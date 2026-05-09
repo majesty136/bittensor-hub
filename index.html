@@ -60,7 +60,8 @@
   }
 
   /* ── Cards grid ── */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px}
+  @media(max-width:620px){.grid{grid-template-columns:1fr}}
 
   /* ── Miner card ── */
   .card{
@@ -145,6 +146,7 @@
   /* ── P&L section ── */
   .pnl-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
   @media(max-width:680px){.pnl-hero{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:400px){.pnl-hero{grid-template-columns:1fr 1fr}}
   .pnl-tile{background:rgba(255,255,255,.04);padding:24px 22px}
   .pnl-tile:first-child{border-radius:16px 0 0 0}
   .pnl-tile:nth-child(2){border-radius:0}
@@ -164,16 +166,21 @@
     background:rgba(255,255,255,.04);
     border-radius:0 0 16px 16px;
     padding:0 22px;
+    overflow-x:auto;
   }
   .pnl-row{
     display:flex;justify-content:space-between;align-items:center;
     padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05);
+    gap:8px;min-width:0;
   }
   .pnl-row:last-child{border:none}
-  .pnl-row-label{font-size:.8em;color:rgba(255,255,255,.4)}
-  .pnl-row-val{font-size:.8em;font-weight:600}
-  .pnl-row-sub{font-size:.68em;color:rgba(255,255,255,.25);margin-left:8px}
+  .pnl-row-label{font-size:.8em;color:rgba(255,255,255,.4);min-width:0;flex:1}
+  .pnl-row-val{font-size:.8em;font-weight:600;white-space:nowrap}
+  .pnl-row-sub{font-size:.68em;color:rgba(255,255,255,.25);margin-left:8px;white-space:nowrap}
   .pnl-divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0}
+  @media(max-width:480px){
+    .pnl-row-sub{display:none}
+  }
 
   /* ── Forecasting card specifics ── */
   .immune-badge{
@@ -415,8 +422,13 @@ function renderCard(sub, data) {
     const gpuName = data.gpu_name
       ? data.gpu_name.replace('NVIDIA ','').replace('GeForce ','')
       : sub.gpu;
-    card.querySelector('.m-extra-tag').textContent =
-      data.gpu_util != null ? `${gpuName} · ${data.gpu_util}%` : gpuName;
+    // SN26: show rank in GPU tag
+    if (sub.netuid === 26 && data.rank) {
+      card.querySelector('.m-extra-tag').textContent = `${gpuName} · Rang #${data.rank}`;
+    } else {
+      card.querySelector('.m-extra-tag').textContent =
+        data.gpu_util != null ? `${gpuName} · ${data.gpu_util}%` : gpuName;
+    }
   }
 }
 
