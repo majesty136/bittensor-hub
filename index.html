@@ -466,9 +466,7 @@ function renderPnl(results, taoPrice) {
 
   // Breakdown — lignes issues de mining-core.js (p.lines)
   const bd = document.getElementById('pnl-breakdown');
-  const header = bd.querySelector('.pnl-row');
   bd.innerHTML = '';
-  bd.appendChild(header);
 
   p.lines.forEach(r => {
     const div = document.createElement('div');
