@@ -43,15 +43,17 @@ async function fetchTaoPrice(fallback = 0) {
 function computePnl(results, taoPrice, fixedCosts) {
   const monthlyFixed = fixedCosts.reduce((s, c) => s + c.usd_month, 0);
 
-  let totalEarnedTao = 0;
-  let varCosts       = 0;
-  let earliestMs     = null;
-  let taoFallback    = 0;
+  let totalEarnedTao   = 0;
+  let totalEarnedAlpha = 0;
+  let varCosts         = 0;
+  let earliestMs       = null;
+  let taoFallback      = 0;
 
   results.forEach(data => {
     if (!data) return;
-    totalEarnedTao += data.total_earned_tao || 0;
-    varCosts       += data.cost_usd         || 0;
+    totalEarnedTao   += data.total_earned_tao   || 0;
+    totalEarnedAlpha += data.total_earned_alpha  || 0;
+    varCosts         += data.cost_usd            || 0;
     if (data.tao_price_usd) taoFallback = data.tao_price_usd;
     if (data.tracking_since) {
       const ts = new Date(data.tracking_since).getTime();
@@ -72,12 +74,13 @@ function computePnl(results, taoPrice, fixedCosts) {
   const breakEvenDays  = pnl < 0 && dailyRevenue > 0 ? Math.abs(pnl) / dailyRevenue : 0;
 
   return {
-    price, totalEarnedTao, varCosts,
+    price, totalEarnedTao, totalEarnedAlpha, varCosts,
     fixedTotal, monthlyFixed, daysTracked,
     revenue, totalCosts, pnl, roi, breakEvenDays,
     // Détail ligne par ligne pour le breakdown
     lines: [
-      { label: 'Revenus — TAO gagné',  val: revenue,    sign: +1, sub: `${totalEarnedTao.toFixed(6)} τ × $${price.toFixed(2)}` },
+      { label: 'Revenus — TAO gagné (est.)', val: revenue, sign: +1,
+        sub: `~${totalEarnedTao.toFixed(4)} τ · ~${totalEarnedAlpha.toFixed(2)} α × $${price.toFixed(2)}` },
       { label: 'GPU / RunPod',         val: varCosts,   sign: -1, sub: 'variable (heures × tarif)' },
       ...fixedCosts.map(c => ({
         label: c.label,

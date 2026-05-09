@@ -451,7 +451,7 @@ function renderPnl(results, taoPrice) {
   const pnlColor = p.pnl >= 0 ? '#30D158' : '#FF453A';
 
   document.getElementById('pnl-revenue').textContent    = '+$' + p.revenue.toFixed(2);
-  document.getElementById('pnl-tao-detail').textContent = p.totalEarnedTao.toFixed(6) + ' τ gagné';
+  document.getElementById('pnl-tao-detail').textContent = '~' + p.totalEarnedTao.toFixed(4) + ' τ · ~' + p.totalEarnedAlpha.toFixed(2) + ' α (estimé)';
   document.getElementById('pnl-var').textContent        = '−$' + p.varCosts.toFixed(2);
   document.getElementById('pnl-fixed').textContent      = '−$' + p.fixedTotal.toFixed(2);
   document.getElementById('pnl-fixed-period').textContent =
