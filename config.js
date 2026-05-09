@@ -3,7 +3,14 @@ const FIXED_COSTS = [
   { label: 'Claude Max+',    usd_month: 200 },
   { label: 'Anthropic API',  usd_month:  50 },
   // { label: 'Cloudflare',  usd_month:   0 },
-  // Ajouter ici tout autre abonnement mensuel
+];
+
+// Frais d'inscription on-chain (burn TAO, coût unique par subnet)
+// Récupérés via SubtensorModule.Burn au bloc d'inscription de chaque UID.
+const REGISTRATION_COSTS = [
+  { label: 'Inscription SN85 (UID 251)', tao: 0.0005,  reg_block: 8139796 },
+  { label: 'Inscription SN26 (UID 129)', tao: 0.07366, reg_block: 8146550 },
+  { label: 'Inscription SN6  (UID 156)', tao: 0.2000,  reg_block: 8145945 },
 ];
 
 const SUBNETS = [

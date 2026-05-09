@@ -40,7 +40,7 @@ async function fetchTaoPrice(fallback = 0) {
  * @param {Array}  fixedCosts - FIXED_COSTS depuis config.js
  * @returns {Object} pnlData
  */
-function computePnl(results, taoPrice, fixedCosts) {
+function computePnl(results, taoPrice, fixedCosts, registrationCosts = []) {
   const monthlyFixed = fixedCosts.reduce((s, c) => s + c.usd_month, 0);
 
   let totalEarnedTao   = 0;
@@ -64,31 +64,36 @@ function computePnl(results, taoPrice, fixedCosts) {
   const price        = taoPrice || taoFallback;
   const daysTracked  = earliestMs ? (Date.now() - earliestMs) / 86_400_000 : 0;
   const fixedTotal   = (monthlyFixed / 30.44) * daysTracked;
+  const regTotal     = registrationCosts.reduce((s, c) => s + c.tao * price, 0);
   const revenue      = totalEarnedTao * price;
-  const totalCosts   = varCosts + fixedTotal;
+  const totalCosts   = varCosts + fixedTotal + regTotal;
   const pnl          = revenue - totalCosts;
   const roi          = totalCosts > 0 ? pnl / totalCosts * 100 : 0;
 
-  // Jours avant break-even au rythme actuel
-  const dailyRevenue   = daysTracked > 0 ? revenue / daysTracked : 0;
-  const breakEvenDays  = pnl < 0 && dailyRevenue > 0 ? Math.abs(pnl) / dailyRevenue : 0;
+  const dailyRevenue  = daysTracked > 0 ? revenue / daysTracked : 0;
+  const breakEvenDays = pnl < 0 && dailyRevenue > 0 ? Math.abs(pnl) / dailyRevenue : 0;
 
   return {
     price, totalEarnedTao, totalEarnedAlpha, varCosts,
-    fixedTotal, monthlyFixed, daysTracked,
+    fixedTotal, monthlyFixed, regTotal, daysTracked,
     revenue, totalCosts, pnl, roi, breakEvenDays,
-    // Détail ligne par ligne pour le breakdown
     lines: [
       { label: 'Revenus — TAO gagné (est.)', val: revenue, sign: +1,
         sub: `~${totalEarnedTao.toFixed(4)} τ · ~${totalEarnedAlpha.toFixed(2)} α × $${price.toFixed(2)}` },
-      { label: 'GPU / RunPod',         val: varCosts,   sign: -1, sub: 'variable (heures × tarif)' },
+      { label: 'GPU / RunPod',    val: varCosts,  sign: -1, sub: 'variable (heures × tarif)' },
       ...fixedCosts.map(c => ({
         label: c.label,
         val:   (c.usd_month / 30.44) * daysTracked,
         sign:  -1,
         sub:   `$${c.usd_month}/mois · ${daysTracked.toFixed(1)} j trackés`,
       })),
-      { label: 'Total coûts',  val: totalCosts, sign: -1, sub: 'variable + fixe', separator: true },
+      ...registrationCosts.map(c => ({
+        label: c.label,
+        val:   c.tao * price,
+        sign:  -1,
+        sub:   `${c.tao.toFixed(4)} τ × $${price.toFixed(0)} · bloc ${c.reg_block.toLocaleString()}`,
+      })),
+      { label: 'Total coûts',  val: totalCosts, sign: -1, sub: 'GPU + fixes + inscriptions', separator: true },
       { label: 'P&L net',      val: pnl,        sign: pnl >= 0 ? 1 : -1, sub: `ROI ${roi.toFixed(1)}%` },
     ],
   };

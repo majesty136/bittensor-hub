@@ -447,7 +447,7 @@ function buildAddCard() {
 
 // ── renderPnl : DOM update only — calcul via mining-core.js::computePnl ──
 function renderPnl(results, taoPrice) {
-  const p = computePnl(results, taoPrice, FIXED_COSTS);
+  const p = computePnl(results, taoPrice, FIXED_COSTS, REGISTRATION_COSTS);
   const pnlColor = p.pnl >= 0 ? '#30D158' : '#FF453A';
 
   document.getElementById('pnl-revenue').textContent    = '+$' + p.revenue.toFixed(2);
