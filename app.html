@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mining Hub">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.json">
+<title>Mining Hub</title>
+<style>
+  :root {
+    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --tab-h: 72px;
+    --ok:   #30D158;
+    --warn: #FF9F0A;
+    --err:  #FF453A;
+    --blue: #0A84FF;
+    --purple: #BF5AF2;
+    --dim:  rgba(255,255,255,.35);
+    --faint:rgba(255,255,255,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent }
+  html, body {
+    height: 100%; height: -webkit-fill-available;
+    background: #000; color: #fff; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout shell ── */
+  #shell {
+    display: flex; flex-direction: column;
+    height: 100%; height: -webkit-fill-available;
+  }
+  #scroll-area {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(var(--tab-h) + var(--safe-bottom) + 16px);
+  }
+
+  /* ── Status bar spacer ── */
+  .status-spacer {
+    height: calc(var(--safe-top) + 8px);
+    background: #000;
+    position: sticky; top: 0; z-index: 10;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    padding: 8px 20px 20px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .page-title { font-size: 1.75em; font-weight: 700; letter-spacing: -.03em }
+  .refresh-btn {
+    background: var(--faint); border: none; border-radius: 99px;
+    padding: 7px 14px; color: rgba(255,255,255,.5); font-size: .78em;
+    cursor: pointer; font-family: inherit;
+    transition: background .15s;
+  }
+  .refresh-btn:active { background: rgba(255,255,255,.12) }
+  .refresh-btn.spinning { animation: spin .7s linear infinite }
+  @keyframes spin { to { transform: rotate(360deg) } }
+
+  /* ── Sections ── */
+  .section { display: none; padding: 0 16px }
+  .section.active { display: block }
+
+  /* ── Section label ── */
+  .slabel {
+    font-size: .62em; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: rgba(255,255,255,.3);
+    margin: 24px 4px 10px;
+  }
+
+  /* ── Hero tiles (full-bleed strip) ── */
+  .hero-strip {
+    display: grid; gap: 2px;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 -16px;
+  }
+  .hero-tile {
+    background: var(--faint); padding: 20px 18px;
+  }
+  .hero-tile:nth-child(1) { border-radius: 18px 0 0 0 }
+  .hero-tile:nth-child(2) { border-radius: 0 18px 0 0 }
+  .hero-tile:nth-child(3) { border-radius: 0 0 0 18px }
+  .hero-tile:nth-child(4) { border-radius: 0 0 18px 0 }
+  .ht-label { font-size: .6em; font-weight: 500; text-transform: uppercase;
+              letter-spacing: .12em; color: var(--dim); margin-bottom: 8px }
+  .ht-val { font-size: 1.55em; font-weight: 700; letter-spacing: -.04em; line-height: 1 }
+  .ht-sub { font-size: .68em; color: var(--dim); margin-top: 5px }
+
+  /* ── Status pill ── */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--faint); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 99px; padding: 6px 14px;
+    font-size: .72em; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; animation: blink 2s ease infinite }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--faint); border-radius: 18px; padding: 20px; margin-bottom: 2px;
+  }
+  .card-title {
+    font-size: .62em; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+  }
+
+  /* ── KV rows ── */
+  .kv { display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.06) }
+  .kv:last-child { border: none; padding-bottom: 0 }
+  .kv-label { font-size: .82em; color: var(--dim) }
+  .kv-val { font-size: .82em; font-weight: 500 }
+
+  /* ── Progress bar ── */
+  .prog-wrap { margin-bottom: 16px }
+  .prog-wrap:last-child { margin-bottom: 0 }
+  .prog-hd { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: .78em }
+  .prog-hd span:first-child { color: var(--dim) }
+  .prog-hd span:last-child { font-weight: 500 }
+  .prog-bar { height: 3px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden }
+  .prog-fill { height: 3px; border-radius: 99px; transition: width .6s ease }
+
+  /* ── Miner cards (tab Miners) ── */
+  .miner-card {
+    background: var(--faint); border-radius: 18px; padding: 18px 20px;
+    margin-bottom: 2px;
+  }
+  .miner-sn   { font-size: 1.3em; font-weight: 800; letter-spacing: -.03em }
+  .miner-name { font-size: .88em; font-weight: 600; margin-top: 1px }
+  .miner-desc { font-size: .72em; color: var(--dim); margin-top: 2px }
+
+  /* 4-KPI mini-grid inside miner card */
+  .m4 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 14px 0 12px }
+  .m4-cell { background: rgba(255,255,255,.04); padding: 11px 13px }
+  .m4-cell:nth-child(1) { border-radius: 10px 0 0 0 }
+  .m4-cell:nth-child(2) { border-radius: 0 10px 0 0 }
+  .m4-cell:nth-child(3) { border-radius: 0 0 0 10px }
+  .m4-cell:nth-child(4) { border-radius: 0 0 10px 0 }
+  .m4-label { font-size: .55em; font-weight: 600; text-transform: uppercase;
+              letter-spacing: .1em; color: var(--dim); margin-bottom: 5px }
+  .m4-val   { font-size: .84em; font-weight: 600; line-height: 1.2 }
+  .m4-sub   { font-size: .65em; color: var(--dim); margin-top: 3px }
+
+  /* dashboard link button */
+  .dash-btn {
+    display: block; text-align: center;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px; padding: 11px;
+    font-size: .78em; color: rgba(255,255,255,.7); text-decoration: none;
+    transition: background .15s;
+  }
+  .dash-btn:active { background: rgba(255,255,255,.12) }
+
+  /* ── P&L breakdown ── */
+  .pnl-total {
+    background: var(--faint); border-radius: 18px; padding: 22px 20px; margin-bottom: 2px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .pnl-total-label { font-size: .7em; font-weight: 600; letter-spacing: .1em;
+                     text-transform: uppercase; color: var(--dim); margin-bottom: 6px }
+  .pnl-total-val { font-size: 2em; font-weight: 700; letter-spacing: -.04em }
+  .pnl-total-sub { font-size: .72em; color: var(--dim); margin-top: 4px }
+
+  /* ── Logs ── */
+  .log-entry { padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+               font-size: .78em; font-family: 'SF Mono', 'Fira Code', monospace; line-height: 1.4 }
+  .log-entry:last-child { border: none }
+  .log-ts { font-size: .85em; color: rgba(255,255,255,.2); display: block; margin-bottom: 2px }
+
+  /* ── Last update ── */
+  .last-update {
+    text-align: center; font-size: .68em; color: rgba(255,255,255,.2);
+    margin: 20px 0 8px; padding: 0 16px;
+  }
+
+  /* ── Chips ── */
+  .chip-ok   { display:inline-block; background:rgba(48,209,88,.12);  color:var(--ok);   border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
+  .chip-warn { display:inline-block; background:rgba(255,159,10,.12); color:var(--warn); border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
+  .chip-off  { display:inline-block; background:rgba(255,255,255,.06);color:var(--dim);  border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
+
+  /* ── Tab bar ── */
+  #tabbar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: calc(var(--tab-h) + var(--safe-bottom));
+    background: rgba(0,0,0,.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-top: 1px solid rgba(255,255,255,.08);
+    display: flex; align-items: flex-start;
+    padding-top: 10px;
+    padding-bottom: var(--safe-bottom);
+    z-index: 100;
+  }
+  .tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 0 4px; cursor: pointer; border: none; background: none; font-family: inherit;
+    color: rgba(255,255,255,.35); transition: color .2s;
+  }
+  .tab.active { color: #fff }
+  .tab-icon { font-size: 1.4em; line-height: 1 }
+  .tab-label { font-size: .6em; font-weight: 500; letter-spacing: .02em }
+</style>
+</head>
+<body>
+<div id="shell">
+
+  <div id="scroll-area">
+    <div class="status-spacer"></div>
+
+    <!-- ╔══════════════╗ -->
+    <!-- ║  DASHBOARD   ║ -->
+    <!-- ╚══════════════╝ -->
+    <section class="section active" id="sec-dashboard">
+      <div class="page-header">
+        <div class="page-title">Vue d'ensemble</div>
+        <button class="refresh-btn" id="btn-refresh">↻ Refresh</button>
+      </div>
+
+      <!-- Fleet status + block -->
+      <div style="padding:0 4px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+        <div class="status-pill">
+          <div class="dot" id="d-dot" style="background:rgba(255,255,255,.3)"></div>
+          <span id="d-status">…</span>
+        </div>
+        <div style="font-size:.68em;color:rgba(255,255,255,.25)" id="d-block">block —</div>
+      </div>
+
+      <!-- Hero 4-tile : fleet -->
+      <div class="hero-strip">
+        <div class="hero-tile">
+          <div class="ht-label">Miners actifs</div>
+          <div class="ht-val" id="d-mining" style="color:var(--ok)">—</div>
+          <div class="ht-sub" id="d-mining-sub">sur <span id="d-total">—</span> subnets</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">Émission / jour</div>
+          <div class="ht-val" id="d-emission" style="color:var(--blue)">—</div>
+          <div class="ht-sub">τ / jour · flotte</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">Coût total</div>
+          <div class="ht-val" id="d-cost" style="color:var(--warn)">$—</div>
+          <div class="ht-sub" id="d-rate-sub">—</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">P&amp;L net</div>
+          <div class="ht-val" id="d-pnl">$—</div>
+          <div class="ht-sub" id="d-roi">ROI —%</div>
+        </div>
+      </div>
+
+      <!-- GPU card (SN85) -->
+      <div class="slabel">GPU — SN85</div>
+      <div class="card">
+        <div class="card-title" id="d-gpu-name">GPU</div>
+        <div class="prog-wrap">
+          <div class="prog-hd"><span>Utilisation GPU</span><span id="d-gpu-util">—</span></div>
+          <div class="prog-bar"><div class="prog-fill" id="pb-gpu-util" style="width:0;background:var(--blue)"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-hd"><span>VRAM</span><span id="d-gpu-mem">—</span></div>
+          <div class="prog-bar"><div class="prog-fill" id="pb-gpu-mem" style="width:0;background:var(--purple)"></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:1.4em;font-weight:700;letter-spacing:-.03em" id="d-temp">—°</div>
+            <div style="font-size:.62em;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.08em">Température</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:1.4em;font-weight:700;letter-spacing:-.03em;color:var(--warn)" id="d-power">— W</div>
+            <div style="font-size:.62em;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.08em">Puissance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services card (SN85) -->
+      <div class="slabel">Services PM2 — SN85</div>
+      <div class="card" id="d-services"></div>
+    </section>
+
+    <!-- ╔══════════════╗ -->
+    <!-- ║    MINERS    ║ -->
+    <!-- ╚══════════════╝ -->
+    <section class="section" id="sec-miners">
+      <div class="page-header">
+        <div class="page-title">Miners</div>
+        <div id="m-summary" style="font-size:.78em;color:var(--dim)">—</div>
+      </div>
+      <div id="miners-list"></div>
+    </section>
+
+    <!-- ╔══════════════╗ -->
+    <!-- ║     P&L      ║ -->
+    <!-- ╚══════════════╝ -->
+    <section class="section" id="sec-pnl">
+      <div class="page-header">
+        <div class="page-title">P&amp;L</div>
+        <div style="font-size:.72em;color:var(--dim)">TAO <span id="p-tao-price">$—</span></div>
+      </div>
+
+      <div class="pnl-total">
+        <div>
+          <div class="pnl-total-label">P&amp;L net</div>
+          <div class="pnl-total-val" id="p-pnl-val">$—</div>
+          <div class="pnl-total-sub" id="p-pnl-sub">ROI —%</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.65em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Revenus</div>
+          <div style="font-size:1.2em;font-weight:700;color:var(--ok)" id="p-revenue">$—</div>
+          <div style="font-size:.68em;color:var(--dim);margin-top:2px" id="p-tao-earned">— τ gagné</div>
+        </div>
+      </div>
+
+      <div class="slabel">Détail des coûts</div>
+      <div class="card" id="p-breakdown"></div>
+      <div class="last-update" id="p-period"></div>
+    </section>
+
+    <!-- ╔══════════════╗ -->
+    <!-- ║    LOGS      ║ -->
+    <!-- ╚══════════════╝ -->
+    <section class="section" id="sec-logs">
+      <div class="page-header">
+        <div class="page-title">Logs</div>
+        <div style="font-size:.72em;color:var(--dim)">video-miner</div>
+      </div>
+      <div class="card" id="logs-list">
+        <div style="color:var(--dim);font-size:.82em;text-align:center;padding:20px 0">Chargement…</div>
+      </div>
+    </section>
+
+    <div class="last-update" id="last-update">Chargement…</div>
+  </div><!-- /scroll-area -->
+
+  <!-- Tab bar -->
+  <nav id="tabbar">
+    <button class="tab active" onclick="showTab('dashboard',this)">
+      <span class="tab-icon">◈</span>
+      <span class="tab-label">Dashboard</span>
+    </button>
+    <button class="tab" onclick="showTab('miners',this)">
+      <span class="tab-icon">⛏</span>
+      <span class="tab-label">Miners</span>
+    </button>
+    <button class="tab" onclick="showTab('pnl',this)">
+      <span class="tab-icon">$</span>
+      <span class="tab-label">P&amp;L</span>
+    </button>
+    <button class="tab" onclick="showTab('logs',this)">
+      <span class="tab-icon">≡</span>
+      <span class="tab-label">Logs</span>
+    </button>
+  </nav>
+
+</div><!-- /shell -->
+
+<script src="config.js"></script>
+<script src="mining-core.js"></script>
+<script>
+// statusColor, fetchStatus, fetchMeta, fetchTaoPrice,
+// computePnl, computeFleetSummary, fmtPnl, fmtUptime, fmtHours,
+// brierColor → mining-core.js
+
+// ── Service Worker ──────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/bittensor-hub/sw.js', { scope: '/bittensor-hub/' });
+}
+
+// ── Tab navigation ──────────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('scroll-area').scrollTop = 0;
+}
+
+const $ = id => document.getElementById(id);
+
+// Wrapper sécurisé : jamais de crash si n est null/undefined/NaN
+function f(n, digits) {
+  const v = parseFloat(n);
+  return isFinite(v) ? v.toFixed(digits) : '—';
+}
+
+function setBar(id, pct, color) {
+  const el = $(id);
+  if (el) { el.style.width = pct + '%'; el.style.background = color; }
+}
+
+// ── Dashboard tab — fleet hero + SN85 GPU detail ─────────────────
+function renderDashboard(results, taoPrice) {
+  const fleet = computeFleetSummary(results);
+  const ACTIVE_S = ['MINING','ACTIVE','IMMUNE','STARTING'];
+  const anyActive = fleet.mining > 0;
+
+  $('d-dot').style.background = anyActive ? '#30D158' : '#FF453A';
+  $('d-status').textContent   = anyActive ? `${fleet.mining} ACTIF${fleet.mining>1?'S':''}` : 'HORS LIGNE';
+
+  // Block from first available data
+  const firstData = results.find(d => d && d.chain_block);
+  $('d-block').textContent = firstData ? 'block #' + firstData.chain_block : 'block —';
+
+  // Hero tiles — fleet
+  $('d-mining').textContent    = fleet.mining;
+  $('d-mining').style.color    = anyActive ? '#30D158' : '#FF453A';
+  $('d-total').textContent     = SUBNETS.length;
+  $('d-emission').textContent  = fleet.totalEmission > 0 ? fleet.totalEmission.toFixed(5) : '—';
+  $('d-cost').textContent      = '$' + fleet.totalCost.toFixed(2);
+  $('d-rate-sub').textContent  = fleet.successRate > 0 ? fleet.successRate + '% succès tâches' : 'coûts variables';
+
+  const p = computePnl(results, taoPrice, FIXED_COSTS);
+  $('d-pnl').textContent    = fmtPnl(p.pnl);
+  $('d-pnl').style.color    = p.pnl >= 0 ? '#30D158' : '#FF453A';
+  $('d-roi').textContent    = 'ROI ' + (p.roi >= 0 ? '+' : '') + p.roi.toFixed(1) + '%';
+
+  // GPU (SN85 = results[0])
+  const sn85 = results[0];
+  if (sn85) {
+    const gpuName = sn85.gpu_name ? sn85.gpu_name.replace('NVIDIA ','').replace('GeForce ','') : '—';
+    $('d-gpu-name').textContent = gpuName;
+    $('d-gpu-util').textContent = (sn85.gpu_util != null ? sn85.gpu_util : '—') + '%';
+    setBar('pb-gpu-util', sn85.gpu_util || 0, '#0A84FF');
+    $('d-gpu-mem').textContent = '—';
+    $('d-temp').textContent     = (sn85.gpu_temp != null ? sn85.gpu_temp : '—') + '°';
+    $('d-temp').style.color     = sn85.gpu_temp > 80 ? '#FF453A' : sn85.gpu_temp > 70 ? '#FF9F0A' : '#30D158';
+    $('d-power').textContent    = (sn85.gpu_power || '—') + ' W';
+
+    const svcs = sn85.services || {};
+    const svcLabels = {
+      'video-upscaler':'Upscaler','video-compressor':'Compressor',
+      'video-deleter':'Deleter','video-miner':'Miner'
+    };
+    $('d-services').innerHTML = Object.entries(svcs).map(([k, v]) => {
+      const ok  = v === 'online';
+      const col = ok ? '#30D158' : v === 'errored' ? '#FF453A' : 'rgba(255,255,255,.3)';
+      return `<div class="kv">
+        <span class="kv-label">${svcLabels[k] || k}</span>
+        <span class="kv-val" style="color:${col}">${v.toUpperCase()}</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── Miners tab — card unifiée 4 KPIs (identique index.html) ──────
+function renderMiners(results) {
+  const ACTIVE_S = ['MINING','ACTIVE','IMMUNE','STARTING'];
+  const active = results.filter(d => d && ACTIVE_S.includes(d.status)).length;
+  $('m-summary').textContent = active + ' / ' + SUBNETS.length + ' actif' + (active > 1 ? 's' : '');
+
+  $('miners-list').innerHTML = SUBNETS.map((sub, i) => {
+    const data = results[i];
+    const s  = data ? data.status : 'OFFLINE';
+    let sc;
+    if (s==='MINING'||s==='ACTIVE')        sc = '#30D158';
+    else if (s==='IMMUNE'||s==='STARTING') sc = '#FF9F0A';
+    else                                   sc = '#FF453A';
+
+    const hours = data ? (data.immunity_hours_remaining || 0) : 0;
+    const label = s === 'IMMUNE' ? `IMMUNE · ${fmtHours(hours)}` : s;
+
+    // ── KPI 1 : Incentive ──
+    const inc  = data ? (data.incentive || 0) : 0;
+    const eday = data ? (data.emission_day || 0) : 0;
+    const incHTML = inc > 0
+      ? `<span class="chip-ok" style="font-size:.72em">ACTIF</span> <span style="font-size:.78em;font-weight:700">${f(inc,5)}</span>`
+      : `<span class="chip-off" style="font-size:.72em">EN ATTENTE</span>`;
+    const incSub = eday > 0 ? `~${f(eday,4)} τ/jour` : "Pas d'émission";
+
+    // ── KPI 2 : Travail produit ──
+    let workVal, workSub, workColor = 'var(--blue)';
+    if (sub.type === 'forecasting') {
+      const pred  = data ? (data.predictions_count || 0) : 0;
+      const brier = data ? (data.brier_score ?? null) : null;
+      workVal  = pred > 0 ? pred + ' préd.' : '—';
+      workSub  = brier != null
+        ? `Brier ${f(brier,4)}`
+        : (pred > 0 ? 'Score en cours' : 'En attente');
+      workColor = pred > 0 ? 'var(--blue)' : 'var(--dim)';
+    } else {
+      const tasks = data ? (data.tasks || {}) : {};
+      const done = tasks.completed || 0, recv = tasks.received || 0, rate = tasks.success_rate || 0;
+      workVal  = recv > 0 ? `${done} / ${recv}` : '—';
+      workSub  = recv > 0 ? `${rate}% succès` : 'Aucune tâche';
+      workColor = recv > 0 ? 'var(--blue)' : 'var(--dim)';
+    }
+
+    // ── KPI 3 : Coût engagés ──
+    const cost    = data ? (data.cost_usd || 0) : 0;
+    const costSub = sub.type === 'forecasting'
+      ? (data && data.agent_name ? data.agent_name : 'API LLM')
+      : (data && data.gpu_hours != null ? `${f(data.gpu_hours,1)} h GPU` : 'RunPod');
+
+    // ── KPI 4 : Balance ──
+    const bal    = data ? data.balance : null;
+    const balStr = (bal != null && bal !== '—') ? f(Number(bal),4) + ' τ' : '— τ';
+
+    return `
+      <div class="miner-card">
+        <!-- header -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="miner-sn" style="color:${sub.color}">SN${sub.netuid}</div>
+            <div class="miner-name">${sub.name}</div>
+            <div class="miner-desc">UID #${sub.uid} · ${sub.type==='forecasting'?'No GPU':sub.gpu} · ${sub.network}</div>
+          </div>
+          <div class="status-pill" style="color:${sc};border-color:${sc}33;background:${sc}12;flex-shrink:0">
+            <div class="dot" style="background:${sc}"></div>
+            <span style="font-size:.9em">${label}</span>
+          </div>
+        </div>
+
+        <!-- 4-KPI grid -->
+        <div class="m4">
+          <div class="m4-cell">
+            <div class="m4-label">Incentive</div>
+            <div class="m4-val">${incHTML}</div>
+            <div class="m4-sub">${incSub}</div>
+          </div>
+          <div class="m4-cell">
+            <div class="m4-label">Travail produit</div>
+            <div class="m4-val" style="color:${workColor}">${workVal}</div>
+            <div class="m4-sub">${workSub}</div>
+          </div>
+          <div class="m4-cell">
+            <div class="m4-label">Coût engagés</div>
+            <div class="m4-val" style="color:var(--warn)">$${f(cost,2)}</div>
+            <div class="m4-sub">${costSub}</div>
+          </div>
+          <div class="m4-cell">
+            <div class="m4-label">Balance</div>
+            <div class="m4-val" style="color:var(--ok)">${balStr}</div>
+            <div class="m4-sub">coldkey</div>
+          </div>
+        </div>
+
+        <!-- Dashboard link -->
+        <a class="dash-btn" href="${sub.dashboardUrl}" ${sub.dashboardUrl.startsWith('http')?'target="_blank"':''}>
+          Dashboard &nbsp;→
+        </a>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── P&L tab ────────────────────────────────────────────────────────
+function renderPnl(results, taoPrice) {
+  const p = computePnl(results, taoPrice, FIXED_COSTS);
+  const pnlColor = p.pnl >= 0 ? '#30D158' : '#FF453A';
+
+  $('p-tao-price').textContent  = p.price > 0 ? '$' + p.price.toFixed(2) : '$—';
+  $('p-pnl-val').textContent    = fmtPnl(p.pnl);
+  $('p-pnl-val').style.color    = pnlColor;
+  $('p-pnl-sub').textContent    = 'ROI ' + (p.roi >= 0 ? '+' : '') + p.roi.toFixed(1) + '%'
+    + (p.breakEvenDays > 0 ? ' · BE dans ' + p.breakEvenDays.toFixed(0) + ' j' : '');
+  $('p-revenue').textContent    = '+$' + p.revenue.toFixed(2);
+  $('p-tao-earned').textContent = p.totalEarnedTao.toFixed(6) + ' τ gagné';
+
+  $('p-breakdown').innerHTML = p.lines.map(r => {
+    const isPnlRow = r.label === 'P&L net';
+    const color  = isPnlRow ? pnlColor : (r.sign > 0 ? '#30D158' : '#FF9F0A');
+    const valStr = isPnlRow ? fmtPnl(r.val) : (r.sign > 0 ? '+' : '−') + '$' + Math.abs(r.val).toFixed(2);
+    return `<div class="kv" ${r.separator ? 'style="border-top:1px solid rgba(255,255,255,.12);margin-top:6px;padding-top:14px"' : ''}>
+      <div>
+        <span class="kv-label">${r.label}</span>
+        <div style="font-size:.68em;color:rgba(255,255,255,.2);margin-top:2px">${r.sub}</div>
+      </div>
+      <span class="kv-val" style="color:${color}">${valStr}</span>
+    </div>`;
+  }).join('');
+
+  $('p-period').textContent = p.daysTracked > 0
+    ? `Tracking depuis ${p.daysTracked.toFixed(1)} jours · $${p.monthlyFixed}/mois en coûts fixes`
+    : 'Tracking en cours…';
+}
+
+// ── Logs tab ──────────────────────────────────────────────────────
+function renderLogs(data) {
+  if (!data || !data.logs || data.logs.length === 0) {
+    $('logs-list').innerHTML = '<div style="color:var(--dim);font-size:.82em;text-align:center;padding:20px 0">Aucun log disponible</div>';
+    return;
+  }
+  $('logs-list').innerHTML = data.logs.map(e => {
+    const isErr  = /error|fail|exception/i.test(e.msg);
+    const isWarn = /warn|timeout/i.test(e.msg);
+    const col = isErr ? '#FF453A' : isWarn ? '#FF9F0A' : 'rgba(255,255,255,.55)';
+    return `<div class="log-entry">
+      <span class="log-ts">${e.ts}</span>
+      <span style="color:${col}">${e.msg}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── Main refresh ─────────────────────────────────────────────────
+let _taoPrice = 0;
+
+async function refresh() {
+  const btn = $('btn-refresh');
+  if (btn) btn.classList.add('spinning');
+
+  try {
+    const [results, meta, tao] = await Promise.all([
+      Promise.all(SUBNETS.map(fetchStatus)),
+      fetchMeta(),
+      fetchTaoPrice(),
+    ]);
+
+    if (tao) _taoPrice = tao;
+    else {
+      const fb = results.find(d => d && d.tao_price_usd);
+      if (fb) _taoPrice = fb.tao_price_usd;
+    }
+
+    // Miners en premier — indépendant du reste
+    try {
+      renderMiners(results);
+    } catch(e) {
+      console.error('renderMiners', e);
+      const ml = $('miners-list');
+      if (ml) ml.innerHTML = `<div class="card" style="color:var(--err);font-size:.82em">Erreur chargement : ${e.message}</div>`;
+    }
+    try { renderDashboard(results, _taoPrice); } catch(e) { console.error('renderDashboard', e); }
+    try { renderPnl(results, _taoPrice); } catch(e) { console.error('renderPnl', e); }
+    try { renderLogs(results[0]); } catch(e) { console.error('renderLogs', e); }
+
+    if (meta && meta.updated_at) {
+      const d = new Date(meta.updated_at);
+      $('last-update').textContent = 'Données du ' + d.toLocaleTimeString('fr-FR');
+    }
+  } finally {
+    if (btn) btn.classList.remove('spinning');
+  }
+}
+
+// ── Init ─────────────────────────────────────────────────────────
+refresh();
+setInterval(refresh, 30_000);
+$('btn-refresh').addEventListener('click', refresh);
+</script>
+</body>
+</html>

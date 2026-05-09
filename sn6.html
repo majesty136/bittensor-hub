@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SN6 Numinous · Analytics</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#000;color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;padding:40px 32px 64px;
+  }
+  @media(max-width:680px){body{padding:24px 16px 48px}}
+  .wrap{max-width:1080px;margin:0 auto}
+
+  /* Nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px}
+  .nav-back{
+    display:inline-flex;align-items:center;gap:6px;
+    color:rgba(255,255,255,.35);font-size:.78em;text-decoration:none;
+    transition:color .15s;
+  }
+  .nav-back:hover{color:rgba(255,255,255,.7)}
+  .nav-ts{font-size:.7em;color:rgba(255,255,255,.2)}
+
+  /* Header */
+  .page-header{margin-bottom:40px}
+  .page-header h1{font-size:1.9em;font-weight:700;letter-spacing:-.03em}
+  .page-header p{margin-top:5px;font-size:.82em;color:rgba(255,255,255,.35)}
+
+  /* Section label */
+  .sl{font-size:.62em;font-weight:600;color:rgba(255,255,255,.3);
+      text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px}
+
+  /* 4-tile strip */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:32px}
+  @media(max-width:680px){.strip{grid-template-columns:repeat(2,1fr)}}
+  .tile{background:rgba(255,255,255,.04);padding:22px 20px}
+  .tile:first-child{border-radius:14px 0 0 14px}
+  .tile:last-child{border-radius:0 14px 14px 0}
+  @media(max-width:680px){
+    .tile:first-child{border-radius:14px 0 0 0}
+    .tile:nth-child(2){border-radius:0 14px 0 0}
+    .tile:nth-child(3){border-radius:0 0 0 14px}
+    .tile:last-child{border-radius:0 0 14px 0}
+  }
+  .tile-label{font-size:.6em;font-weight:500;color:rgba(255,255,255,.3);
+              text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+  .tile-val{font-size:1.7em;font-weight:700;letter-spacing:-.04em;line-height:1}
+  .tile-sub{font-size:.7em;color:rgba(255,255,255,.3);margin-top:5px}
+
+  /* Pool cards row */
+  .pools{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:32px}
+  @media(max-width:680px){.pools{grid-template-columns:1fr}}
+  .pool-card{background:rgba(255,255,255,.04);padding:20px 18px}
+  .pool-card:first-child{border-radius:14px 0 0 14px}
+  .pool-card:last-child{border-radius:0 14px 14px 0}
+  @media(max-width:680px){
+    .pool-card:first-child{border-radius:14px 14px 0 0}
+    .pool-card:last-child{border-radius:0 0 14px 14px}
+    .pool-card:not(:first-child):not(:last-child){border-radius:0}
+  }
+  .pool-name{font-size:.7em;font-weight:600;color:rgba(255,255,255,.5);
+             text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;
+             display:flex;align-items:center;gap:8px}
+  .pool-track{font-size:.65em;background:rgba(255,255,255,.07);
+              border-radius:99px;padding:2px 8px;color:rgba(255,255,255,.4)}
+  .pool-row{display:flex;justify-content:space-between;align-items:baseline;
+            padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .pool-row:last-child{border:none;padding-bottom:0}
+  .pool-row-label{font-size:.72em;color:rgba(255,255,255,.35)}
+  .pool-row-val{font-size:.8em;font-weight:600}
+  .pool-our{background:rgba(99,102,241,.12);border-radius:8px;padding:10px 12px;margin-top:12px}
+  .pool-our-label{font-size:.62em;color:#818cf8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .pool-our-val{font-size:.9em;font-weight:600;color:#818cf8}
+
+  /* Leaderboard table */
+  .lb-wrap{background:rgba(255,255,255,.03);border-radius:14px;overflow:hidden;margin-bottom:32px}
+  .lb-table{width:100%;border-collapse:collapse}
+  .lb-table thead th{
+    font-size:.6em;font-weight:600;color:rgba(255,255,255,.3);
+    text-transform:uppercase;letter-spacing:.1em;
+    padding:14px 16px;text-align:left;
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .lb-table tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s}
+  .lb-table tbody tr:last-child{border:none}
+  .lb-table tbody tr:hover{background:rgba(255,255,255,.03)}
+  .lb-table tbody tr.our-row{background:rgba(99,102,241,.08)}
+  .lb-table tbody tr.our-row:hover{background:rgba(99,102,241,.13)}
+  .lb-table td{padding:12px 16px;font-size:.82em;vertical-align:middle}
+  .rank-badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;border-radius:8px;
+    background:rgba(255,255,255,.06);font-weight:700;font-size:.82em;
+  }
+  .rank-top3{background:rgba(255,196,0,.12);color:#FFC400}
+  .track-badge{
+    display:inline-block;font-size:.65em;font-weight:600;
+    border-radius:99px;padding:2px 9px;
+  }
+  .track-signal{background:rgba(10,132,255,.12);color:#0A84FF}
+  .track-main{background:rgba(99,102,241,.15);color:#818cf8}
+  .brier-good{color:#30D158}
+  .brier-mid {color:#FF9F0A}
+  .brier-bad {color:#FF453A}
+  .brier-na  {color:rgba(255,255,255,.2)}
+  .our-tag{
+    display:inline-block;font-size:.6em;font-weight:600;
+    background:rgba(99,102,241,.2);color:#818cf8;
+    border-radius:99px;padding:1px 7px;margin-left:6px;vertical-align:middle;
+  }
+
+  /* Synthesis */
+  .synthesis{background:rgba(255,255,255,.03);border-radius:14px;padding:24px;margin-bottom:32px}
+  .insight{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .insight:last-child{border:none;padding-bottom:0}
+  .insight-icon{width:28px;height:28px;border-radius:8px;flex-shrink:0;
+                display:flex;align-items:center;justify-content:center;font-size:.85em}
+  .insight-text{font-size:.82em;line-height:1.5;color:rgba(255,255,255,.65)}
+  .insight-text strong{color:rgba(255,255,255,.9)}
+
+  /* Pills */
+  .p-ok  {display:inline-block;background:rgba(48,209,88,.12);color:#30D158;border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
+  .p-warn{display:inline-block;background:rgba(255,159,10,.12);color:#FF9F0A;border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
+  .p-off {display:inline-block;background:rgba(255,255,255,.06);color:rgba(255,255,255,.3);border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
+
+  /* Reasoning table (compact) */
+  .reasoning-wrap{background:rgba(99,102,241,.04);border:1px solid rgba(99,102,241,.12);
+                  border-radius:14px;overflow:hidden;margin-bottom:32px}
+  .reasoning-wrap table{width:100%;border-collapse:collapse}
+  .reasoning-wrap thead th{font-size:.6em;font-weight:600;color:rgba(129,140,248,.5);
+    text-transform:uppercase;letter-spacing:.1em;padding:12px 14px;text-align:left;
+    border-bottom:1px solid rgba(99,102,241,.1)}
+  .reasoning-wrap tbody tr{border-bottom:1px solid rgba(99,102,241,.07)}
+  .reasoning-wrap tbody tr:last-child{border:none}
+  .reasoning-wrap tbody tr.our-row{background:rgba(99,102,241,.1)}
+  .reasoning-wrap td{padding:10px 14px;font-size:.8em;vertical-align:middle}
+
+  /* Footer */
+  .ft{margin-top:40px;font-size:.68em;color:rgba(255,255,255,.2)}
+</style>
+</head>
+<body><div class="wrap">
+
+<!-- NAV -->
+<div class="nav">
+  <a class="nav-back" href="index.html">← Mining Hub</a>
+  <span class="nav-ts" id="updated-at">Chargement…</span>
+</div>
+
+<!-- HEADER -->
+<div class="page-header">
+  <h1 style="color:#818cf8">SN6 · Numinous Analytics</h1>
+  <p>Analyse compétitive de notre agent vs le reste du réseau · Track MAIN · UID 156</p>
+</div>
+
+<!-- NOTRE POSITION -->
+<div class="sl">Notre position</div>
+<div class="strip" id="our-strip">
+  <div class="tile">
+    <div class="tile-label">Rang émissions</div>
+    <div class="tile-val" id="our-em-rank" style="color:#818cf8">—</div>
+    <div class="tile-sub" id="our-em-rank-sub">/ 200 miners</div>
+  </div>
+  <div class="tile">
+    <div class="tile-label">Rang reasoning</div>
+    <div class="tile-val" id="our-reason-rank" style="color:#818cf8">—</div>
+    <div class="tile-sub">pool MAIN · notre compétition</div>
+  </div>
+  <div class="tile">
+    <div class="tile-label">Poids réseau</div>
+    <div class="tile-val" id="our-weight" style="color:#818cf8">—%</div>
+    <div class="tile-sub" id="our-weight-sub">part des émissions</div>
+  </div>
+  <div class="tile">
+    <div class="tile-label">Brier score</div>
+    <div class="tile-val" id="our-brier">—</div>
+    <div class="tile-sub" id="our-brier-sub">lower = meilleur</div>
+  </div>
+</div>
+
+<!-- POOLS -->
+<div class="sl">Analyse des pools</div>
+<div class="pools">
+  <div class="pool-card">
+    <div class="pool-name">Global Brier <span class="pool-track">SIGNAL</span></div>
+    <div class="pool-row"><span class="pool-row-label">Meilleur score</span><span class="pool-row-val brier-good" id="gb-best">—</span></div>
+    <div class="pool-row"><span class="pool-row-label">Médiane</span><span class="pool-row-val" id="gb-med">—</span></div>
+    <div class="pool-row"><span class="pool-row-label">Poids top miner</span><span class="pool-row-val" id="gb-top-wt">—</span></div>
+    <div class="pool-our">
+      <div class="pool-our-label">Notre position</div>
+      <div class="pool-our-val" id="gb-our">Non inscrit (track MAIN)</div>
+    </div>
+  </div>
+  <div class="pool-card">
+    <div class="pool-name">Geopolitics Brier <span class="pool-track">SIGNAL</span></div>
+    <div class="pool-row"><span class="pool-row-label">Meilleur score</span><span class="pool-row-val brier-good" id="geo-best">—</span></div>
+    <div class="pool-row"><span class="pool-row-label">Médiane</span><span class="pool-row-val" id="geo-med">—</span></div>
+    <div class="pool-row"><span class="pool-row-label">Poids top miner</span><span class="pool-row-val" id="geo-top-wt">—</span></div>
+    <div class="pool-our">
+      <div class="pool-our-label">Notre position</div>
+      <div class="pool-our-val" id="geo-our">Non inscrit (track MAIN)</div>
+    </div>
+  </div>
+  <div class="pool-card" style="border:1px solid rgba(99,102,241,.2)">
+    <div class="pool-name">Reasoning <span class="pool-track" style="color:#818cf8;background:rgba(99,102,241,.15)">MAIN ★ Notre pool</span></div>
+    <div class="pool-row"><span class="pool-row-label">Meilleur score</span><span class="pool-row-val brier-good" id="rs-best">—</span></div>
+    <div class="pool-row"><span class="pool-row-label">Médiane</span><span class="pool-row-val" id="rs-med">—</span></div>
+    <div class="pool-row"><span class="pool-row-label">Poids max accessible</span><span class="pool-row-val" id="rs-top-wt">—</span></div>
+    <div class="pool-our">
+      <div class="pool-our-label">Notre position</div>
+      <div class="pool-our-val" id="rs-our">En attente d'activation</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP 10 LEADERBOARD -->
+<div class="sl">Top 10 miners — émissions</div>
+<div class="lb-wrap">
+  <table class="lb-table">
+    <thead>
+      <tr>
+        <th>Rang</th>
+        <th>UID</th>
+        <th>Track dominant</th>
+        <th>global_brier rank</th>
+        <th>geopolitics rank</th>
+        <th>reasoning rank</th>
+        <th>Poids</th>
+      </tr>
+    </thead>
+    <tbody id="lb-body">
+      <tr><td colspan="7" style="color:rgba(255,255,255,.2);padding:24px;text-align:center">Chargement…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- NOTRE POOL : REASONING MAIN TOP 20 -->
+<div class="sl">Notre pool : Reasoning MAIN — Top 20</div>
+<div class="reasoning-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Rang pool</th>
+        <th>UID</th>
+        <th>Rang émissions</th>
+        <th>Brier score</th>
+        <th>Évènements</th>
+        <th>Poids réseau</th>
+      </tr>
+    </thead>
+    <tbody id="reasoning-body">
+      <tr><td colspan="6" style="color:rgba(255,255,255,.2);padding:20px;text-align:center">Chargement…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SYNTHÈSE -->
+<div class="sl">Synthèse compétitive</div>
+<div class="synthesis" id="synthesis">
+  <div class="insight">
+    <div class="insight-icon" style="background:rgba(255,255,255,.05)">⏳</div>
+    <div class="insight-text">Chargement de l'analyse…</div>
+  </div>
+</div>
+
+<div class="ft" id="footer-ts"></div>
+
+</div>
+<script>
+const OUR_UID = 156;
+const INDIGO  = '#818cf8';
+const GREEN   = '#30D158';
+const ORANGE  = '#FF9F0A';
+const RED     = '#FF453A';
+const DIM     = 'rgba(255,255,255,.25)';
+
+function fmt(v, dec=4) {
+  return v != null ? Number(v).toFixed(dec) : '—';
+}
+function brierColor(b) {
+  if (b == null) return DIM;
+  if (b < 0.20)  return GREEN;
+  if (b < 0.30)  return ORANGE;
+  return RED;
+}
+function brierClass(b) {
+  if (b == null) return 'brier-na';
+  if (b < 0.20)  return 'brier-good';
+  if (b < 0.30)  return 'brier-mid';
+  return 'brier-bad';
+}
+
+async function load() {
+  let lb, sn6;
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch('./status/sn6_leaderboard.json?t=' + Date.now(), {cache:'no-store'}),
+      fetch('./status/sn6.json?t=' + Date.now(), {cache:'no-store'}),
+    ]);
+    lb  = r1.ok  ? await r1.json() : null;
+    sn6 = r2.ok  ? await r2.json() : null;
+  } catch(e) { console.error(e); }
+
+  if (!lb) {
+    document.getElementById('lb-body').innerHTML =
+      '<tr><td colspan="7" style="color:'+RED+';padding:24px;text-align:center">Données non disponibles — premier refresh GitHub Actions en cours</td></tr>';
+    return;
+  }
+
+  const updAt = new Date(lb.updated_at);
+  document.getElementById('updated-at').textContent =
+    'Données du ' + updAt.toLocaleDateString('fr-FR') + ' ' + updAt.toLocaleTimeString('fr-FR');
+  document.getElementById('footer-ts').textContent =
+    'Mise à jour automatique toutes les 15 min via GitHub Actions · api.numinouslabs.io';
+
+  // ── Notre position ──────────────────────────────────────────────────
+  const ours = lb.our_data;
+  if (ours) {
+    const emRank = ours.emissions_rank;
+    document.getElementById('our-em-rank').textContent = '#' + emRank;
+    document.getElementById('our-em-rank-sub').textContent = 'sur ' + (lb.top10.length >= 10 ? '200+' : '—') + ' miners';
+
+    const rsPools = (ours.pools || []).filter(p => p.pool==='reasoning' && p.track==='MAIN');
+    const rsRank  = rsPools.length ? rsPools[0].rank : null;
+    const rsBrier = rsPools.length ? rsPools[0].avg_brier : null;
+    document.getElementById('our-reason-rank').textContent = rsRank != null ? '#' + rsRank : '—';
+
+    const wt = ours.weight;
+    document.getElementById('our-weight').textContent = wt > 0 ? (wt*100).toFixed(3) + '%' : '< 0.001%';
+    document.getElementById('our-weight-sub').textContent = wt > 0
+      ? 'émissions allouées'
+      : 'pas encore activé';
+
+    if (sn6 && sn6.brier_score != null) {
+      const b = sn6.brier_score;
+      document.getElementById('our-brier').textContent = b.toFixed(4);
+      document.getElementById('our-brier').style.color = brierColor(b);
+      document.getElementById('our-brier-sub').textContent = b < 0.25
+        ? 'bon · objectif < 0.20' : 'objectif < 0.25';
+    }
+  } else {
+    document.getElementById('our-em-rank').textContent = 'Non classé';
+    document.getElementById('our-reason-rank').textContent = 'Non classé';
+  }
+
+  // ── Pool stats ──────────────────────────────────────────────────────
+  const ps = lb.pool_stats || {};
+  function fillPool(prefix, key, ourPool) {
+    const s = ps[key];
+    if (!s) return;
+    document.getElementById(prefix+'-best').textContent = fmt(s.best_brier);
+    document.getElementById(prefix+'-med').textContent  = fmt(s.median_brier);
+
+    // top weight for this pool from top10
+    const poolTop = lb.top10
+      .filter(m => (m.pools||[]).some(p => p.pool+'_'+p.track === key))
+      .sort((a,b) => a.emissions_rank - b.emissions_rank)[0];
+    document.getElementById(prefix+'-top-wt').textContent =
+      poolTop ? (poolTop.weight*100).toFixed(2)+'%' : '—';
+
+    if (ourPool) {
+      const el = document.getElementById(prefix+'-our');
+      el.textContent = ourPool.rank != null
+        ? `Rang #${ourPool.rank} · Brier ${fmt(ourPool.avg_brier)}`
+        : 'En attente d\'activation';
+    }
+  }
+
+  const ourPools = ours ? Object.fromEntries((ours.pools||[]).map(p=>[p.pool+'_'+p.track, p])) : {};
+  fillPool('gb',  'global_brier_SIGNAL',       null);
+  fillPool('geo', 'geopolitics_brier_SIGNAL',  null);
+  fillPool('rs',  'reasoning_MAIN',            ourPools['reasoning_MAIN'] || null);
+
+  // Our pool — our position label
+  const ourRs = ourPools['reasoning_MAIN'];
+  if (ourRs) {
+    document.getElementById('rs-our').textContent =
+      ourRs.rank != null
+        ? `Rang #${ourRs.rank} · Brier ${fmt(ourRs.avg_brier)}`
+        : 'En attente d\'activation';
+  }
+
+  // ── Top 10 table ────────────────────────────────────────────────────
+  const tbody = document.getElementById('lb-body');
+  tbody.innerHTML = '';
+
+  lb.top10.forEach(m => {
+    const isOurs = m.uid === OUR_UID;
+    const poolsIdx = Object.fromEntries((m.pools||[]).map(p=>[p.pool+'_'+p.track, p]));
+
+    // Dominant track: check which pool gives most weight
+    const hasSig = (m.pools||[]).some(p => p.track==='SIGNAL' && p.rank <= 30);
+    const trackLabel = hasSig
+      ? '<span class="track-badge track-signal">SIGNAL</span>'
+      : '<span class="track-badge track-main">MAIN</span>';
+
+    function poolCell(key) {
+      const p = poolsIdx[key];
+      if (!p) return `<span style="color:${DIM}">—</span>`;
+      const bc = brierClass(p.avg_brier);
+      return `<span>#${p.rank}</span> <span class="${bc}" style="font-size:.85em">${fmt(p.avg_brier)}</span>`;
+    }
+
+    const rankStyle = m.emissions_rank <= 3 ? 'rank-badge rank-top3' : 'rank-badge';
+    const tr = document.createElement('tr');
+    if (isOurs) tr.className = 'our-row';
+    tr.innerHTML = `
+      <td><span class="${rankStyle}">#${m.emissions_rank}</span></td>
+      <td>${m.uid}${isOurs ? '<span class="our-tag">NOUS</span>' : ''}</td>
+      <td>${trackLabel}</td>
+      <td>${poolCell('global_brier_SIGNAL')}</td>
+      <td>${poolCell('geopolitics_brier_SIGNAL')}</td>
+      <td>${poolCell('reasoning_MAIN')}</td>
+      <td style="color:${INDIGO};font-weight:600">${(m.weight*100).toFixed(2)}%</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // If we're not in top10, add our row at bottom
+  if (ours && ours.emissions_rank > 10) {
+    const sep = document.createElement('tr');
+    sep.innerHTML = `<td colspan="7" style="padding:6px 16px;font-size:.65em;color:rgba(255,255,255,.15);border-top:1px solid rgba(255,255,255,.08)">…</td>`;
+    tbody.appendChild(sep);
+    const poolsIdx = Object.fromEntries((ours.pools||[]).map(p=>[p.pool+'_'+p.track, p]));
+    function poolCell(key) {
+      const p = poolsIdx[key];
+      if (!p) return `<span style="color:${DIM}">—</span>`;
+      return `<span>#${p.rank}</span> <span class="${brierClass(p.avg_brier)}" style="font-size:.85em">${fmt(p.avg_brier)}</span>`;
+    }
+    const tr = document.createElement('tr');
+    tr.className = 'our-row';
+    tr.innerHTML = `
+      <td><span class="rank-badge">#${ours.emissions_rank}</span></td>
+      <td>${OUR_UID}<span class="our-tag">NOUS</span></td>
+      <td><span class="track-badge track-main">MAIN</span></td>
+      <td>${poolCell('global_brier_SIGNAL')}</td>
+      <td>${poolCell('geopolitics_brier_SIGNAL')}</td>
+      <td>${poolCell('reasoning_MAIN')}</td>
+      <td style="color:${INDIGO};font-weight:600">${(ours.weight*100).toFixed(3)}%</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  // ── Reasoning top 20 ────────────────────────────────────────────────
+  const rbody = document.getElementById('reasoning-body');
+  rbody.innerHTML = '';
+  lb.reasoning_top20.forEach(m => {
+    const isOurs = m.uid === OUR_UID;
+    const tr = document.createElement('tr');
+    if (isOurs) tr.className = 'our-row';
+    tr.innerHTML = `
+      <td style="font-weight:700;color:${m.reasoning_rank<=5?GREEN:INDIGO}">#${m.reasoning_rank}</td>
+      <td>${m.uid}${isOurs ? '<span class="our-tag">NOUS</span>' : ''}</td>
+      <td style="color:rgba(255,255,255,.4)">#${m.emissions_rank}</td>
+      <td class="${brierClass(m.brier)}">${fmt(m.brier)}</td>
+      <td style="color:rgba(255,255,255,.4)">${m.events}</td>
+      <td style="color:${INDIGO}">${(m.weight*100).toFixed(3)}%</td>
+    `;
+    rbody.appendChild(tr);
+  });
+
+  // If not in top 20, show our row
+  if (ours) {
+    const ourRs = (ours.pools||[]).find(p=>p.pool==='reasoning'&&p.track==='MAIN');
+    if (ourRs && ourRs.rank > 20) {
+      const sep = document.createElement('tr');
+      sep.innerHTML = `<td colspan="6" style="padding:6px 14px;font-size:.65em;color:rgba(255,255,255,.15);border-top:1px solid rgba(99,102,241,.08)">…</td>`;
+      rbody.appendChild(sep);
+      const tr = document.createElement('tr');
+      tr.className = 'our-row';
+      tr.innerHTML = `
+        <td style="font-weight:700;color:${INDIGO}">#${ourRs.rank}</td>
+        <td>${OUR_UID}<span class="our-tag">NOUS</span></td>
+        <td style="color:rgba(255,255,255,.4)">#${ours.emissions_rank}</td>
+        <td class="${brierClass(ourRs.avg_brier)}">${fmt(ourRs.avg_brier)}</td>
+        <td style="color:rgba(255,255,255,.4)">${ourRs.events_scored}</td>
+        <td style="color:${INDIGO}">${(ours.weight*100).toFixed(3)}%</td>
+      `;
+      rbody.appendChild(tr);
+    }
+  }
+
+  // ── Synthèse auto-générée ────────────────────────────────────────────
+  renderSynthesis(lb, sn6, ps, ours);
+}
+
+function renderSynthesis(lb, sn6, ps, ours) {
+  const insights = [];
+
+  // 1. Track distribution
+  const signalCount = lb.top10.filter(m =>
+    (m.pools||[]).some(p => p.track==='SIGNAL' && p.rank <= 30)
+  ).length;
+  insights.push({
+    icon: '📊',
+    color: 'rgba(10,132,255,.15)',
+    text: `<strong>${signalCount}/10 top miners sont sur track SIGNAL</strong> et dominent le pool global_brier.
+           Leur weight moyen est ${(lb.top10.slice(0,5).reduce((s,m)=>s+m.weight,0)/5*100).toFixed(2)}% pour le top 5,
+           soit ${((lb.top10.slice(0,5).reduce((s,m)=>s+m.weight,0)/5) / (lb.top10.find(m=>(m.pools||[]).some(p=>p.pool==='reasoning'&&p.track==='MAIN'))||{weight:0.01}).weight).toFixed(0)}× plus que les spécialistes reasoning MAIN.`,
+  });
+
+  // 2. Best reasoning miner
+  if (lb.reasoning_top20 && lb.reasoning_top20.length > 0) {
+    const top1 = lb.reasoning_top20[0];
+    const psStat = ps['reasoning_MAIN'];
+    insights.push({
+      icon: '🧠',
+      color: 'rgba(99,102,241,.15)',
+      text: `<strong>Meilleur reasoning MAIN : UID ${top1.uid} (rang émissions #${top1.emissions_rank})</strong> avec un Brier de ${fmt(top1.brier)} sur ${top1.events} événements.
+             La médiane du pool est ${psStat ? fmt(psStat.median_brier) : '—'} —
+             être dans le top 5 reasoning suffit pour obtenir ~${psStat && lb.reasoning_top20[4] ? (lb.reasoning_top20[4].weight*100).toFixed(2) : '—'}% du poids.`,
+    });
+  }
+
+  // 3. Gap analysis
+  const rsStats = ps['reasoning_MAIN'];
+  if (rsStats && sn6 && sn6.brier_score != null) {
+    const gap = sn6.brier_score - rsStats.best_brier;
+    insights.push({
+      icon: '🎯',
+      color: 'rgba(48,209,88,.1)',
+      text: `<strong>Notre gap actuel : +${gap.toFixed(4)} vs le meilleur (${fmt(rsStats.best_brier)})</strong>.
+             Objectif court-terme : passer sous ${(rsStats.best_brier + rsStats.median_brier) / 2 < 0.40 ? ((rsStats.best_brier + rsStats.median_brier)/2).toFixed(3) : '0.420'}
+             pour entrer dans le top 10 reasoning. Notre agent v2 (Lightning Rod + Vericore + OpenAI) vise ce palier.`,
+    });
+  } else {
+    insights.push({
+      icon: '🎯',
+      color: 'rgba(48,209,88,.1)',
+      text: `<strong>Notre agent est en période d'immunité</strong> — aucun score Brier encore.
+             L'activation est prévue le 12 mai. Le meilleur score reasoning MAIN est ${rsStats ? fmt(rsStats.best_brier) : '—'},
+             l'objectif initial est de passer sous ${rsStats ? (rsStats.median_brier).toFixed(3) : '0.45'} (médiane du pool).`,
+    });
+  }
+
+  // 4. Geopolitics opportunity
+  const geoStats = ps['geopolitics_brier_SIGNAL'];
+  if (geoStats) {
+    insights.push({
+      icon: '🌍',
+      color: 'rgba(255,159,10,.1)',
+      text: `<strong>Pool geopolitics_brier SIGNAL : le plus compétitif</strong> — meilleur Brier ${fmt(geoStats.best_brier)}
+             (vs ${fmt(ps['global_brier_SIGNAL']?.best_brier)} en global).
+             Les UID 213, 13, 229, 180, 133 dominent avec accuracy > 88%.
+             Ce pool nécessite le track SIGNAL (accès Numinous Signals API).`,
+    });
+  }
+
+  // 5. Our strengths
+  insights.push({
+    icon: '💡',
+    color: 'rgba(99,102,241,.12)',
+    text: `<strong>Avantage MAIN track : accès à tous les gateways</strong> (Vericore, Desearch, OpenAI).
+           Le track SIGNAL est limité à Chutes, Indicia, Lightning Rod et Numinous Signals.
+           Notre agent v2 exploite cette richesse pour produire des raisonnements de meilleure qualité
+           (70% du score reasoning = qualité des sources + pondération + contre-arguments).`,
+  });
+
+  const synth = document.getElementById('synthesis');
+  synth.innerHTML = insights.map(ins => `
+    <div class="insight">
+      <div class="insight-icon" style="background:${ins.color}">${ins.icon}</div>
+      <div class="insight-text">${ins.text}</div>
+    </div>
+  `).join('');
+}
+
+load();
+setInterval(load, 60_000);
+</script>
+</body>
+</html>
