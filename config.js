@@ -41,7 +41,7 @@ const SUBNETS = [
     name:         'Perturb',
     description:  'Adversarial Perturbation — Attaques PGD sur EfficientNet-B5',
     uid:          129,
-    gpu:          'RTX 4090',
+    gpu:          'RTX 3090',
     network:      'finney',
     dashboardUrl: 'http://216.249.100.66:14512',
     statusFile:   './status/sn26.json',

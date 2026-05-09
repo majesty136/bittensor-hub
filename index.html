@@ -365,14 +365,17 @@ function renderCard(sub, data) {
   }
 
   // ── KPI 1 : Incentive ──
-  const inc  = data.incentive || 0;
-  const eday = data.emission_day || 0;
+  const inc       = data.incentive || 0;
+  const eday      = data.emission_day || 0;
+  const edayAlpha = data.emission_day_alpha || 0;
   card.querySelector('.m-incentive').innerHTML =
     inc > 0
       ? `<span class="p-ok">ACTIF</span> <span style="font-size:.82em">${inc.toFixed(6)}</span>`
       : `<span class="p-off">EN ATTENTE</span>`;
   card.querySelector('.m-incentive-sub').textContent =
-    eday > 0 ? `~${eday.toFixed(4)} τ/jour` : "Pas d'émission";
+    edayAlpha > 0
+      ? `~${edayAlpha.toFixed(3)} α/jour ≈ ${eday.toFixed(4)} τ`
+      : eday > 0 ? `~${eday.toFixed(4)} τ/jour` : "Pas d'émission";
 
   // ── KPI 2 : Travail produit ──
   if (sub.type === 'forecasting') {
@@ -494,7 +497,7 @@ async function refresh() {
   document.getElementById('s-mining').textContent      = fleet.mining + ' / ' + SUBNETS.length;
   document.getElementById('s-tasks').textContent       = fleet.totalDone + ' / ' + fleet.totalRecv;
   document.getElementById('s-tasks-rate').textContent  = fleet.successRate + '% succès';
-  document.getElementById('s-emission').textContent    = fleet.totalEmission > 0 ? fleet.totalEmission.toFixed(5) + ' τ' : '— τ';
+  document.getElementById('s-emission').textContent    = fleet.totalEmission > 0 ? '~' + fleet.totalEmission.toFixed(5) + ' τ' : '— τ';
   document.getElementById('s-cost').textContent        = '$' + fleet.totalCost.toFixed(2);
 
   renderPnl(results, price);
