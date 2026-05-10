@@ -1,0 +1,92 @@
+name: Update Dashboard Data
+
+# ── Déclencheurs ──────────────────────────────────────────────────────────────
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # toutes les 10 minutes
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Enable debug output"
+        required: false
+        default: "false"
+
+# ── Permissions ───────────────────────────────────────────────────────────────
+permissions:
+  contents: write
+
+# ── Concurrence : un seul run à la fois ───────────────────────────────────────
+concurrency:
+  group: update-dashboard-data
+  cancel-in-progress: false
+
+# ── Job principal ─────────────────────────────────────────────────────────────
+jobs:
+  fetch-and-push:
+    name: Fetch metagraph & update JSON
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      # 1. Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Python 3.11
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # 3. Dépendances — bittensor 10.x + async-substrate 1.6.4
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip --quiet
+          pip install \
+            "bittensor==10.1.0" \
+            "async-substrate-interface==1.6.4" \
+            --quiet
+          python -c "import bittensor; print('bittensor', bittensor.__version__)"
+
+      # 4. Fetch métagraphe on-chain
+      - name: Fetch metagraph snapshots
+        run: python scripts/fetch_metagraph.py
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      # 5. Validation JSON
+      - name: Validate JSON outputs
+        run: |
+          for f in data/meta_sn26.json data/meta_sn85.json data/history_sn26.json data/history_sn85.json; do
+            if [ -f "$f" ]; then
+              echo "=== $f ==="
+              python -m json.tool "$f" | head -15
+            else
+              echo "WARNING: $f not found — skipping"
+            fi
+          done
+
+      # 6. Commit + push
+      - name: Commit & push snapshots
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add data/meta_sn26.json data/meta_sn85.json \
+                  data/history_sn26.json data/history_sn85.json \
+                  data/meta_sn26.json.prev data/meta_sn85.json.prev 2>/dev/null || true
+
+          if git diff --cached --quiet; then
+            echo "No changes — snapshots unchanged."
+          else
+            TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            git commit -m "chore: metagraph snapshot ${TIMESTAMP}"
+            git push
+            echo "✓ Pushed new snapshots at ${TIMESTAMP}"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
