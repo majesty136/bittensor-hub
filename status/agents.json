@@ -1,0 +1,31 @@
+{
+  "updated_at": "2026-05-10T20:30:00Z",
+  "vps": "Hetzner VPS · 62.238.31.176",
+  "ceo": {
+    "name": "Néo",
+    "status": "ACTIVE",
+    "platform": "Telegram",
+    "last_active": "2026-05-10T20:31:00Z",
+    "incidents_24h": 3,
+    "kb_lessons_today": 8
+  },
+  "cto": {
+    "name": "CTO",
+    "status": "STANDBY",
+    "last_action": "SN85 codec fix + video2x PATH + pm2 reset",
+    "last_action_at": "2026-05-10T18:30:00Z"
+  },
+  "coo": {
+    "name": "COO",
+    "status": "MONITORING",
+    "last_check": "2026-05-10T20:12:00Z",
+    "next_check": "2026-05-10T20:42:00Z"
+  },
+  "kb": {
+    "total_lessons": 21,
+    "sn85_lessons": 11,
+    "sn26_lessons": 10,
+    "agent_lessons": 0,
+    "last_updated": "2026-05-10T20:31:00Z"
+  }
+}
