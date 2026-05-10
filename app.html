@@ -12,17 +12,12 @@
 <title>Mining Hub</title>
 <style>
   :root {
-    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --tab-h: 72px;
-    --ok:     #30D158;
-    --warn:   #FF9F0A;
-    --err:    #FF453A;
-    --blue:   #0A84FF;
-    --purple: #BF5AF2;
-    --teal:   #2dd4bf;
-    --dim:    rgba(255,255,255,.35);
-    --faint:  rgba(255,255,255,.06);
+    --ok: #30D158; --warn: #FF9F0A; --err: #FF453A;
+    --blue: #0A84FF; --purple: #BF5AF2; --teal: #2dd4bf;
+    --dim: rgba(255,255,255,.35); --faint: rgba(255,255,255,.06);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent }
   html, body {
@@ -31,27 +26,18 @@
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-
-  /* ── Layout ── */
   #shell { display: flex; flex-direction: column; height: 100%; height: -webkit-fill-available; }
   #scroll-area {
     flex: 1; overflow-y: auto; overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     padding-bottom: calc(var(--tab-h) + var(--safe-bottom) + 16px);
   }
-
-  /* ── Status bar spacer ── */
-  .status-spacer {
-    height: calc(var(--safe-top) + 8px);
-    background: #000; position: sticky; top: 0; z-index: 10;
-  }
-
-  /* ── Page header ── */
-  .page-header {
-    padding: 8px 20px 20px;
-    display: flex; align-items: flex-end; justify-content: space-between;
-  }
+  .status-spacer { height: calc(var(--safe-top) + 8px); background: #000; position: sticky; top: 0; z-index: 10; }
+  .section { display: none; padding: 0 16px }
+  .section.active { display: block }
+  .page-header { padding: 8px 20px 20px; display: flex; align-items: flex-end; justify-content: space-between; }
   .page-title { font-size: 1.75em; font-weight: 700; letter-spacing: -.03em }
+  .page-sub { font-size: .72em; color: var(--dim); margin-top: 3px }
   .refresh-btn {
     background: var(--faint); border: none; border-radius: 99px;
     padding: 7px 14px; color: rgba(255,255,255,.5); font-size: .78em;
@@ -60,19 +46,11 @@
   .refresh-btn:active { background: rgba(255,255,255,.12) }
   .refresh-btn.spinning { animation: spin .7s linear infinite }
   @keyframes spin { to { transform: rotate(360deg) } }
-
-  /* ── Sections ── */
-  .section { display: none; padding: 0 16px }
-  .section.active { display: block }
-
-  /* ── Section label ── */
   .slabel {
     font-size: .62em; font-weight: 600; letter-spacing: .14em;
     text-transform: uppercase; color: rgba(255,255,255,.3);
     margin: 24px 4px 10px;
   }
-
-  /* ── Hero strip ── */
   .hero-strip { display: grid; gap: 2px; grid-template-columns: 1fr 1fr; margin: 0 -16px; }
   .hero-tile { background: var(--faint); padding: 20px 18px; }
   .hero-tile:nth-child(1) { border-radius: 18px 0 0 0 }
@@ -82,8 +60,6 @@
   .ht-label { font-size: .6em; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--dim); margin-bottom: 8px }
   .ht-val   { font-size: 1.55em; font-weight: 700; letter-spacing: -.04em; line-height: 1 }
   .ht-sub   { font-size: .68em; color: var(--dim); margin-top: 5px }
-
-  /* ── Status pill ── */
   .status-pill {
     display: inline-flex; align-items: center; gap: 6px;
     background: var(--faint); border: 1px solid rgba(255,255,255,.1);
@@ -92,98 +68,89 @@
   }
   .dot { width: 6px; height: 6px; border-radius: 50%; animation: blink 2s ease infinite }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-  /* ── Cards ── */
   .card { background: var(--faint); border-radius: 18px; padding: 20px; margin-bottom: 2px; }
   .card-title { font-size: .62em; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 16px; }
-
-  /* ── KV rows ── */
-  .kv { display: flex; justify-content: space-between; align-items: center;
-        padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.06) }
+  .kv { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.06) }
   .kv:last-child { border: none; padding-bottom: 0 }
   .kv-label { font-size: .82em; color: var(--dim) }
   .kv-val   { font-size: .82em; font-weight: 500 }
-
-  /* ── Progress bar ── */
-  .prog-wrap { margin-bottom: 16px }
+  .prog-wrap { margin-bottom: 14px }
   .prog-wrap:last-child { margin-bottom: 0 }
   .prog-hd { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: .78em }
   .prog-hd span:first-child { color: var(--dim) }
   .prog-hd span:last-child  { font-weight: 500 }
   .prog-bar  { height: 3px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden }
   .prog-fill { height: 3px; border-radius: 99px; transition: width .6s ease }
-
-  /* ── Miner cards ── */
-  .miner-card { background: var(--faint); border-radius: 18px; padding: 18px 20px; margin-bottom: 2px; }
-  .miner-sn   { font-size: 1.3em; font-weight: 800; letter-spacing: -.03em }
-  .miner-name { font-size: .88em; font-weight: 600; margin-top: 1px }
-  .miner-desc { font-size: .72em; color: var(--dim); margin-top: 2px }
-
-  /* 4-KPI mini-grid */
-  .m4 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 14px 0 12px }
-  .m4-cell { background: rgba(255,255,255,.04); padding: 11px 13px }
-  .m4-cell:nth-child(1) { border-radius: 10px 0 0 0 }
-  .m4-cell:nth-child(2) { border-radius: 0 10px 0 0 }
-  .m4-cell:nth-child(3) { border-radius: 0 0 0 10px }
-  .m4-cell:nth-child(4) { border-radius: 0 0 10px 0 }
-  .m4-label { font-size: .55em; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin-bottom: 5px }
-  .m4-val   { font-size: .84em; font-weight: 600; line-height: 1.2 }
-  .m4-sub   { font-size: .65em; color: var(--dim); margin-top: 3px }
-
-  /* Attack stats strip (SN26 only) */
+  .m4 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 0 0 2px }
+  .m4-cell { background: rgba(255,255,255,.04); padding: 14px 14px }
+  .m4-cell:nth-child(1) { border-radius: 14px 0 0 0 }
+  .m4-cell:nth-child(2) { border-radius: 0 14px 0 0 }
+  .m4-cell:nth-child(3) { border-radius: 0 0 0 14px }
+  .m4-cell:nth-child(4) { border-radius: 0 0 14px 0 }
+  .m4-label { font-size: .56em; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin-bottom: 6px }
+  .m4-val   { font-size: .96em; font-weight: 700; line-height: 1.2 }
+  .m4-sub   { font-size: .65em; color: var(--dim); margin-top: 4px }
+  /* Fleet cards */
+  .fleet-card { background: var(--faint); border-radius: 16px; padding: 16px 18px; margin-bottom: 2px; }
+  .fc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px }
+  .fc-sn  { font-size: 1.05em; font-weight: 800; letter-spacing: -.02em }
+  .fc-desc { font-size: .65em; color: var(--dim); margin-top: 2px }
+  .fc-metrics { display: flex; gap: 20px }
+  .fc-m { text-align: left }
+  .fc-m-val { font-size: .88em; font-weight: 700 }
+  .fc-m-lbl { font-size: .58em; color: var(--dim); margin-top: 2px; text-transform: uppercase; letter-spacing: .08em }
+  /* Finance row */
+  .fin-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-bottom: 2px }
+  .fin-cell { background: rgba(255,255,255,.04); padding: 14px 12px; border-radius: 12px; text-align: center }
+  .fin-label { font-size: .56em; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin-bottom: 6px }
+  .fin-val   { font-size: .88em; font-weight: 700 }
+  .fin-sub   { font-size: .6em; color: var(--dim); margin-top: 3px }
+  /* GPU grid */
+  .gpu-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px }
+  .gpu-cell { background: rgba(255,255,255,.04); border-radius: 12px; padding: 12px; text-align: center }
+  .gpu-val  { font-size: 1.35em; font-weight: 700; letter-spacing: -.02em }
+  .gpu-lbl  { font-size: .6em; color: var(--dim); margin-top: 3px; text-transform: uppercase; letter-spacing: .08em }
+  /* Top miners table */
+  .miners-table { width: 100%; font-size: .76em }
+  .miners-table thead td { color: rgba(255,255,255,.3); font-size: .85em; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding-bottom: 10px }
+  .miners-table tbody tr { border-top: 1px solid rgba(255,255,255,.05) }
+  .miners-table tbody td { padding: 9px 0; vertical-align: middle }
+  .miners-table .us { background: rgba(255,159,10,.06); border-radius: 6px }
+  /* Logs */
+  .log-entry { padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+  .log-entry:last-child { border: none }
+  .log-ts  { font-size: .68em; color: rgba(255,255,255,.2); margin-bottom: 2px }
+  .log-msg { font-size: .76em; font-family: 'SF Mono', 'Fira Code', monospace; color: rgba(255,255,255,.7) }
+  .log-ok   { color: var(--ok) }
+  .log-warn { color: var(--warn) }
+  .log-err  { color: var(--err) }
+  /* Attack strip */
   .attack-strip {
-    display: flex; justify-content: space-around; align-items: center;
-    background: rgba(45,212,191,.06); border-radius: 0 0 12px 12px;
-    padding: 9px 12px; margin: -2px 0 12px; gap: 8px;
+    display: flex; justify-content: space-around;
+    background: rgba(45,212,191,.06); border-radius: 14px;
+    padding: 14px 12px; margin-bottom: 2px;
   }
   .as-item { text-align: center }
-  .as-label { font-size: .55em; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .1em; }
-  .as-val   { font-size: .84em; font-weight: 700; margin-top: 2px }
-
-  /* Dashboard link button */
-  .dash-btn {
-    display: block; text-align: center;
-    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
-    border-radius: 12px; padding: 11px;
-    font-size: .78em; color: rgba(255,255,255,.7); text-decoration: none;
-    transition: background .15s;
-  }
-  .dash-btn:active { background: rgba(255,255,255,.12) }
-
-  /* ── P&L ── */
-  .pnl-total {
-    background: var(--faint); border-radius: 18px; padding: 22px 20px; margin-bottom: 2px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .pnl-total-label { font-size: .7em; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px }
-  .pnl-total-val   { font-size: 2em; font-weight: 700; letter-spacing: -.04em }
-  .pnl-total-sub   { font-size: .72em; color: var(--dim); margin-top: 4px }
-
-  /* ── Logs ── */
-  .log-entry { padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: .78em; font-family: 'SF Mono','Fira Code',monospace; line-height: 1.4 }
-  .log-entry:last-child { border: none }
-  .log-ts { font-size: .85em; color: rgba(255,255,255,.2); display: block; margin-bottom: 2px }
-
-  /* ── Last update ── */
-  .last-update { text-align: center; font-size: .68em; color: rgba(255,255,255,.2); margin: 20px 0 8px; padding: 0 16px; }
-
-  /* ── Chips ── */
+  .as-label { font-size: .55em; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .1em }
+  .as-val   { font-size: .9em; font-weight: 700; margin-top: 3px }
+  /* Immunity */
+  .imm-bar-bg { height: 5px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden; margin: 8px 0 }
+  .imm-bar-fill { height: 5px; border-radius: 99px; background: var(--warn); transition: width .6s ease }
+  /* Agent cards */
+  .agent-card { background: var(--faint); border-radius: 16px; padding: 16px 18px; margin-bottom: 2px; display: flex; align-items: flex-start; gap: 14px; }
+  .agent-icon { font-size: 1.6em; flex-shrink: 0; margin-top: 2px }
+  .agent-info { flex: 1; min-width: 0 }
+  .agent-title { font-size: .58em; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--dim); margin-bottom: 3px }
+  .agent-name { font-size: .92em; font-weight: 700 }
+  .agent-role { font-size: .65em; color: var(--dim); margin-top: 2px }
+  .agent-stat { font-size: .7em; color: rgba(255,255,255,.45); margin-top: 6px }
+  /* Chips */
   .chip-ok   { display:inline-block; background:rgba(48,209,88,.12);  color:var(--ok);   border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
   .chip-warn { display:inline-block; background:rgba(255,159,10,.12); color:var(--warn); border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
-  .chip-off  { display:inline-block; background:rgba(255,255,255,.06);color:var(--dim);  border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
   .chip-teal { display:inline-block; background:rgba(45,212,191,.12); color:var(--teal); border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
-
-  /* ── Ranking mini-table ── */
-  .rank-banner {
-    background: rgba(45,212,191,.08); border: 1px solid rgba(45,212,191,.2);
-    border-radius: 14px; padding: 14px 16px; margin-bottom: 2px;
-    display: flex; justify-content: space-around; align-items: center; gap: 8px; flex-wrap: wrap;
-  }
-  .rank-stat { text-align: center }
-  .rank-stat-label { font-size: .58em; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px }
-  .rank-stat-val   { font-size: 1.3em; font-weight: 700; letter-spacing: -.03em }
-
-  /* ── Tab bar ── */
+  .chip-off  { display:inline-block; background:rgba(255,255,255,.06);color:var(--dim);  border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
+  .last-update { text-align: center; font-size: .65em; color: rgba(255,255,255,.2); margin: 20px 0 8px }
+  /* Tab bar */
   #tabbar {
     position: fixed; bottom: 0; left: 0; right: 0;
     height: calc(var(--tab-h) + var(--safe-bottom));
@@ -197,12 +164,12 @@
   }
   .tab {
     flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 0 4px; cursor: pointer; border: none; background: none; font-family: inherit;
-    color: rgba(255,255,255,.35); transition: color .2s;
+    padding: 0 2px; cursor: pointer; border: none; background: none; font-family: inherit;
+    color: rgba(255,255,255,.3); transition: color .2s;
   }
   .tab.active { color: #fff }
-  .tab-icon  { font-size: 1.4em; line-height: 1 }
-  .tab-label { font-size: .6em; font-weight: 500; letter-spacing: .02em }
+  .tab-icon  { font-size: 1.3em; line-height: 1 }
+  .tab-label { font-size: .56em; font-weight: 500; letter-spacing: .02em }
 </style>
 </head>
 <body>
@@ -210,181 +177,151 @@
   <div id="scroll-area">
     <div class="status-spacer"></div>
 
-    <!-- ╔══════════════╗ -->
-    <!-- ║  DASHBOARD   ║ -->
-    <!-- ╚══════════════╝ -->
-    <section class="section active" id="sec-dashboard">
+    <!-- ══ FLOTTE ══ -->
+    <section class="section active" id="sec-flotte">
       <div class="page-header">
-        <div class="page-title">Vue d'ensemble</div>
-        <button class="refresh-btn" id="btn-refresh">↻ Refresh</button>
-      </div>
-
-      <!-- Fleet status + block -->
-      <div style="padding:0 4px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
-        <div class="status-pill">
-          <div class="dot" id="d-dot" style="background:rgba(255,255,255,.3)"></div>
-          <span id="d-status">…</span>
+        <div>
+          <div class="page-title">Mining HQ</div>
+          <div class="page-sub" id="f-block">block —</div>
         </div>
-        <div style="font-size:.68em;color:rgba(255,255,255,.25)" id="d-block">block —</div>
+        <button class="refresh-btn" id="btn-refresh">↻</button>
       </div>
-
-      <!-- Hero 4-tile : fleet -->
+      <div style="padding:0 4px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+        <div class="status-pill">
+          <div class="dot" id="f-dot" style="background:rgba(255,255,255,.3)"></div>
+          <span id="f-status">…</span>
+        </div>
+        <div style="font-size:.7em;color:rgba(255,255,255,.25)" id="f-tao">TAO $—</div>
+      </div>
       <div class="hero-strip">
         <div class="hero-tile">
-          <div class="ht-label">Miners actifs</div>
-          <div class="ht-val" id="d-mining" style="color:var(--ok)">—</div>
-          <div class="ht-sub">sur <span id="d-total">—</span> subnets</div>
-        </div>
-        <div class="hero-tile">
-          <div class="ht-label">Émission / jour</div>
-          <div class="ht-val" id="d-emission" style="color:var(--blue)">—</div>
-          <div class="ht-sub">τ équivalent · flotte</div>
-        </div>
-        <div class="hero-tile">
-          <div class="ht-label">Coût total</div>
-          <div class="ht-val" id="d-cost" style="color:var(--warn)">$—</div>
-          <div class="ht-sub" id="d-rate-sub">—</div>
-        </div>
-        <div class="hero-tile">
           <div class="ht-label">P&amp;L net</div>
-          <div class="ht-val" id="d-pnl">$—</div>
-          <div class="ht-sub" id="d-roi">ROI —%</div>
+          <div class="ht-val" id="f-pnl">$—</div>
+          <div class="ht-sub" id="f-roi">ROI —%</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">Revenus</div>
+          <div class="ht-val" id="f-rev" style="color:var(--ok)">$—</div>
+          <div class="ht-sub" id="f-tao-earned">— τ gagné</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">Coûts GPU</div>
+          <div class="ht-val" id="f-cost" style="color:var(--warn)">$—</div>
+          <div class="ht-sub" id="f-days">—</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">Emission / j</div>
+          <div class="ht-val" id="f-emission" style="color:var(--blue)">—</div>
+          <div class="ht-sub">τ flotte</div>
         </div>
       </div>
+      <div class="slabel">Miners</div>
+      <div id="f-miners"></div>
+      <div class="last-update" id="f-updated">—</div>
+    </section>
 
-      <!-- SN26 Ranking banner -->
-      <div class="slabel">SN26 — Perturb</div>
-      <div class="rank-banner" id="sn26-rank-banner">
-        <div class="rank-stat">
-          <div class="rank-stat-label">Rang</div>
-          <div class="rank-stat-val" id="db-rank" style="color:var(--teal)">—</div>
-        </div>
-        <div class="rank-stat">
-          <div class="rank-stat-label">Incentive</div>
-          <div class="rank-stat-val" id="db-inc" style="color:var(--ok)">—</div>
-        </div>
-        <div class="rank-stat">
-          <div class="rank-stat-label">α/jour</div>
-          <div class="rank-stat-val" id="db-alpha" style="color:var(--teal)">—</div>
-        </div>
-        <div class="rank-stat">
-          <div class="rank-stat-label">τ/jour</div>
-          <div class="rank-stat-val" id="db-tao" style="color:var(--blue)">—</div>
-        </div>
-      </div>
-      <div class="card" style="padding:14px 18px;margin-bottom:2px;display:flex;justify-content:space-between;align-items:center">
+    <!-- ══ SN85 ══ -->
+    <section class="section" id="sec-sn85">
+      <div class="page-header">
         <div>
-          <div style="font-size:.62em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Meilleur δ L∞</div>
-          <div style="font-size:1.1em;font-weight:700;color:var(--teal)" id="db-delta">—</div>
+          <div class="page-title" style="color:#a78bfa">SN85</div>
+          <div class="page-sub">Vidaio · Traitement vidéo AI</div>
         </div>
-        <div style="text-align:center">
-          <div style="font-size:.62em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Moy. δ</div>
-          <div style="font-size:1.1em;font-weight:700;color:var(--blue)" id="db-avg-delta">—</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:.62em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Challenges</div>
-          <div style="font-size:1.1em;font-weight:700" id="db-tasks">—</div>
-        </div>
+        <div id="sn85-pill"></div>
       </div>
-
-      <!-- GPU card (SN85) -->
-      <div class="slabel">SN85 — Vidaio GPU</div>
-      <div class="card">
-        <div class="card-title" id="d-gpu-name">GPU</div>
-        <div class="prog-wrap">
-          <div class="prog-hd"><span>Utilisation GPU</span><span id="d-gpu-util">—</span></div>
-          <div class="prog-bar"><div class="prog-fill" id="pb-gpu-util" style="width:0;background:var(--blue)"></div></div>
-        </div>
-        <div class="prog-wrap">
-          <div class="prog-hd"><span>VRAM</span><span id="d-gpu-mem">—</span></div>
-          <div class="prog-bar"><div class="prog-fill" id="pb-gpu-mem" style="width:0;background:var(--purple)"></div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
-          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center">
-            <div style="font-size:1.4em;font-weight:700;letter-spacing:-.03em" id="d-temp">—°</div>
-            <div style="font-size:.62em;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.08em">Température</div>
-          </div>
-          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center">
-            <div style="font-size:1.4em;font-weight:700;letter-spacing:-.03em;color:var(--warn)" id="d-power">— W</div>
-            <div style="font-size:.62em;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.08em">Puissance</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Services (SN85) -->
-      <div class="slabel">Services PM2 — SN85</div>
-      <div class="card" id="d-services"></div>
+      <div class="m4" id="sn85-m4"></div>
+      <div class="slabel">Finance</div>
+      <div id="sn85-finance"></div>
+      <div class="slabel">GPU · RTX 5090</div>
+      <div class="card" id="sn85-gpu"></div>
+      <div class="slabel">Services PM2</div>
+      <div class="card" id="sn85-services"></div>
+      <div class="slabel">Top Miners — À battre</div>
+      <div class="card" id="sn85-topm"></div>
+      <div class="slabel">Derniers logs</div>
+      <div class="card" id="sn85-logs"></div>
+      <div class="slabel">Réseau</div>
+      <div class="card" id="sn85-network"></div>
+      <div class="last-update" id="sn85-updated">—</div>
     </section>
 
-    <!-- ╔══════════════╗ -->
-    <!-- ║    MINERS    ║ -->
-    <!-- ╚══════════════╝ -->
-    <section class="section" id="sec-miners">
+    <!-- ══ SN26 ══ -->
+    <section class="section" id="sec-sn26">
       <div class="page-header">
-        <div class="page-title">Miners</div>
-        <div id="m-summary" style="font-size:.78em;color:var(--dim)">—</div>
-      </div>
-      <div id="miners-list"></div>
-    </section>
-
-    <!-- ╔══════════════╗ -->
-    <!-- ║     P&L      ║ -->
-    <!-- ╚══════════════╝ -->
-    <section class="section" id="sec-pnl">
-      <div class="page-header">
-        <div class="page-title">P&amp;L</div>
-        <div style="font-size:.72em;color:var(--dim)">TAO <span id="p-tao-price">$—</span></div>
-      </div>
-      <div class="pnl-total">
         <div>
-          <div class="pnl-total-label">P&amp;L net</div>
-          <div class="pnl-total-val" id="p-pnl-val">$—</div>
-          <div class="pnl-total-sub" id="p-pnl-sub">ROI —%</div>
+          <div class="page-title" style="color:var(--teal)">SN26</div>
+          <div class="page-sub">Perturb · Adversarial Perturbation</div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:.65em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Revenus</div>
-          <div style="font-size:1.2em;font-weight:700;color:var(--ok)" id="p-revenue">$—</div>
-          <div style="font-size:.68em;color:var(--dim);margin-top:2px" id="p-tao-earned">— τ gagné</div>
-        </div>
+        <div id="sn26-pill"></div>
       </div>
-      <div class="slabel">Détail des coûts</div>
-      <div class="card" id="p-breakdown"></div>
-      <div class="last-update" id="p-period"></div>
+      <div class="m4" id="sn26-m4"></div>
+      <div class="slabel">Finance</div>
+      <div id="sn26-finance"></div>
+      <div class="slabel">Attaques PGD</div>
+      <div class="attack-strip" id="sn26-attacks"></div>
+      <div class="slabel">Top Miners — À battre</div>
+      <div class="card" id="sn26-topm"></div>
+      <div class="slabel">Derniers logs</div>
+      <div class="card" id="sn26-logs"></div>
+      <div class="slabel">Réseau</div>
+      <div class="card" id="sn26-network"></div>
+      <div class="last-update" id="sn26-updated">—</div>
     </section>
 
-    <!-- ╔══════════════╗ -->
-    <!-- ║    LOGS      ║ -->
-    <!-- ╚══════════════╝ -->
-    <section class="section" id="sec-logs">
+    <!-- ══ SN6 ══ -->
+    <section class="section" id="sec-sn6">
       <div class="page-header">
-        <div class="page-title">Logs</div>
-        <div style="font-size:.72em;color:var(--dim)">Perturb Miner</div>
+        <div>
+          <div class="page-title" style="color:#818cf8">SN6</div>
+          <div class="page-sub">Numinous · Forecasting AI</div>
+        </div>
+        <div id="sn6-pill"></div>
       </div>
-      <div class="card" id="logs-list">
-        <div style="color:var(--dim);font-size:.82em;text-align:center;padding:20px 0">Chargement…</div>
-      </div>
+      <div id="sn6-imm"></div>
+      <div class="slabel">Finance</div>
+      <div id="sn6-finance"></div>
+      <div class="slabel">Agent</div>
+      <div class="card" id="sn6-agent"></div>
+      <div class="slabel">Performances</div>
+      <div class="card" id="sn6-perf"></div>
+      <div class="slabel">Derniers logs</div>
+      <div class="card" id="sn6-logs"></div>
+      <div class="last-update" id="sn6-updated">—</div>
     </section>
 
-    <div class="last-update" id="last-update">Chargement…</div>
+    <!-- ══ AGENTS ══ -->
+    <section class="section" id="sec-agents">
+      <div class="page-header">
+        <div class="page-title">Agents HQ</div>
+        <div style="font-size:.7em;color:var(--dim)" id="ag-hetzner">Hetzner VPS</div>
+      </div>
+      <div id="ag-cards"></div>
+      <div class="slabel">Knowledge Base</div>
+      <div class="card" id="ag-kb"></div>
+      <div class="last-update" id="ag-updated">—</div>
+    </section>
   </div>
 
-  <!-- Tab bar -->
   <nav id="tabbar">
-    <button class="tab active" onclick="showTab('dashboard',this)">
+    <button class="tab active" onclick="showTab('flotte',this)">
       <span class="tab-icon">◈</span>
-      <span class="tab-label">Dashboard</span>
+      <span class="tab-label">Flotte</span>
     </button>
-    <button class="tab" onclick="showTab('miners',this)">
-      <span class="tab-icon">⛏</span>
-      <span class="tab-label">Miners</span>
+    <button class="tab" onclick="showTab('sn85',this)">
+      <span class="tab-icon">▶</span>
+      <span class="tab-label">SN85</span>
     </button>
-    <button class="tab" onclick="showTab('pnl',this)">
-      <span class="tab-icon">$</span>
-      <span class="tab-label">P&amp;L</span>
+    <button class="tab" onclick="showTab('sn26',this)">
+      <span class="tab-icon">⚔</span>
+      <span class="tab-label">SN26</span>
     </button>
-    <button class="tab" onclick="showTab('logs',this)">
-      <span class="tab-icon">≡</span>
-      <span class="tab-label">Logs</span>
+    <button class="tab" onclick="showTab('sn6',this)">
+      <span class="tab-icon">◎</span>
+      <span class="tab-label">SN6</span>
+    </button>
+    <button class="tab" onclick="showTab('agents',this)">
+      <span class="tab-icon">⚡</span>
+      <span class="tab-label">Agents</span>
     </button>
   </nav>
 </div>
@@ -396,324 +333,468 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/bittensor-hub/sw.js', { scope: '/bittensor-hub/' });
 }
 
+const $ = id => document.getElementById(id);
+const f = (n, d) => { const v = parseFloat(n); return isFinite(v) ? v.toFixed(d) : '—'; };
+
 function showTab(name, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('sec-' + name).classList.add('active');
+  $('sec-' + name).classList.add('active');
   btn.classList.add('active');
-  document.getElementById('scroll-area').scrollTop = 0;
+  $('scroll-area').scrollTop = 0;
 }
 
-const $ = id => document.getElementById(id);
-
-function f(n, digits) {
-  const v = parseFloat(n);
-  return isFinite(v) ? v.toFixed(digits) : '—';
+function pill(status, extra) {
+  const map = {
+    MINING:   ['#30D158','MINING'], ACTIVE:   ['#30D158','ACTIF'],
+    IMMUNE:   ['#FF9F0A','IMMUNE'], STARTING: ['#FF9F0A','DÉMARRAGE'],
+    OFFLINE:  ['#FF453A','OFFLINE'], ERROR:   ['#FF453A','ERREUR'],
+  };
+  const [col, lbl] = map[status] || ['rgba(255,255,255,.3)', status || '—'];
+  return `<div class="status-pill" style="color:${col};border-color:${col}33;background:${col}12">
+    <div class="dot" style="background:${col}"></div>
+    <span>${lbl}${extra ? ' · ' + extra : ''}</span>
+  </div>`;
 }
 
-function setBar(id, pct, color) {
-  const el = $(id);
-  if (el) { el.style.width = pct + '%'; el.style.background = color; }
+function rankColor(rank, total) {
+  if (!rank) return 'rgba(255,255,255,.4)';
+  const p = rank / (total || rank);
+  return p <= 0.20 ? '#30D158' : p <= 0.55 ? '#FF9F0A' : '#FF453A';
 }
 
-// ── Dashboard tab ──────────────────────────────────────────────────
-function renderDashboard(results, taoPrice) {
+function financeStrip(d, taoPrice, accentColor) {
+  const price  = taoPrice || d?.tao_price_usd || 0;
+  const earned = (d?.total_earned_tao || 0) * price;
+  const cost   = d?.cost_usd || 0;
+  const pnl    = earned - cost;
+  const tau    = d?.emission_day || 0;
+  const alpha  = d?.emission_day_alpha || 0;
+  const pnlCol = pnl >= 0 ? '#30D158' : '#FF453A';
+  return `<div class="fin-strip">
+    <div class="fin-cell">
+      <div class="fin-label">Revenus</div>
+      <div class="fin-val" style="color:#30D158">+$${f(earned,2)}</div>
+      <div class="fin-sub">${f(d?.total_earned_tao,4)} τ gagné</div>
+    </div>
+    <div class="fin-cell">
+      <div class="fin-label">Coûts GPU</div>
+      <div class="fin-val" style="color:var(--warn)">-$${f(cost,2)}</div>
+      <div class="fin-sub">${d?.gpu_hours ? f(d.gpu_hours,1) + 'h GPU' : '—'}</div>
+    </div>
+    <div class="fin-cell">
+      <div class="fin-label">P&amp;L net</div>
+      <div class="fin-val" style="color:${pnlCol}">${pnl >= 0 ? '+' : ''}$${f(pnl,2)}</div>
+      <div class="fin-sub">${tau > 0 ? f(tau,4) + ' τ/j' : alpha > 0 ? f(alpha,3) + ' α/j' : '—'}</div>
+    </div>
+  </div>`;
+}
+
+function topMinersTable(miners, ourRank, ourData, accent) {
+  if (!miners || miners.length === 0) {
+    return `<div style="text-align:center;padding:12px 0">
+      <div style="font-size:.78em;color:var(--dim)">Données à alimenter par le COO</div>
+      <div style="font-size:.68em;color:rgba(255,255,255,.2);margin-top:4px">Champ <code style="font-size:.9em">top_miners</code> manquant dans le JSON</div>
+    </div>`;
+  }
+  const rows = miners.map(m => {
+    const isUs = m.uid === ourData?.uid;
+    return `<tr class="${isUs ? 'us' : ''}">
+      <td style="color:${isUs ? accent : 'rgba(255,255,255,.6)'};font-weight:${isUs?700:400};padding-left:${isUs?'6px':'0'}">#${m.rank}</td>
+      <td style="color:rgba(255,255,255,.5)">UID ${m.uid}</td>
+      <td style="color:${m.incentive > 0 ? '#30D158' : 'rgba(255,255,255,.3)';font-weight:600">${m.incentive > 0 ? f(m.incentive,5) : '—'}</td>
+      <td style="color:var(--blue)">${m.emission_day > 0 ? f(m.emission_day,4) + 'τ' : '—'}</td>
+      ${m.note ? `<td style="color:rgba(255,255,255,.25);font-size:.85em">${m.note}</td>` : '<td></td>'}
+    </tr>`;
+  }).join('');
+  return `<table class="miners-table">
+    <thead><tr>
+      <td>Rang</td><td>UID</td><td>Incentive</td><td>τ/jour</td><td>Note</td>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function logsHtml(logs) {
+  if (!logs || logs.length === 0) {
+    return `<div style="color:var(--dim);font-size:.8em;text-align:center;padding:10px 0">
+      Aucun log — champ <code style="font-size:.9em">logs</code> à alimenter par les agents
+    </div>`;
+  }
+  return logs.slice(0, 12).map(e => {
+    const isErr  = /error|fail|❌|crash/i.test(e.msg);
+    const isWarn = /warn|timeout|⚠/i.test(e.msg);
+    const isOk   = /ok|✅|success|upload|upscal/i.test(e.msg);
+    const cls = isErr ? 'log-err' : isWarn ? 'log-warn' : isOk ? 'log-ok' : '';
+    const ts = e.ts ? new Date(e.ts).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
+    return `<div class="log-entry">
+      <div class="log-ts">${ts}${e.ts ? ' UTC · ' : ''}${new Date(e.ts || 0).toLocaleDateString('fr-FR')}</div>
+      <div class="log-msg ${cls}">${e.msg}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── FLOTTE ───────────────────────────────────────────────────────────
+function renderFlotte(sn85, sn26, sn6, taoPrice) {
+  const results = [sn85, sn26, sn6];
   const fleet = computeFleetSummary(results);
+  const p = computePnl(results, taoPrice, FIXED_COSTS, REGISTRATION_COSTS);
   const anyActive = fleet.mining > 0;
 
-  $('d-dot').style.background = anyActive ? '#30D158' : '#FF453A';
-  $('d-status').textContent   = anyActive ? `${fleet.mining} ACTIF${fleet.mining>1?'S':''}` : 'HORS LIGNE';
+  $('f-dot').style.background = anyActive ? '#30D158' : '#FF453A';
+  $('f-status').textContent = anyActive
+    ? `${fleet.mining} ACTIF${fleet.mining > 1 ? 'S' : ''} / ${SUBNETS.length} SUBNETS`
+    : 'HORS LIGNE';
+  $('f-tao').textContent = taoPrice > 0 ? 'TAO $' + taoPrice.toFixed(0) : 'TAO $—';
+  const firstBlock = results.find(d => d?.chain_block);
+  $('f-block').textContent = firstBlock ? 'block #' + firstBlock.chain_block.toLocaleString() : 'block —';
 
-  const firstData = results.find(d => d && d.chain_block);
-  $('d-block').textContent = firstData ? 'block #' + firstData.chain_block : 'block —';
+  $('f-pnl').textContent = fmtPnl(p.pnl);
+  $('f-pnl').style.color = p.pnl >= 0 ? '#30D158' : '#FF453A';
+  $('f-roi').textContent = 'ROI ' + (p.roi >= 0 ? '+' : '') + p.roi.toFixed(1) + '%';
+  $('f-rev').textContent = '+$' + p.revenue.toFixed(2);
+  $('f-tao-earned').textContent = p.totalEarnedTao.toFixed(4) + ' τ gagné';
+  $('f-cost').textContent = '$' + p.varCosts.toFixed(2);
+  $('f-days').textContent = p.daysTracked > 0 ? p.daysTracked.toFixed(1) + ' j trackés' : '—';
+  $('f-emission').textContent = fleet.totalEmission > 0 ? f(fleet.totalEmission, 5) : '—';
 
-  $('d-mining').textContent   = fleet.mining;
-  $('d-mining').style.color   = anyActive ? '#30D158' : '#FF453A';
-  $('d-total').textContent    = SUBNETS.length;
-  $('d-emission').textContent = fleet.totalEmission > 0 ? '~' + fleet.totalEmission.toFixed(5) : '—';
-  $('d-cost').textContent     = '$' + fleet.totalCost.toFixed(2);
-  $('d-rate-sub').textContent = fleet.successRate > 0 ? fleet.successRate + '% succès tâches' : 'coûts variables';
+  const miners = [
+    { cfg: SUBNETS.find(s => s.netuid === 85), data: sn85, color: '#a78bfa' },
+    { cfg: SUBNETS.find(s => s.netuid === 26), data: sn26, color: '#2dd4bf' },
+    { cfg: SUBNETS.find(s => s.netuid === 6),  data: sn6,  color: '#818cf8' },
+  ];
 
-  const p = computePnl(results, taoPrice, FIXED_COSTS);
-  $('d-pnl').textContent   = fmtPnl(p.pnl);
-  $('d-pnl').style.color   = p.pnl >= 0 ? '#30D158' : '#FF453A';
-  $('d-roi').textContent   = 'ROI ' + (p.roi >= 0 ? '+' : '') + p.roi.toFixed(1) + '%';
+  $('f-miners').innerHTML = miners.map(({ cfg, data, color }) => {
+    if (!cfg) return '';
+    const s  = data?.status || 'OFFLINE';
+    const sc = s === 'MINING' || s === 'ACTIVE' ? '#30D158'
+             : s === 'IMMUNE' || s === 'STARTING' ? '#FF9F0A' : '#FF453A';
+    const rank = data?.rank, total = data?.total_miners;
+    const inc  = data?.incentive || 0, tau = data?.emission_day || 0;
+    const immH = data?.immunity_hours_remaining || 0;
+    const tasks = data?.tasks || {};
 
-  // SN26 banner (results[2] in SUBNETS array where netuid=26)
-  const sn26idx = SUBNETS.findIndex(s => s.netuid === 26);
-  const sn26    = sn26idx >= 0 ? results[sn26idx] : null;
-  if (sn26) {
-    const alpha = sn26.emission_day_alpha || 0;
-    const tau   = sn26.emission_day || 0;
-    const rank  = sn26.rank;
-    const total = sn26.total_miners;
-    $('db-rank').textContent      = rank ? `#${rank}/${total||'?'}` : '—';
-    $('db-inc').textContent       = sn26.incentive ? f(sn26.incentive, 5) : '—';
-    $('db-alpha').textContent     = alpha > 0 ? f(alpha, 3) : '—';
-    $('db-tao').textContent       = tau > 0 ? f(tau, 4) : '—';
-    $('db-delta').textContent     = sn26.best_delta != null ? f(sn26.best_delta, 4) : '—';
-    $('db-avg-delta').textContent = sn26.avg_delta  != null ? f(sn26.avg_delta,  4) : '—';
-    const tasks = sn26.tasks || {};
-    $('db-tasks').textContent     = tasks.completed != null ? `${tasks.completed}/${tasks.received}` : '—';
-  }
-
-  // GPU (SN85 = first in list)
-  const sn85 = results.find((d, i) => SUBNETS[i]?.netuid === 85);
-  if (sn85) {
-    const gpuName = sn85.gpu_name ? sn85.gpu_name.replace('NVIDIA ','').replace('GeForce ','') : '—';
-    $('d-gpu-name').textContent = gpuName;
-    $('d-gpu-util').textContent = (sn85.gpu_util != null ? sn85.gpu_util : '—') + '%';
-    setBar('pb-gpu-util', sn85.gpu_util || 0, '#0A84FF');
-    $('d-gpu-mem').textContent = '—';
-    $('d-temp').textContent    = (sn85.gpu_temp != null ? sn85.gpu_temp : '—') + '°';
-    $('d-temp').style.color    = sn85.gpu_temp > 80 ? '#FF453A' : sn85.gpu_temp > 70 ? '#FF9F0A' : '#30D158';
-    $('d-power').textContent   = (sn85.gpu_power || '—') + ' W';
-
-    const svcs = sn85.services || {};
-    const svcLabels = { 'video-upscaler':'Upscaler','video-compressor':'Compressor','video-deleter':'Deleter','video-miner':'Miner' };
-    $('d-services').innerHTML = Object.entries(svcs).map(([k, v]) => {
-      const ok  = v === 'online';
-      const col = ok ? '#30D158' : v === 'errored' ? '#FF453A' : 'rgba(255,255,255,.3)';
-      return `<div class="kv">
-        <span class="kv-label">${svcLabels[k] || k}</span>
-        <span class="kv-val" style="color:${col}">${v.toUpperCase()}</span>
-      </div>`;
-    }).join('');
-  }
-}
-
-// ── Miners tab ──────────────────────────────────────────────────────
-function renderMiners(results) {
-  const ACTIVE_S = ['MINING','ACTIVE','IMMUNE','STARTING'];
-  const active = results.filter(d => d && ACTIVE_S.includes(d.status)).length;
-  $('m-summary').textContent = active + ' / ' + SUBNETS.length + ' actif' + (active > 1 ? 's' : '');
-
-  $('miners-list').innerHTML = SUBNETS.map((sub, i) => {
-    const data = results[i];
-    const s  = data ? data.status : 'OFFLINE';
-    let sc;
-    if (s==='MINING'||s==='ACTIVE')        sc = '#30D158';
-    else if (s==='IMMUNE'||s==='STARTING') sc = '#FF9F0A';
-    else                                   sc = '#FF453A';
-
-    const hours = data ? (data.immunity_hours_remaining || 0) : 0;
-    const label = s === 'IMMUNE' ? `IMMUNE · ${fmtHours(hours)}` : s;
-
-    // ── KPI 1 : Incentive + émission ──
-    const inc       = data ? (data.incentive || 0) : 0;
-    const eday      = data ? (data.emission_day || 0) : 0;
-    const edayAlpha = data ? (data.emission_day_alpha || 0) : 0;
-    const incHTML   = inc > 0
-      ? `<span class="chip-ok" style="font-size:.72em">ACTIF</span> <span style="font-size:.78em;font-weight:700">${f(inc,5)}</span>`
-      : `<span class="chip-off" style="font-size:.72em">EN ATTENTE</span>`;
-    const incSub = edayAlpha > 0
-      ? `~${f(edayAlpha,3)} α/j ≈ ${f(eday,4)} τ`
-      : eday > 0 ? `~${f(eday,4)} τ/jour` : "Pas d'émission";
-
-    // ── KPI 2 : Travail produit ──
-    let workVal, workSub, workColor = 'var(--blue)';
-    if (sub.type === 'forecasting') {
-      const pred  = data ? (data.predictions_count || 0) : 0;
-      const brier = data ? (data.brier_score ?? null) : null;
-      workVal  = pred > 0 ? pred + ' préd.' : '—';
-      workSub  = brier != null ? `Brier ${f(brier,4)}` : (pred > 0 ? 'Score en cours' : 'En attente');
-      workColor = pred > 0 ? 'var(--blue)' : 'var(--dim)';
+    let m1v, m1l, m1c, m2v, m2l, m2c, m3v, m3l, m3c;
+    if (s === 'IMMUNE') {
+      m1v = fmtHours(immH); m1l = 'Immunité'; m1c = '#FF9F0A';
+      m2v = data?.predictions_count || '0'; m2l = 'Préd.'; m2c = 'rgba(255,255,255,.5)';
+      m3v = '$0.00'; m3l = 'Coût'; m3c = 'var(--warn)';
+    } else if (cfg.netuid === 26) {
+      m1v = rank ? `#${rank}` : '—'; m1l = 'Rang'; m1c = rankColor(rank, total);
+      m2v = inc > 0 ? f(inc, 5) : '—'; m2l = 'Incentive'; m2c = inc > 0 ? '#30D158' : 'rgba(255,255,255,.4)';
+      m3v = tau > 0 ? f(tau, 4) + 'τ' : '—'; m3l = 'τ/jour'; m3c = tau > 0 ? '#0A84FF' : 'rgba(255,255,255,.4)';
     } else {
-      const tasks = data ? (data.tasks || {}) : {};
-      const done = tasks.completed || 0, recv = tasks.received || 0, rate = tasks.success_rate || 0;
-      workVal   = recv > 0 ? `${done} / ${recv}` : '—';
-      workSub   = recv > 0 ? `${rate}% succès` : 'Aucune tâche';
-      workColor = recv > 0 ? 'var(--blue)' : 'var(--dim)';
+      m1v = rank ? `#${rank}` : '—'; m1l = 'Rang'; m1c = rankColor(rank, total);
+      m2v = tasks.completed != null ? `${tasks.completed}/${tasks.received}` : '—'; m2l = 'Tâches'; m2c = 'var(--blue)';
+      m3v = '$' + f(data?.cost_usd, 2); m3l = 'Coût'; m3c = 'var(--warn)';
     }
 
-    // ── KPI 3 : Coût engagés ──
-    const cost    = data ? (data.cost_usd || 0) : 0;
-    const costSub = sub.type === 'forecasting'
-      ? (data && data.agent_name ? data.agent_name : 'API LLM')
-      : (data && data.gpu_hours != null ? `${f(data.gpu_hours,1)} h GPU` : 'RunPod');
-
-    // ── KPI 4 : Rang (SN26) ou Balance (autres) ──
-    let kpi4Label, kpi4Val, kpi4Sub, kpi4Color;
-    if (sub.netuid === 26 && data && data.rank) {
-      kpi4Label = 'Rang SN26';
-      kpi4Val   = `#${data.rank}`;
-      kpi4Sub   = `sur ${data.total_miners || '?'} miners`;
-      kpi4Color = 'var(--teal)';
-    } else {
-      const bal = data ? data.balance : null;
-      kpi4Label = 'Balance';
-      kpi4Val   = (bal != null && bal !== '—') ? f(Number(bal),4) + ' τ' : '— τ';
-      kpi4Sub   = 'coldkey';
-      kpi4Color = 'var(--ok)';
-    }
-
-    // ── Rank + GPU in desc ──
-    const rankBadge = (data && data.rank) ? ` · Rang #${data.rank}` : '';
-    const gpuLabel  = sub.type === 'forecasting' ? 'No GPU' : sub.gpu;
-
-    // ── Attack strip (SN26 only) ──
-    const attackStrip = (sub.netuid === 26 && data) ? `
-      <div class="attack-strip">
-        <div class="as-item">
-          <div class="as-label">Meilleur δ</div>
-          <div class="as-val" style="color:var(--teal)">${data.best_delta != null ? f(data.best_delta,4) : '—'}</div>
+    return `<div class="fleet-card">
+      <div class="fc-top">
+        <div>
+          <div class="fc-sn" style="color:${color}">SN${cfg.netuid} · ${cfg.name}</div>
+          <div class="fc-desc">UID #${cfg.uid} · ${cfg.gpu}</div>
         </div>
-        <div class="as-item">
-          <div class="as-label">Moy. δ</div>
-          <div class="as-val" style="color:var(--blue)">${data.avg_delta != null ? f(data.avg_delta,4) : '—'}</div>
+        <div class="status-pill" style="color:${sc};border-color:${sc}33;background:${sc}12;padding:4px 10px;font-size:.65em">
+          <div class="dot" style="background:${sc};width:5px;height:5px"></div>
+          <span>${s}</span>
         </div>
-        <div class="as-item">
-          <div class="as-label">Statut</div>
-          <div class="as-val"><span class="chip-teal" style="font-size:.7em">PGD</span></div>
-        </div>
-      </div>` : '';
-
-    return `
-      <div class="miner-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div>
-            <div class="miner-sn" style="color:${sub.color}">SN${sub.netuid}</div>
-            <div class="miner-name">${sub.name}</div>
-            <div class="miner-desc">UID #${sub.uid}${rankBadge} · ${gpuLabel} · ${sub.network}</div>
-          </div>
-          <div class="status-pill" style="color:${sc};border-color:${sc}33;background:${sc}12;flex-shrink:0">
-            <div class="dot" style="background:${sc}"></div>
-            <span style="font-size:.9em">${label}</span>
-          </div>
-        </div>
-        <div class="m4">
-          <div class="m4-cell">
-            <div class="m4-label">Incentive</div>
-            <div class="m4-val">${incHTML}</div>
-            <div class="m4-sub">${incSub}</div>
-          </div>
-          <div class="m4-cell">
-            <div class="m4-label">Travail produit</div>
-            <div class="m4-val" style="color:${workColor}">${workVal}</div>
-            <div class="m4-sub">${workSub}</div>
-          </div>
-          <div class="m4-cell">
-            <div class="m4-label">Coût engagés</div>
-            <div class="m4-val" style="color:var(--warn)">$${f(cost,2)}</div>
-            <div class="m4-sub">${costSub}</div>
-          </div>
-          <div class="m4-cell">
-            <div class="m4-label">${kpi4Label}</div>
-            <div class="m4-val" style="color:${kpi4Color}">${kpi4Val}</div>
-            <div class="m4-sub">${kpi4Sub}</div>
-          </div>
-        </div>
-        ${attackStrip}
-        <a class="dash-btn" href="${sub.dashboardUrl}" ${sub.dashboardUrl.startsWith('http')?'target="_blank"':''}>
-          Dashboard &nbsp;→
-        </a>
       </div>
-    `;
-  }).join('');
-}
-
-// ── P&L tab ─────────────────────────────────────────────────────────
-function renderPnl(results, taoPrice) {
-  const p = computePnl(results, taoPrice, FIXED_COSTS);
-  const pnlColor = p.pnl >= 0 ? '#30D158' : '#FF453A';
-
-  $('p-tao-price').textContent  = p.price > 0 ? '$' + p.price.toFixed(2) : '$—';
-  $('p-pnl-val').textContent    = fmtPnl(p.pnl);
-  $('p-pnl-val').style.color    = pnlColor;
-  $('p-pnl-sub').textContent    = 'ROI ' + (p.roi >= 0 ? '+' : '') + p.roi.toFixed(1) + '%'
-    + (p.breakEvenDays > 0 ? ' · BE dans ' + p.breakEvenDays.toFixed(0) + ' j' : '');
-  $('p-revenue').textContent    = '+$' + p.revenue.toFixed(2);
-  $('p-tao-earned').textContent = p.totalEarnedTao.toFixed(6) + ' τ gagné';
-
-  $('p-breakdown').innerHTML = p.lines.map(r => {
-    const isPnlRow = r.label === 'P&L net';
-    const color  = isPnlRow ? pnlColor : (r.sign > 0 ? '#30D158' : '#FF9F0A');
-    const valStr = isPnlRow ? fmtPnl(r.val) : (r.sign > 0 ? '+' : '−') + '$' + Math.abs(r.val).toFixed(2);
-    return `<div class="kv" ${r.separator ? 'style="border-top:1px solid rgba(255,255,255,.12);margin-top:6px;padding-top:14px"' : ''}>
-      <div>
-        <span class="kv-label">${r.label}</span>
-        <div style="font-size:.68em;color:rgba(255,255,255,.2);margin-top:2px">${r.sub}</div>
+      <div class="fc-metrics">
+        <div class="fc-m"><div class="fc-m-val" style="color:${m1c}">${m1v}</div><div class="fc-m-lbl">${m1l}</div></div>
+        <div class="fc-m"><div class="fc-m-val" style="color:${m2c}">${m2v}</div><div class="fc-m-lbl">${m2l}</div></div>
+        <div class="fc-m"><div class="fc-m-val" style="color:${m3c}">${m3v}</div><div class="fc-m-lbl">${m3l}</div></div>
       </div>
-      <span class="kv-val" style="color:${color}">${valStr}</span>
     </div>`;
   }).join('');
 
-  $('p-period').textContent = p.daysTracked > 0
-    ? `Tracking depuis ${p.daysTracked.toFixed(1)} jours · $${p.monthlyFixed}/mois en coûts fixes`
-    : 'Tracking en cours…';
+  const ts = [sn85, sn26, sn6].map(d => d?.updated_at).filter(Boolean).sort().pop();
+  $('f-updated').textContent = ts ? 'Mis à jour ' + new Date(ts).toLocaleTimeString('fr-FR') : '';
 }
 
-// ── Logs tab ─────────────────────────────────────────────────────────
-function renderLogs(data) {
-  if (!data || !data.logs || data.logs.length === 0) {
-    $('logs-list').innerHTML = '<div style="color:var(--dim);font-size:.82em;text-align:center;padding:20px 0">Aucun log disponible</div>';
+// ─── SN85 ─────────────────────────────────────────────────────────────
+function renderSn85(d, taoPrice) {
+  if (!d) {
+    $('sn85-pill').innerHTML = pill('OFFLINE');
+    ['sn85-m4','sn85-finance','sn85-gpu','sn85-services','sn85-topm','sn85-logs','sn85-network'].forEach(id =>
+      $(id).innerHTML = '<div style="color:var(--dim);text-align:center;padding:14px">Données indisponibles</div>'
+    );
     return;
   }
-  $('logs-list').innerHTML = data.logs.map(e => {
-    const isErr  = /error|fail|exception/i.test(e.msg);
-    const isWarn = /warn|timeout/i.test(e.msg);
-    const col = isErr ? '#FF453A' : isWarn ? '#FF9F0A' : 'rgba(255,255,255,.55)';
-    return `<div class="log-entry">
-      <span class="log-ts">${e.ts}</span>
-      <span style="color:${col}">${e.msg}</span>
+  const rank = d.rank, total = d.total_miners || 256, rc = rankColor(rank, total);
+  $('sn85-pill').innerHTML = pill(d.status, rank ? '#' + rank + '/' + total : null);
+
+  const tasks = d.tasks || {};
+  $('sn85-m4').innerHTML = `
+    <div class="m4-cell">
+      <div class="m4-label">Rang</div>
+      <div class="m4-val" style="color:${rc}">${rank ? '#' + rank + '/' + total : '—/' + total}</div>
+      <div class="m4-sub">cutoff top 50</div>
+    </div>
+    <div class="m4-cell">
+      <div class="m4-label">Incentive</div>
+      <div class="m4-val" style="color:${d.incentive > 0 ? '#30D158' : 'rgba(255,255,255,.4)'}">${d.incentive > 0 ? f(d.incentive,5) : '0.00000'}</div>
+      <div class="m4-sub">${d.emission_day > 0 ? '~' + f(d.emission_day,5) + ' τ/j' : 'Pas d\'émission'}</div>
+    </div>
+    <div class="m4-cell">
+      <div class="m4-label">Tâches</div>
+      <div class="m4-val" style="color:var(--blue)">${tasks.completed != null ? tasks.completed + '/' + tasks.received : '—'}</div>
+      <div class="m4-sub">${tasks.success_rate != null ? tasks.success_rate + '% succès' : '—'}</div>
+    </div>
+    <div class="m4-cell">
+      <div class="m4-label">GPU</div>
+      <div class="m4-val" style="color:${d.gpu_util > 60 ? '#30D158' : 'rgba(255,255,255,.5)'}">${d.gpu_util != null ? d.gpu_util + '%' : '—'}</div>
+      <div class="m4-sub">${d.gpu_temp != null ? d.gpu_temp + '°C · ' : ''}${d.gpu_power != null ? d.gpu_power + 'W' : '—'}</div>
     </div>`;
-  }).join('');
+
+  $('sn85-finance').innerHTML = financeStrip(d, taoPrice, '#a78bfa');
+
+  const util = d.gpu_util, mem = d.gpu_mem_pct, temp = d.gpu_temp, power = d.gpu_power;
+  const memUsed = d.gpu_mem_used_gb, memTotal = d.gpu_mem_total_gb;
+  const tempCol = temp > 80 ? '#FF453A' : temp > 70 ? '#FF9F0A' : '#30D158';
+  $('sn85-gpu').innerHTML = `
+    <div class="prog-wrap">
+      <div class="prog-hd"><span>Utilisation GPU</span><span style="color:var(--blue)">${util != null ? util + '%' : '—'}</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${util||0}%;background:var(--blue)"></div></div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-hd">
+        <span>VRAM</span>
+        <span style="color:var(--purple)">${memUsed != null && memTotal != null ? memUsed.toFixed(1) + '/' + memTotal.toFixed(0) + ' GB' : mem != null ? mem + '%' : '—'}</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${mem||0}%;background:var(--purple)"></div></div>
+    </div>
+    <div class="gpu-2col">
+      <div class="gpu-cell">
+        <div class="gpu-val" style="color:${temp != null ? tempCol : 'rgba(255,255,255,.4)'}">${temp != null ? temp + '°' : '—'}</div>
+        <div class="gpu-lbl">Température</div>
+      </div>
+      <div class="gpu-cell">
+        <div class="gpu-val" style="color:var(--warn)">${power != null ? power + ' W' : '—'}</div>
+        <div class="gpu-lbl">Puissance</div>
+      </div>
+    </div>`;
+
+  const svcs = d.services || {};
+  const svcNames = {'video-upscaler':'Upscaler','video-compressor':'Compressor','video-miner':'Miner','video-deleter':'Deleter','sn85-optimizer':'Optimizer','dashboard':'Dashboard'};
+  $('sn85-services').innerHTML = Object.keys(svcs).length
+    ? Object.entries(svcs).map(([k,v]) => {
+        const ok = v === 'online', col = ok ? '#30D158' : v === 'errored' ? '#FF453A' : 'rgba(255,255,255,.3)';
+        return `<div class="kv"><span class="kv-label">${svcNames[k]||k}</span><span class="kv-val" style="color:${col}">${v.toUpperCase()}</span></div>`;
+      }).join('')
+    : '<div style="color:var(--dim);font-size:.8em;text-align:center;padding:8px">Champ <code>services</code> à alimenter par les agents</div>';
+
+  $('sn85-topm').innerHTML = topMinersTable(d.top_miners, rank, d, '#a78bfa');
+  $('sn85-logs').innerHTML = logsHtml(d.logs);
+
+  $('sn85-network').innerHTML = `
+    <div class="kv"><span class="kv-label">Axon</span><span class="kv-val" style="font-family:monospace;font-size:.78em">${d.axon_ip||'—'}:${d.axon_port||'—'}</span></div>
+    <div class="kv"><span class="kv-label">UID</span><span class="kv-val">#${d.uid}</span></div>
+    <div class="kv"><span class="kv-label">Réseau</span><span class="kv-val">${d.network||'finney'}</span></div>
+    <div class="kv"><span class="kv-label">GPU</span><span class="kv-val">${d.gpu||'—'}</span></div>
+    <div class="kv"><span class="kv-label">Tracking depuis</span><span class="kv-val">${d.tracking_since ? new Date(d.tracking_since).toLocaleDateString('fr-FR') : '—'}</span></div>`;
+
+  $('sn85-updated').textContent = d.updated_at ? 'Mis à jour ' + new Date(d.updated_at).toLocaleTimeString('fr-FR') : '';
 }
 
-// ── Logs from SN26 recent challenges ─────────────────────────────────
-function buildLogsFromSn26(data) {
-  if (!data) return;
-  const ch = data.tasks || {};
-  // Try to show recent challenges as pseudo-logs
-  const recent = data._recent_challenges || [];
-  if (recent.length === 0) return;
-  $('logs-list').innerHTML = recent.map(r => {
-    const col = r.ok ? '#30D158' : '#FF453A';
-    const res = r.ok ? '✓' : '✗';
-    return `<div class="log-entry">
-      <span class="log-ts">${r.ts || ''}</span>
-      <span style="color:${col}">${res} ${r.norm_type} ε=${r.epsilon} δ=${r.delta != null ? r.delta.toFixed(4) : '—'}</span>
+// ─── SN26 ─────────────────────────────────────────────────────────────
+function renderSn26(d, taoPrice) {
+  if (!d) {
+    $('sn26-pill').innerHTML = pill('OFFLINE');
+    ['sn26-m4','sn26-finance','sn26-attacks','sn26-topm','sn26-logs','sn26-network'].forEach(id =>
+      $(id).innerHTML = '<div style="color:var(--dim);text-align:center;padding:14px">Données indisponibles</div>'
+    );
+    return;
+  }
+  const rank = d.rank, total = d.total_miners, rc = rankColor(rank, total);
+  $('sn26-pill').innerHTML = pill(d.status, rank ? '#' + rank + (total ? '/' + total : '') : null);
+
+  const alpha = d.emission_day_alpha || 0, tau = d.emission_day || 0;
+  $('sn26-m4').innerHTML = `
+    <div class="m4-cell">
+      <div class="m4-label">Rang</div>
+      <div class="m4-val" style="color:${rc}">${rank ? '#' + rank + (total ? '/' + total : '') : '—'}</div>
+      <div class="m4-sub">${total ? 'sur ' + total + ' miners' : '—'}</div>
+    </div>
+    <div class="m4-cell">
+      <div class="m4-label">Incentive</div>
+      <div class="m4-val" style="color:${d.incentive > 0 ? '#30D158' : 'rgba(255,255,255,.4)'}">${d.incentive > 0 ? f(d.incentive,5) : '—'}</div>
+      <div class="m4-sub">${tau > 0 ? '~' + f(tau,4) + ' τ/j' : 'En attente'}</div>
+    </div>
+    <div class="m4-cell">
+      <div class="m4-label">α / jour</div>
+      <div class="m4-val" style="color:var(--teal)">${alpha > 0 ? f(alpha,3) : '—'}</div>
+      <div class="m4-sub">alpha SN26</div>
+    </div>
+    <div class="m4-cell">
+      <div class="m4-label">Balance</div>
+      <div class="m4-val" style="color:var(--ok)">${d.balance != null ? f(d.balance,4) + ' τ' : '—'}</div>
+      <div class="m4-sub">coldkey</div>
     </div>`;
-  }).join('');
+
+  $('sn26-finance').innerHTML = financeStrip(d, taoPrice, '#2dd4bf');
+
+  const tasks = d.tasks || {};
+  $('sn26-attacks').innerHTML = `
+    <div class="as-item">
+      <div class="as-label">Meilleur δ</div>
+      <div class="as-val" style="color:var(--teal)">${d.best_delta != null ? f(d.best_delta,4) : '—'}</div>
+    </div>
+    <div class="as-item">
+      <div class="as-label">Moyenne δ</div>
+      <div class="as-val" style="color:var(--blue)">${d.avg_delta != null ? f(d.avg_delta,4) : '—'}</div>
+    </div>
+    <div class="as-item">
+      <div class="as-label">Tâches</div>
+      <div class="as-val">${tasks.completed != null ? tasks.completed + '/' + tasks.received : '—'}</div>
+    </div>
+    <div class="as-item">
+      <div class="as-label">Attaques OK</div>
+      <div class="as-val" style="color:var(--ok)">${tasks.attacks_ok != null ? tasks.attacks_ok : '—'}</div>
+    </div>`;
+
+  $('sn26-topm').innerHTML = topMinersTable(d.top_miners, rank, d, '#2dd4bf');
+  $('sn26-logs').innerHTML = logsHtml(d.logs);
+
+  $('sn26-network').innerHTML = `
+    <div class="kv"><span class="kv-label">Axon</span><span class="kv-val" style="font-family:monospace;font-size:.78em">${d.axon_ip||'—'}:${d.axon_port||'—'}</span></div>
+    <div class="kv"><span class="kv-label">UID</span><span class="kv-val">#${d.uid}</span></div>
+    <div class="kv"><span class="kv-label">GPU</span><span class="kv-val">${d.gpu||'—'}</span></div>
+    ${d.gpu_util != null ? `<div class="kv"><span class="kv-label">GPU util.</span><span class="kv-val" style="color:var(--blue)">${d.gpu_util}%</span></div>` : ''}
+    ${d.chain_block ? `<div class="kv"><span class="kv-label">Bloc</span><span class="kv-val">#${d.chain_block.toLocaleString()}</span></div>` : ''}`;
+
+  $('sn26-updated').textContent = d.updated_at ? 'Mis à jour ' + new Date(d.updated_at).toLocaleTimeString('fr-FR') : '';
 }
 
-// ── Main refresh ──────────────────────────────────────────────────────
-let _taoPrice = 0;
+// ─── SN6 ──────────────────────────────────────────────────────────────
+function renderSn6(d, taoPrice) {
+  if (!d) {
+    $('sn6-pill').innerHTML = pill('OFFLINE');
+    ['sn6-imm','sn6-finance','sn6-agent','sn6-perf','sn6-logs'].forEach(id =>
+      $(id).innerHTML = '<div style="color:var(--dim);text-align:center;padding:14px">Données indisponibles</div>'
+    );
+    return;
+  }
+  const immH = d.immunity_hours_remaining || 0;
+  $('sn6-pill').innerHTML = pill(d.status, d.status === 'IMMUNE' ? fmtHours(immH) + ' restant' : null);
+
+  $('sn6-imm').innerHTML = immH > 0 ? `
+    <div class="card">
+      <div class="card-title">Immunité</div>
+      <div class="prog-hd"><span style="color:var(--dim)">Temps restant</span><span style="color:var(--warn);font-weight:600">${fmtHours(immH)} / 168h</span></div>
+      <div class="imm-bar-bg"><div class="imm-bar-fill" style="width:${Math.min(100,(immH/168)*100)}%"></div></div>
+      <div style="font-size:.67em;color:var(--dim);margin-top:4px">Fin dans ~${(immH/24).toFixed(1)} jours · Après : scoring actif</div>
+    </div>` : '';
+
+  $('sn6-finance').innerHTML = financeStrip(d, taoPrice, '#818cf8');
+
+  const activated = d.agent_activated_at
+    ? new Date(d.agent_activated_at).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
+    : '—';
+  $('sn6-agent').innerHTML = `
+    <div class="kv"><span class="kv-label">Agent</span><span class="kv-val">${d.agent_name||'—'}</span></div>
+    <div class="kv"><span class="kv-label">Version</span><span class="kv-val">v${d.agent_version??'—'}</span></div>
+    <div class="kv"><span class="kv-label">Track</span><span class="kv-val"><span class="chip-teal">${d.track||'—'}</span></span></div>
+    <div class="kv"><span class="kv-label">UID</span><span class="kv-val">#${d.uid}</span></div>
+    <div class="kv"><span class="kv-label">Activé le</span><span class="kv-val" style="font-size:.78em">${activated}</span></div>`;
+
+  const brier = d.brier_score;
+  const brierCol = brier == null ? 'rgba(255,255,255,.3)' : brier < 0.20 ? '#30D158' : brier < 0.25 ? '#FF9F0A' : '#FF453A';
+  $('sn6-perf').innerHTML = `
+    <div class="kv"><span class="kv-label">Prédictions</span><span class="kv-val">${d.predictions_count||0}</span></div>
+    <div class="kv"><span class="kv-label">Brier score</span><span class="kv-val" style="color:${brierCol}">${brier!=null?f(brier,4):'En attente'}</span></div>
+    <div class="kv"><span class="kv-label">Reasoning</span><span class="kv-val">${d.reasoning_score!=null?f(d.reasoning_score,4):'En attente'}</span></div>
+    <div class="kv"><span class="kv-label">Rang</span><span class="kv-val">${d.ranking||'—'}</span></div>
+    <div class="kv"><span class="kv-label">Incentive</span><span class="kv-val">${d.incentive>0?f(d.incentive,5):'—'}</span></div>`;
+
+  $('sn6-logs').innerHTML = logsHtml(d.logs);
+  $('sn6-updated').textContent = d.updated_at ? 'Mis à jour ' + new Date(d.updated_at).toLocaleTimeString('fr-FR') : '';
+}
+
+// ─── AGENTS ───────────────────────────────────────────────────────────
+function renderAgents(d) {
+  if (!d) {
+    $('ag-cards').innerHTML = `<div class="card" style="text-align:center;padding:28px">
+      <div style="font-size:1.6em;margin-bottom:10px;opacity:.4">⚡</div>
+      <div style="font-size:.82em;color:var(--dim)">status/agents.json non disponible</div>
+    </div>`;
+    $('ag-kb').innerHTML = '<div style="color:var(--dim);font-size:.82em;text-align:center;padding:12px">—</div>';
+    return;
+  }
+  $('ag-hetzner').textContent = d.vps || 'Hetzner VPS · 62.238.31.176';
+
+  const defs = [
+    { key:'ceo', icon:'🤖', title:'CEO', name:'Néo',     role:'Orchestrateur Telegram · SQLite incidents · 5 boucles autonomes' },
+    { key:'cso', icon:'🔭', title:'CSO', name:'Morpheus', role:'Stratégie marché · ROI 3-scénarios · Intelligence GitHub · Discord' },
+    { key:'cto', icon:'🔧', title:'CTO', name:'CTO',     role:'Engineering · SSH/SCP · Patches code · Dashboard GitHub Pages' },
+    { key:'coo', icon:'📊', title:'COO', name:'COO',     role:'Opérations · Health checks · Monitoring pods · Auto-résolution' },
+  ];
+
+  $('ag-cards').innerHTML = defs.map(({ key, icon, title, name, role }) => {
+    const ag = d[key] || {};
+    const sc = ag.status === 'ACTIVE'    ? '#30D158'
+             : ag.status === 'MONITORING' ? '#0A84FF'
+             : ag.status === 'STANDBY'   ? '#FF9F0A'
+             : 'rgba(255,255,255,.3)';
+    const lastTs = ag.last_active || ag.last_action_at || ag.last_check;
+    const ago = lastTs ? fmtUptime(Math.round((Date.now() - new Date(lastTs)) / 1000)) : null;
+    const stat = ag.incidents_24h != null
+      ? `${ag.incidents_24h} incidents 24h · ${ag.kb_lessons_today||0} leçons KB aujourd'hui`
+      : ag.last_action || (ag.next_check ? 'Prochain check ' + new Date(ag.next_check).toLocaleTimeString('fr-FR') : 'En attente');
+    return `<div class="agent-card">
+      <div class="agent-icon">${icon}</div>
+      <div class="agent-info">
+        <div class="agent-title">${title}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="agent-name">${ag.name || name}</span>
+          <span class="status-pill" style="color:${sc};border-color:${sc}33;background:${sc}12;padding:3px 9px;font-size:.62em">${ag.status || '—'}</span>
+        </div>
+        <div class="agent-role">${role}</div>
+        <div class="agent-stat">${stat}</div>
+      </div>
+      ${ago ? `<div style="font-size:.62em;color:rgba(255,255,255,.2);flex-shrink:0;padding-top:2px;white-space:nowrap">il y a ${ago}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const kb = d.kb || {};
+  $('ag-kb').innerHTML = `
+    <div class="kv"><span class="kv-label">Total leçons</span><span class="kv-val" style="font-weight:700">${kb.total_lessons??'—'}</span></div>
+    <div class="kv"><span class="kv-label">SN85</span><span class="kv-val">${kb.sn85_lessons??'—'}</span></div>
+    <div class="kv"><span class="kv-label">SN26</span><span class="kv-val">${kb.sn26_lessons??'—'}</span></div>
+    <div class="kv"><span class="kv-label">Agents</span><span class="kv-val">${kb.agent_lessons??'—'}</span></div>
+    <div class="kv"><span class="kv-label">Dernière MàJ</span><span class="kv-val" style="font-size:.78em">${kb.last_updated ? new Date(kb.last_updated).toLocaleTimeString('fr-FR') : '—'}</span></div>`;
+
+  $('ag-updated').textContent = d.updated_at ? 'Mis à jour ' + new Date(d.updated_at).toLocaleTimeString('fr-FR') : '';
+}
+
+// ─── Refresh ──────────────────────────────────────────────────────────
+let _taoPrice = 326;
 
 async function refresh() {
   const btn = $('btn-refresh');
   if (btn) btn.classList.add('spinning');
-
   try {
-    const [results, meta, tao] = await Promise.all([
-      Promise.all(SUBNETS.map(fetchStatus)),
-      fetchMeta(),
-      fetchTaoPrice(),
+    const get = url => fetch(url + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null).catch(() => null);
+    const [sn85, sn26, sn6, agents, tao] = await Promise.all([
+      get('./status/sn85.json'),
+      get('./status/sn26.json'),
+      get('./status/sn6.json'),
+      get('./status/agents.json'),
+      fetchTaoPrice(_taoPrice),
     ]);
-
-    if (tao) _taoPrice = tao;
-    else {
-      const fb = results.find(d => d && d.tao_price_usd);
-      if (fb) _taoPrice = fb.tao_price_usd;
-    }
-
-    try { renderMiners(results); } catch(e) { console.error('renderMiners', e); }
-    try { renderDashboard(results, _taoPrice); } catch(e) { console.error('renderDashboard', e); }
-    try { renderPnl(results, _taoPrice); } catch(e) { console.error('renderPnl', e); }
-    try { renderLogs(results[0]); } catch(e) { console.error('renderLogs', e); }
-
-    if (meta && meta.updated_at) {
-      const d = new Date(meta.updated_at);
-      $('last-update').textContent = 'Données du ' + d.toLocaleTimeString('fr-FR');
-    }
-  } finally {
-    if (btn) btn.classList.remove('spinning');
-  }
+    if (tao > 0) _taoPrice = tao;
+    renderFlotte(sn85, sn26, sn6, _taoPrice);
+    renderSn85(sn85, _taoPrice);
+    renderSn26(sn26, _taoPrice);
+    renderSn6(sn6, _taoPrice);
+    renderAgents(agents);
+  } catch(e) { console.error(e); }
+  finally { if (btn) btn.classList.remove('spinning'); }
 }
 
 refresh();
-setInterval(refresh, 30_000);
-$('btn-refresh').addEventListener('click', refresh);
+setInterval(refresh, 30000);
 </script>
 </body>
 </html>
