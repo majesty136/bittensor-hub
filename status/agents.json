@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-10T20:30:00Z",
+  "updated_at": "2026-05-10T20:35:00Z",
   "vps": "Hetzner VPS · 62.238.31.176",
   "ceo": {
     "name": "Néo",
@@ -9,10 +9,16 @@
     "incidents_24h": 3,
     "kb_lessons_today": 8
   },
+  "cso": {
+    "name": "Morpheus",
+    "status": "STANDBY",
+    "last_action": "Analyse marché SN85 — farm cluster detection + ROI 3-scénarios",
+    "last_action_at": "2026-05-10T18:00:00Z"
+  },
   "cto": {
     "name": "CTO",
     "status": "STANDBY",
-    "last_action": "SN85 codec fix + video2x PATH + pm2 reset",
+    "last_action": "SN85 codec fix (encoder.py) + video2x PATH + pm2 reset upscaler",
     "last_action_at": "2026-05-10T18:30:00Z"
   },
   "coo": {
