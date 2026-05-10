@@ -1,1 +1,36 @@
-{"status": "OFFLINE", "netuid": 26, "uid": 129, "network": "finney", "hotkey": "5ExroXjhMkXePHtYMjNrtURU32msNFJCHogaN4RMHVoT22C8", "axon_ip": null, "axon_port": null, "balance": 0.184105, "incentive": 0.00013733, "emission_day_alpha": 0.4512, "emission_day": 0.007479, "alpha_price_tao": 0.016576, "rank": null, "total_miners": null, "best_delta": null, "avg_delta": null, "immunity_hours_remaining": 0.0, "chain_block": 8154720, "tao_price_usd": 326.14, "total_earned_tao": 0.008107, "total_earned_alpha": 0.4891, "cost_usd": 8.85, "gpu_hours": 26.0, "tracking_since": "2026-05-09T15:38:00Z", "gpu": "RTX 3090", "tasks": {"received": 0, "completed": 0, "skipped": 0, "attacks_ok": 0, "success_rate": 0}, "monitor_ok": false}
+{
+  "status": "MINING",
+  "netuid": 26,
+  "uid": 129,
+  "network": "finney",
+  "hotkey": "5ExroXjhMkXePHtYMjNrtURU32msNFJCHogaN4RMHVoT22C8",
+  "axon_ip": "103.196.86.111",
+  "axon_port": 16813,
+  "balance": 0.184105,
+  "incentive": 0.00013733,
+  "emission_day_alpha": 0.4512,
+  "emission_day": 0.007479,
+  "alpha_price_tao": 0.016576,
+  "rank": 127,
+  "total_miners": 191,
+  "best_delta": null,
+  "avg_delta": null,
+  "immunity_hours_remaining": 0.0,
+  "chain_block": 8154720,
+  "tao_price_usd": 326.14,
+  "total_earned_tao": 0.008107,
+  "total_earned_alpha": 0.4891,
+  "cost_usd": 8.85,
+  "gpu_hours": 26.0,
+  "tracking_since": "2026-05-09T15:38:00Z",
+  "gpu": "RTX 4090",
+  "tasks": {
+    "received": 0,
+    "completed": 0,
+    "skipped": 0,
+    "attacks_ok": 0,
+    "success_rate": 0
+  },
+  "monitor_ok": true,
+  "updated_at": "2026-05-10T20:30:00Z"
+}
