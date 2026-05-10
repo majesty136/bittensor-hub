@@ -402,7 +402,7 @@ function topMinersTable(miners, ourRank, ourData, accent) {
     return `<tr class="${isUs ? 'us' : ''}">
       <td style="color:${isUs ? accent : 'rgba(255,255,255,.6)'};font-weight:${isUs?700:400};padding-left:${isUs?'6px':'0'}">#${m.rank}</td>
       <td style="color:rgba(255,255,255,.5)">UID ${m.uid}</td>
-      <td style="color:${m.incentive > 0 ? '#30D158' : 'rgba(255,255,255,.3)';font-weight:600">${m.incentive > 0 ? f(m.incentive,5) : '—'}</td>
+      <td style="color:${m.incentive > 0 ? '#30D158' : 'rgba(255,255,255,.3)'};font-weight:600">${m.incentive > 0 ? f(m.incentive,5) : '—'}</td>
       <td style="color:var(--blue)">${m.emission_day > 0 ? f(m.emission_day,4) + 'τ' : '—'}</td>
       ${m.note ? `<td style="color:rgba(255,255,255,.25);font-size:.85em">${m.note}</td>` : '<td></td>'}
     </tr>`;
