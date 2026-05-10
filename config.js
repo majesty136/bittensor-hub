@@ -22,7 +22,7 @@ const SUBNETS = [
     uid:          251,
     gpu:          'RTX 5090',
     network:      'finney',
-    dashboardUrl: 'http://87.197.110.78:40014',
+    dashboardUrl: 'http://87.197.110.78:40167',
     statusFile:   './status/sn85.json',
     color:        '#7c3aed',
     accent:       '#a78bfa',
