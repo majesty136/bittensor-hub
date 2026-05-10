@@ -2,529 +2,718 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mining Hub">
 <meta name="theme-color" content="#000000">
-<title>Mining Hub · Bittensor</title>
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.json">
+<title>Mining Hub</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    background:#000;
-    color:#fff;
-    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-    padding:48px 32px 64px;
+  :root {
+    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --tab-h: 72px;
+    --ok:     #30D158;
+    --warn:   #FF9F0A;
+    --err:    #FF453A;
+    --blue:   #0A84FF;
+    --purple: #BF5AF2;
+    --teal:   #2dd4bf;
+    --dim:    rgba(255,255,255,.35);
+    --faint:  rgba(255,255,255,.06);
   }
-  @media(max-width:680px){body{padding:28px 16px 48px}}
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent }
+  html, body {
+    height: 100%; height: -webkit-fill-available;
+    background: #000; color: #fff; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 
-  .wrap{max-width:1080px;margin:0 auto}
+  /* ── Layout ── */
+  #shell { display: flex; flex-direction: column; height: 100%; height: -webkit-fill-available; }
+  #scroll-area {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(var(--tab-h) + var(--safe-bottom) + 16px);
+  }
 
-  /* ── Header ── */
-  .hd{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:52px}
-  .hd-left h1{font-size:2em;font-weight:700;letter-spacing:-.03em}
-  .hd-left p{margin-top:4px;font-size:.82em;color:rgba(255,255,255,.4)}
-  .hd-right{text-align:right}
-  .hd-ts{font-size:.72em;color:rgba(255,255,255,.25);margin-top:6px}
+  /* ── Status bar spacer ── */
+  .status-spacer {
+    height: calc(var(--safe-top) + 8px);
+    background: #000; position: sticky; top: 0; z-index: 10;
+  }
 
-  /* ── Summary strip ── */
-  .summary{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:2px;
-    margin-bottom:40px;
+  /* ── Page header ── */
+  .page-header {
+    padding: 8px 20px 20px;
+    display: flex; align-items: flex-end; justify-content: space-between;
   }
-  @media(max-width:680px){.summary{grid-template-columns:repeat(2,1fr)}}
-  .sum-tile{
-    background:rgba(255,255,255,.04);
-    padding:24px 22px;
+  .page-title { font-size: 1.75em; font-weight: 700; letter-spacing: -.03em }
+  .refresh-btn {
+    background: var(--faint); border: none; border-radius: 99px;
+    padding: 7px 14px; color: rgba(255,255,255,.5); font-size: .78em;
+    cursor: pointer; font-family: inherit; transition: background .15s;
   }
-  .sum-tile:first-child{border-radius:16px 0 0 16px}
-  .sum-tile:last-child{border-radius:0 16px 16px 0}
-  @media(max-width:680px){
-    .sum-tile:first-child{border-radius:16px 0 0 0}
-    .sum-tile:nth-child(2){border-radius:0 16px 0 0}
-    .sum-tile:nth-child(3){border-radius:0 0 0 16px}
-    .sum-tile:last-child{border-radius:0 0 16px 0}
-  }
-  .sum-label{font-size:.62em;font-weight:500;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
-  .sum-val{font-size:1.8em;font-weight:700;letter-spacing:-.04em;line-height:1}
-  .sum-sub{font-size:.72em;color:rgba(255,255,255,.3);margin-top:5px}
+  .refresh-btn:active { background: rgba(255,255,255,.12) }
+  .refresh-btn.spinning { animation: spin .7s linear infinite }
+  @keyframes spin { to { transform: rotate(360deg) } }
+
+  /* ── Sections ── */
+  .section { display: none; padding: 0 16px }
+  .section.active { display: block }
 
   /* ── Section label ── */
-  .section-label{
-    font-size:.65em;font-weight:600;color:rgba(255,255,255,.3);
-    text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px;
+  .slabel {
+    font-size: .62em; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: rgba(255,255,255,.3);
+    margin: 24px 4px 10px;
   }
 
-  /* ── Cards grid ── */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px}
-  @media(max-width:620px){.grid{grid-template-columns:1fr}}
+  /* ── Hero strip ── */
+  .hero-strip { display: grid; gap: 2px; grid-template-columns: 1fr 1fr; margin: 0 -16px; }
+  .hero-tile { background: var(--faint); padding: 20px 18px; }
+  .hero-tile:nth-child(1) { border-radius: 18px 0 0 0 }
+  .hero-tile:nth-child(2) { border-radius: 0 18px 0 0 }
+  .hero-tile:nth-child(3) { border-radius: 0 0 0 18px }
+  .hero-tile:nth-child(4) { border-radius: 0 0 18px 0 }
+  .ht-label { font-size: .6em; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--dim); margin-bottom: 8px }
+  .ht-val   { font-size: 1.55em; font-weight: 700; letter-spacing: -.04em; line-height: 1 }
+  .ht-sub   { font-size: .68em; color: var(--dim); margin-top: 5px }
 
-  /* ── Miner card ── */
-  .card{
-    background:rgba(255,255,255,.04);
-    border-radius:0;
-    padding:28px;
-    display:flex;flex-direction:column;gap:0;
-    transition:background .2s;
-    position:relative;
+  /* ── Status pill ── */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--faint); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 99px; padding: 6px 14px;
+    font-size: .72em; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
   }
-  .grid .card:first-child{border-radius:20px 0 0 0}
-  .grid .card:nth-child(2){border-radius:0 20px 0 0}
-  .grid .card:last-child{border-radius:0 0 20px 20px}
-  .card:hover{background:rgba(255,255,255,.07)}
+  .dot { width: 6px; height: 6px; border-radius: 50%; animation: blink 2s ease infinite }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
-  .sn-badge{font-size:2.4em;font-weight:800;letter-spacing:-.05em;line-height:1}
-  .status-pill{
-    display:inline-flex;align-items:center;gap:6px;
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:99px;padding:5px 12px;
-    font-size:.68em;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  /* ── Cards ── */
+  .card { background: var(--faint); border-radius: 18px; padding: 20px; margin-bottom: 2px; }
+  .card-title { font-size: .62em; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 16px; }
+
+  /* ── KV rows ── */
+  .kv { display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.06) }
+  .kv:last-child { border: none; padding-bottom: 0 }
+  .kv-label { font-size: .82em; color: var(--dim) }
+  .kv-val   { font-size: .82em; font-weight: 500 }
+
+  /* ── Progress bar ── */
+  .prog-wrap { margin-bottom: 16px }
+  .prog-wrap:last-child { margin-bottom: 0 }
+  .prog-hd { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: .78em }
+  .prog-hd span:first-child { color: var(--dim) }
+  .prog-hd span:last-child  { font-weight: 500 }
+  .prog-bar  { height: 3px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden }
+  .prog-fill { height: 3px; border-radius: 99px; transition: width .6s ease }
+
+  /* ── Miner cards ── */
+  .miner-card { background: var(--faint); border-radius: 18px; padding: 18px 20px; margin-bottom: 2px; }
+  .miner-sn   { font-size: 1.3em; font-weight: 800; letter-spacing: -.03em }
+  .miner-name { font-size: .88em; font-weight: 600; margin-top: 1px }
+  .miner-desc { font-size: .72em; color: var(--dim); margin-top: 2px }
+
+  /* 4-KPI mini-grid */
+  .m4 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 14px 0 12px }
+  .m4-cell { background: rgba(255,255,255,.04); padding: 11px 13px }
+  .m4-cell:nth-child(1) { border-radius: 10px 0 0 0 }
+  .m4-cell:nth-child(2) { border-radius: 0 10px 0 0 }
+  .m4-cell:nth-child(3) { border-radius: 0 0 0 10px }
+  .m4-cell:nth-child(4) { border-radius: 0 0 10px 0 }
+  .m4-label { font-size: .55em; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin-bottom: 5px }
+  .m4-val   { font-size: .84em; font-weight: 600; line-height: 1.2 }
+  .m4-sub   { font-size: .65em; color: var(--dim); margin-top: 3px }
+
+  /* Attack stats strip (SN26 only) */
+  .attack-strip {
+    display: flex; justify-content: space-around; align-items: center;
+    background: rgba(45,212,191,.06); border-radius: 0 0 12px 12px;
+    padding: 9px 12px; margin: -2px 0 12px; gap: 8px;
   }
-  .dot-live{width:5px;height:5px;border-radius:50%;animation:blink 2s ease infinite}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .as-item { text-align: center }
+  .as-label { font-size: .55em; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .1em; }
+  .as-val   { font-size: .84em; font-weight: 700; margin-top: 2px }
 
-  .card-name{font-size:1.1em;font-weight:600;margin-bottom:3px}
-  .card-desc{font-size:.78em;color:rgba(255,255,255,.35);margin-bottom:20px}
-
-  /* metrics 2×2 */
-  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
-  .metric{background:rgba(255,255,255,.04);border-radius:0;padding:14px 16px}
-  .metric:first-child{border-radius:10px 0 0 0}
-  .metric:nth-child(2){border-radius:0 10px 0 0}
-  .metric:nth-child(3){border-radius:0 0 0 10px}
-  .metric:last-child{border-radius:0 0 10px 0}
-  .metric-label{font-size:.6em;font-weight:500;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
-  .metric-val{font-size:.95em;font-weight:600;line-height:1.2}
-  .metric-sub{font-size:.68em;color:rgba(255,255,255,.3);margin-top:3px}
-
-  /* tag row */
-  .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 20px}
-  .tag{
-    background:rgba(255,255,255,.06);border-radius:99px;
-    padding:3px 11px;font-size:.65em;color:rgba(255,255,255,.4);
+  /* Dashboard link button */
+  .dash-btn {
+    display: block; text-align: center;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px; padding: 11px;
+    font-size: .78em; color: rgba(255,255,255,.7); text-decoration: none;
+    transition: background .15s;
   }
+  .dash-btn:active { background: rgba(255,255,255,.12) }
 
-  /* CTA */
-  .btn{
-    display:flex;align-items:center;justify-content:center;gap:8px;
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:12px;padding:12px 20px;
-    color:rgba(255,255,255,.8);font-size:.82em;font-weight:500;
-    cursor:pointer;text-decoration:none;
-    transition:background .15s,border-color .15s;
-    margin-top:auto;
+  /* ── P&L ── */
+  .pnl-total {
+    background: var(--faint); border-radius: 18px; padding: 22px 20px; margin-bottom: 2px;
+    display: flex; justify-content: space-between; align-items: center;
   }
-  .btn:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.2)}
+  .pnl-total-label { font-size: .7em; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px }
+  .pnl-total-val   { font-size: 2em; font-weight: 700; letter-spacing: -.04em }
+  .pnl-total-sub   { font-size: .72em; color: var(--dim); margin-top: 4px }
 
-  /* add card */
-  .card-add{
-    background:rgba(255,255,255,.02);
-    border:1px dashed rgba(255,255,255,.1);
-    border-radius:20px;padding:32px;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:12px;min-height:260px;color:rgba(255,255,255,.2);font-size:.82em;text-align:center;
-  }
-  .add-icon{
-    width:44px;height:44px;border-radius:50%;
-    border:1px dashed rgba(255,255,255,.15);
-    display:flex;align-items:center;justify-content:center;
-    font-size:1.4em;color:rgba(255,255,255,.2);
-  }
+  /* ── Logs ── */
+  .log-entry { padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: .78em; font-family: 'SF Mono','Fira Code',monospace; line-height: 1.4 }
+  .log-entry:last-child { border: none }
+  .log-ts { font-size: .85em; color: rgba(255,255,255,.2); display: block; margin-bottom: 2px }
 
-  /* pills */
-  .p-ok  {display:inline-block;background:rgba(48,209,88,.12);color:#30D158;border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
-  .p-warn{display:inline-block;background:rgba(255,159,10,.12);color:#FF9F0A;border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
-  .p-off {display:inline-block;background:rgba(255,255,255,.06);color:rgba(255,255,255,.3);border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
+  /* ── Last update ── */
+  .last-update { text-align: center; font-size: .68em; color: rgba(255,255,255,.2); margin: 20px 0 8px; padding: 0 16px; }
 
-  /* ── P&L section ── */
-  .pnl-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
-  @media(max-width:680px){.pnl-hero{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:400px){.pnl-hero{grid-template-columns:1fr 1fr}}
-  .pnl-tile{background:rgba(255,255,255,.04);padding:24px 22px}
-  .pnl-tile:first-child{border-radius:16px 0 0 0}
-  .pnl-tile:nth-child(2){border-radius:0}
-  .pnl-tile:nth-child(3){border-radius:0}
-  .pnl-tile:last-child{border-radius:0 16px 0 0}
-  @media(max-width:680px){
-    .pnl-tile:first-child{border-radius:16px 0 0 0}
-    .pnl-tile:nth-child(2){border-radius:0 16px 0 0}
-    .pnl-tile:nth-child(3){border-radius:0 0 0 0}
-    .pnl-tile:last-child{border-radius:0}
-  }
-  .pnl-label{font-size:.62em;font-weight:500;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
-  .pnl-val{font-size:1.8em;font-weight:700;letter-spacing:-.04em;line-height:1}
-  .pnl-sub{font-size:.72em;color:rgba(255,255,255,.3);margin-top:5px}
+  /* ── Chips ── */
+  .chip-ok   { display:inline-block; background:rgba(48,209,88,.12);  color:var(--ok);   border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
+  .chip-warn { display:inline-block; background:rgba(255,159,10,.12); color:var(--warn); border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
+  .chip-off  { display:inline-block; background:rgba(255,255,255,.06);color:var(--dim);  border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
+  .chip-teal { display:inline-block; background:rgba(45,212,191,.12); color:var(--teal); border-radius:99px; padding:2px 9px; font-size:.72em; font-weight:600 }
 
-  .pnl-breakdown{
-    background:rgba(255,255,255,.04);
-    border-radius:0 0 16px 16px;
-    padding:0 22px;
-    overflow-x:auto;
+  /* ── Ranking mini-table ── */
+  .rank-banner {
+    background: rgba(45,212,191,.08); border: 1px solid rgba(45,212,191,.2);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 2px;
+    display: flex; justify-content: space-around; align-items: center; gap: 8px; flex-wrap: wrap;
   }
-  .pnl-row{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05);
-    gap:8px;min-width:0;
-  }
-  .pnl-row:last-child{border:none}
-  .pnl-row-label{font-size:.8em;color:rgba(255,255,255,.4);min-width:0;flex:1}
-  .pnl-row-val{font-size:.8em;font-weight:600;white-space:nowrap}
-  .pnl-row-sub{font-size:.68em;color:rgba(255,255,255,.25);margin-left:8px;white-space:nowrap}
-  .pnl-divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0}
-  @media(max-width:480px){
-    .pnl-row-sub{display:none}
-  }
+  .rank-stat { text-align: center }
+  .rank-stat-label { font-size: .58em; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px }
+  .rank-stat-val   { font-size: 1.3em; font-weight: 700; letter-spacing: -.03em }
 
-  /* ── Forecasting card specifics ── */
-  .immune-badge{
-    display:inline-flex;align-items:center;gap:5px;
-    background:rgba(255,159,10,.12);color:#FF9F0A;
-    border-radius:99px;padding:3px 10px;font-size:.65em;font-weight:600;letter-spacing:.06em;
+  /* ── Tab bar ── */
+  #tabbar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: calc(var(--tab-h) + var(--safe-bottom));
+    background: rgba(0,0,0,.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-top: 1px solid rgba(255,255,255,.08);
+    display: flex; align-items: flex-start;
+    padding-top: 10px; padding-bottom: var(--safe-bottom);
+    z-index: 100;
   }
-  .brier-val{font-size:1.05em;font-weight:700}
-  .brier-sub{font-size:.68em;color:rgba(255,255,255,.3);margin-top:2px}
-  .score-bar{height:3px;border-radius:2px;background:rgba(255,255,255,.08);margin-top:6px;overflow:hidden}
-  .score-fill{height:3px;border-radius:2px;transition:width .5s}
-
-  /* footer */
-  .ft{margin-top:48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-  .ft span{font-size:.68em;color:rgba(255,255,255,.15)}
-  .ft-bar{height:1px;background:rgba(255,255,255,.06);width:100px;border-radius:1px;overflow:hidden}
-  .ft-fill{height:1px;background:rgba(255,255,255,.2);animation:refill 30s linear infinite}
-  @keyframes refill{from{width:0}to{width:100%}}
+  .tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 0 4px; cursor: pointer; border: none; background: none; font-family: inherit;
+    color: rgba(255,255,255,.35); transition: color .2s;
+  }
+  .tab.active { color: #fff }
+  .tab-icon  { font-size: 1.4em; line-height: 1 }
+  .tab-label { font-size: .6em; font-weight: 500; letter-spacing: .02em }
 </style>
 </head>
-<body><div class="wrap">
+<body>
+<div id="shell">
+  <div id="scroll-area">
+    <div class="status-spacer"></div>
 
-<!-- HEADER -->
-<div class="hd">
-  <div class="hd-left">
-    <h1>Mining Hub</h1>
-    <p>Bittensor · Tableau de bord centralisé · Coldkey 5FLpgbE…dSK</p>
-  </div>
-  <div class="hd-right">
-    <div id="last-refresh" class="hd-ts">Chargement…</div>
-  </div>
-</div>
+    <!-- ╔══════════════╗ -->
+    <!-- ║  DASHBOARD   ║ -->
+    <!-- ╚══════════════╝ -->
+    <section class="section active" id="sec-dashboard">
+      <div class="page-header">
+        <div class="page-title">Vue d'ensemble</div>
+        <button class="refresh-btn" id="btn-refresh">↻ Refresh</button>
+      </div>
 
-<!-- SUMMARY -->
-<div class="summary">
-  <div class="sum-tile">
-    <div class="sum-label">Miners actifs</div>
-    <div class="sum-val" id="s-mining" style="color:#30D158">—</div>
-  </div>
-  <div class="sum-tile">
-    <div class="sum-label">Tâches réalisées</div>
-    <div class="sum-val" id="s-tasks" style="color:#BF5AF2">—</div>
-    <div class="sum-sub" id="s-tasks-rate">—% succès</div>
-  </div>
-  <div class="sum-tile">
-    <div class="sum-label">Émission / jour</div>
-    <div class="sum-val" id="s-emission" style="color:#0A84FF">— τ</div>
-  </div>
-  <div class="sum-tile">
-    <div class="sum-label">Coût total</div>
-    <div class="sum-val" id="s-cost" style="color:#FF9F0A">$—</div>
-  </div>
-</div>
+      <!-- Fleet status + block -->
+      <div style="padding:0 4px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+        <div class="status-pill">
+          <div class="dot" id="d-dot" style="background:rgba(255,255,255,.3)"></div>
+          <span id="d-status">…</span>
+        </div>
+        <div style="font-size:.68em;color:rgba(255,255,255,.25)" id="d-block">block —</div>
+      </div>
 
-<!-- P&L GLOBAL -->
-<div class="section-label" style="margin-top:40px">Rentabilité globale</div>
+      <!-- Hero 4-tile : fleet -->
+      <div class="hero-strip">
+        <div class="hero-tile">
+          <div class="ht-label">Miners actifs</div>
+          <div class="ht-val" id="d-mining" style="color:var(--ok)">—</div>
+          <div class="ht-sub">sur <span id="d-total">—</span> subnets</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">Émission / jour</div>
+          <div class="ht-val" id="d-emission" style="color:var(--blue)">—</div>
+          <div class="ht-sub">τ équivalent · flotte</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">Coût total</div>
+          <div class="ht-val" id="d-cost" style="color:var(--warn)">$—</div>
+          <div class="ht-sub" id="d-rate-sub">—</div>
+        </div>
+        <div class="hero-tile">
+          <div class="ht-label">P&amp;L net</div>
+          <div class="ht-val" id="d-pnl">$—</div>
+          <div class="ht-sub" id="d-roi">ROI —%</div>
+        </div>
+      </div>
 
-<div class="pnl-hero">
-  <div class="pnl-tile">
-    <div class="pnl-label">Revenus</div>
-    <div class="pnl-val" id="pnl-revenue" style="color:#30D158">$—</div>
-    <div class="pnl-sub" id="pnl-tao-detail">— τ gagné</div>
-  </div>
-  <div class="pnl-tile">
-    <div class="pnl-label">Coûts variables</div>
-    <div class="pnl-val" id="pnl-var" style="color:#FF9F0A">$—</div>
-    <div class="pnl-sub">GPU + Stockage R2</div>
-  </div>
-  <div class="pnl-tile">
-    <div class="pnl-label">Coûts fixes</div>
-    <div class="pnl-val" id="pnl-fixed" style="color:#FF9F0A">$—</div>
-    <div class="pnl-sub" id="pnl-fixed-period">proratisés sur la période</div>
-  </div>
-  <div class="pnl-tile">
-    <div class="pnl-label">P&amp;L net</div>
-    <div class="pnl-val" id="pnl-net">$—</div>
-    <div class="pnl-sub" id="pnl-roi">ROI —%</div>
-  </div>
-</div>
+      <!-- SN26 Ranking banner -->
+      <div class="slabel">SN26 — Perturb</div>
+      <div class="rank-banner" id="sn26-rank-banner">
+        <div class="rank-stat">
+          <div class="rank-stat-label">Rang</div>
+          <div class="rank-stat-val" id="db-rank" style="color:var(--teal)">—</div>
+        </div>
+        <div class="rank-stat">
+          <div class="rank-stat-label">Incentive</div>
+          <div class="rank-stat-val" id="db-inc" style="color:var(--ok)">—</div>
+        </div>
+        <div class="rank-stat">
+          <div class="rank-stat-label">α/jour</div>
+          <div class="rank-stat-val" id="db-alpha" style="color:var(--teal)">—</div>
+        </div>
+        <div class="rank-stat">
+          <div class="rank-stat-label">τ/jour</div>
+          <div class="rank-stat-val" id="db-tao" style="color:var(--blue)">—</div>
+        </div>
+      </div>
+      <div class="card" style="padding:14px 18px;margin-bottom:2px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:.62em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Meilleur δ L∞</div>
+          <div style="font-size:1.1em;font-weight:700;color:var(--teal)" id="db-delta">—</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.62em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Moy. δ</div>
+          <div style="font-size:1.1em;font-weight:700;color:var(--blue)" id="db-avg-delta">—</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.62em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Challenges</div>
+          <div style="font-size:1.1em;font-weight:700" id="db-tasks">—</div>
+        </div>
+      </div>
 
-<div class="pnl-breakdown" id="pnl-breakdown">
-  <div class="pnl-row" style="padding:16px 0 12px">
-    <span class="pnl-row-label" style="color:rgba(255,255,255,.2);font-size:.68em;letter-spacing:.1em;text-transform:uppercase">Détail des coûts</span>
-    <span class="pnl-row-val" style="font-size:.68em;color:rgba(255,255,255,.15)">TAO <span id="pnl-tao-price">$—</span> · <span id="pnl-period-days">—</span> jours trackés</span>
+      <!-- GPU card (SN85) -->
+      <div class="slabel">SN85 — Vidaio GPU</div>
+      <div class="card">
+        <div class="card-title" id="d-gpu-name">GPU</div>
+        <div class="prog-wrap">
+          <div class="prog-hd"><span>Utilisation GPU</span><span id="d-gpu-util">—</span></div>
+          <div class="prog-bar"><div class="prog-fill" id="pb-gpu-util" style="width:0;background:var(--blue)"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-hd"><span>VRAM</span><span id="d-gpu-mem">—</span></div>
+          <div class="prog-bar"><div class="prog-fill" id="pb-gpu-mem" style="width:0;background:var(--purple)"></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:1.4em;font-weight:700;letter-spacing:-.03em" id="d-temp">—°</div>
+            <div style="font-size:.62em;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.08em">Température</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:1.4em;font-weight:700;letter-spacing:-.03em;color:var(--warn)" id="d-power">— W</div>
+            <div style="font-size:.62em;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.08em">Puissance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services (SN85) -->
+      <div class="slabel">Services PM2 — SN85</div>
+      <div class="card" id="d-services"></div>
+    </section>
+
+    <!-- ╔══════════════╗ -->
+    <!-- ║    MINERS    ║ -->
+    <!-- ╚══════════════╝ -->
+    <section class="section" id="sec-miners">
+      <div class="page-header">
+        <div class="page-title">Miners</div>
+        <div id="m-summary" style="font-size:.78em;color:var(--dim)">—</div>
+      </div>
+      <div id="miners-list"></div>
+    </section>
+
+    <!-- ╔══════════════╗ -->
+    <!-- ║     P&L      ║ -->
+    <!-- ╚══════════════╝ -->
+    <section class="section" id="sec-pnl">
+      <div class="page-header">
+        <div class="page-title">P&amp;L</div>
+        <div style="font-size:.72em;color:var(--dim)">TAO <span id="p-tao-price">$—</span></div>
+      </div>
+      <div class="pnl-total">
+        <div>
+          <div class="pnl-total-label">P&amp;L net</div>
+          <div class="pnl-total-val" id="p-pnl-val">$—</div>
+          <div class="pnl-total-sub" id="p-pnl-sub">ROI —%</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.65em;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Revenus</div>
+          <div style="font-size:1.2em;font-weight:700;color:var(--ok)" id="p-revenue">$—</div>
+          <div style="font-size:.68em;color:var(--dim);margin-top:2px" id="p-tao-earned">— τ gagné</div>
+        </div>
+      </div>
+      <div class="slabel">Détail des coûts</div>
+      <div class="card" id="p-breakdown"></div>
+      <div class="last-update" id="p-period"></div>
+    </section>
+
+    <!-- ╔══════════════╗ -->
+    <!-- ║    LOGS      ║ -->
+    <!-- ╚══════════════╝ -->
+    <section class="section" id="sec-logs">
+      <div class="page-header">
+        <div class="page-title">Logs</div>
+        <div style="font-size:.72em;color:var(--dim)">Perturb Miner</div>
+      </div>
+      <div class="card" id="logs-list">
+        <div style="color:var(--dim);font-size:.82em;text-align:center;padding:20px 0">Chargement…</div>
+      </div>
+    </section>
+
+    <div class="last-update" id="last-update">Chargement…</div>
   </div>
-</div>
 
-<!-- GRID -->
-<div class="section-label" style="margin-top:40px">Miners</div>
-<div class="grid" id="grid"></div>
-
-<!-- FOOTER -->
-<div class="ft">
-  <a href="app.html" style="font-size:.68em;color:rgba(255,255,255,.25);text-decoration:none">
-    Installer l'app iOS →
-  </a>
-  <div style="display:flex;align-items:center;gap:10px">
-    <span>Prochain refresh</span>
-    <div class="ft-bar"><div class="ft-fill"></div></div>
-  </div>
-</div>
-
+  <!-- Tab bar -->
+  <nav id="tabbar">
+    <button class="tab active" onclick="showTab('dashboard',this)">
+      <span class="tab-icon">◈</span>
+      <span class="tab-label">Dashboard</span>
+    </button>
+    <button class="tab" onclick="showTab('miners',this)">
+      <span class="tab-icon">⛏</span>
+      <span class="tab-label">Miners</span>
+    </button>
+    <button class="tab" onclick="showTab('pnl',this)">
+      <span class="tab-icon">$</span>
+      <span class="tab-label">P&amp;L</span>
+    </button>
+    <button class="tab" onclick="showTab('logs',this)">
+      <span class="tab-icon">≡</span>
+      <span class="tab-label">Logs</span>
+    </button>
+  </nav>
 </div>
 
 <script src="config.js"></script>
 <script src="mining-core.js"></script>
 <script>
-const grid = document.getElementById('grid');
-// statusColor, fetchStatus, fetchMeta, fetchTaoPrice, computePnl,
-// computeFleetSummary, fmtPnl → tous dans mining-core.js
-
-// ── Card unifiée (4 KPIs identiques pour tous les subnets) ──────────
-
-function buildCard(sub) {
-  const workLabel = sub.type === 'forecasting' ? 'Travail produit' : 'Travail produit';
-  const costLabel = sub.type === 'forecasting' ? 'Coût engagés' : 'Coût engagés';
-  const div = document.createElement('div');
-  div.className = 'card'; div.id = 'card-' + sub.netuid;
-  div.innerHTML = `
-    <div class="card-top">
-      <div class="sn-badge" style="color:${sub.color}">SN${sub.netuid}</div>
-      <div class="status-pill" style="color:rgba(255,255,255,.3)">
-        <div class="dot-live" style="background:rgba(255,255,255,.3)"></div>
-        <span class="status-label">…</span>
-      </div>
-    </div>
-    <div class="card-name">${sub.name}</div>
-    <div class="card-desc">${sub.description}</div>
-    <div class="metrics">
-      <div class="metric">
-        <div class="metric-label">Incentive</div>
-        <div class="metric-val m-incentive"><span class="p-off">…</span></div>
-        <div class="metric-sub m-incentive-sub">—</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Travail produit</div>
-        <div class="metric-val m-work" style="color:#0A84FF">—</div>
-        <div class="metric-sub m-work-sub">—</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Coût engagés</div>
-        <div class="metric-val m-cost" style="color:#FF9F0A">—</div>
-        <div class="metric-sub m-cost-sub">—</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Balance</div>
-        <div class="metric-val m-bal" style="color:#30D158">— τ</div>
-        <div class="metric-sub m-bal-sub">coldkey</div>
-      </div>
-    </div>
-    <div class="tag-row">
-      <span class="tag m-uid-tag">UID #${sub.uid!=null?sub.uid:'—'}</span>
-      <span class="tag m-extra-tag">${sub.type==='forecasting'?'MAIN track':sub.gpu}</span>
-      ${sub.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
-      <span class="tag">${sub.network}</span>
-    </div>
-    <a class="btn" href="${sub.dashboardUrl}" target="_blank">Dashboard &nbsp;→</a>
-  `;
-  return div;
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/bittensor-hub/sw.js', { scope: '/bittensor-hub/' });
 }
 
-function renderCard(sub, data) {
-  const card = document.getElementById('card-' + sub.netuid);
-  if (!card) return;
+function showTab(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('scroll-area').scrollTop = 0;
+}
 
-  // ── Status pill ──
-  const s = data ? data.status : 'OFFLINE';
-  let sc;
-  if (s==='MINING'||s==='ACTIVE')      sc = '#30D158';
-  else if (s==='IMMUNE'||s==='STARTING') sc = '#FF9F0A';
-  else if (s==='OFFLINE'||s==='ERROR')   sc = '#FF453A';
-  else                                   sc = 'rgba(255,255,255,.3)';
-  card.querySelector('.dot-live').style.background = sc;
-  card.querySelector('.status-pill').style.color   = sc;
-  const hours = data ? (data.immunity_hours_remaining || 0) : 0;
-  card.querySelector('.status-label').textContent  = s==='IMMUNE' ? `IMMUNE · ${fmtHours(hours)}` : s;
+const $ = id => document.getElementById(id);
 
-  if (!data) {
-    card.querySelector('.m-incentive').innerHTML       = '<span class="p-off">OFFLINE</span>';
-    card.querySelector('.m-incentive-sub').textContent = '—';
-    card.querySelector('.m-work').textContent          = '—';
-    card.querySelector('.m-work-sub').textContent      = '—';
-    card.querySelector('.m-cost').textContent          = '—';
-    card.querySelector('.m-cost-sub').textContent      = '—';
-    card.querySelector('.m-bal').textContent           = '— τ';
-    card.querySelector('.m-bal-sub').textContent       = 'coldkey';
-    card.querySelector('.m-uid-tag').textContent       = sub.uid!=null ? `UID #${sub.uid}` : '—';
-    return;
+function f(n, digits) {
+  const v = parseFloat(n);
+  return isFinite(v) ? v.toFixed(digits) : '—';
+}
+
+function setBar(id, pct, color) {
+  const el = $(id);
+  if (el) { el.style.width = pct + '%'; el.style.background = color; }
+}
+
+// ── Dashboard tab ──────────────────────────────────────────────────
+function renderDashboard(results, taoPrice) {
+  const fleet = computeFleetSummary(results);
+  const anyActive = fleet.mining > 0;
+
+  $('d-dot').style.background = anyActive ? '#30D158' : '#FF453A';
+  $('d-status').textContent   = anyActive ? `${fleet.mining} ACTIF${fleet.mining>1?'S':''}` : 'HORS LIGNE';
+
+  const firstData = results.find(d => d && d.chain_block);
+  $('d-block').textContent = firstData ? 'block #' + firstData.chain_block : 'block —';
+
+  $('d-mining').textContent   = fleet.mining;
+  $('d-mining').style.color   = anyActive ? '#30D158' : '#FF453A';
+  $('d-total').textContent    = SUBNETS.length;
+  $('d-emission').textContent = fleet.totalEmission > 0 ? '~' + fleet.totalEmission.toFixed(5) : '—';
+  $('d-cost').textContent     = '$' + fleet.totalCost.toFixed(2);
+  $('d-rate-sub').textContent = fleet.successRate > 0 ? fleet.successRate + '% succès tâches' : 'coûts variables';
+
+  const p = computePnl(results, taoPrice, FIXED_COSTS);
+  $('d-pnl').textContent   = fmtPnl(p.pnl);
+  $('d-pnl').style.color   = p.pnl >= 0 ? '#30D158' : '#FF453A';
+  $('d-roi').textContent   = 'ROI ' + (p.roi >= 0 ? '+' : '') + p.roi.toFixed(1) + '%';
+
+  // SN26 banner (results[2] in SUBNETS array where netuid=26)
+  const sn26idx = SUBNETS.findIndex(s => s.netuid === 26);
+  const sn26    = sn26idx >= 0 ? results[sn26idx] : null;
+  if (sn26) {
+    const alpha = sn26.emission_day_alpha || 0;
+    const tau   = sn26.emission_day || 0;
+    const rank  = sn26.rank;
+    const total = sn26.total_miners;
+    $('db-rank').textContent      = rank ? `#${rank}/${total||'?'}` : '—';
+    $('db-inc').textContent       = sn26.incentive ? f(sn26.incentive, 5) : '—';
+    $('db-alpha').textContent     = alpha > 0 ? f(alpha, 3) : '—';
+    $('db-tao').textContent       = tau > 0 ? f(tau, 4) : '—';
+    $('db-delta').textContent     = sn26.best_delta != null ? f(sn26.best_delta, 4) : '—';
+    $('db-avg-delta').textContent = sn26.avg_delta  != null ? f(sn26.avg_delta,  4) : '—';
+    const tasks = sn26.tasks || {};
+    $('db-tasks').textContent     = tasks.completed != null ? `${tasks.completed}/${tasks.received}` : '—';
   }
 
-  // ── KPI 1 : Incentive ──
-  const inc       = data.incentive || 0;
-  const eday      = data.emission_day || 0;
-  const edayAlpha = data.emission_day_alpha || 0;
-  card.querySelector('.m-incentive').innerHTML =
-    inc > 0
-      ? `<span class="p-ok">ACTIF</span> <span style="font-size:.82em">${inc.toFixed(6)}</span>`
-      : `<span class="p-off">EN ATTENTE</span>`;
-  card.querySelector('.m-incentive-sub').textContent =
-    edayAlpha > 0
-      ? `~${edayAlpha.toFixed(3)} α/jour ≈ ${eday.toFixed(4)} τ`
-      : eday > 0 ? `~${eday.toFixed(4)} τ/jour` : "Pas d'émission";
+  // GPU (SN85 = first in list)
+  const sn85 = results.find((d, i) => SUBNETS[i]?.netuid === 85);
+  if (sn85) {
+    const gpuName = sn85.gpu_name ? sn85.gpu_name.replace('NVIDIA ','').replace('GeForce ','') : '—';
+    $('d-gpu-name').textContent = gpuName;
+    $('d-gpu-util').textContent = (sn85.gpu_util != null ? sn85.gpu_util : '—') + '%';
+    setBar('pb-gpu-util', sn85.gpu_util || 0, '#0A84FF');
+    $('d-gpu-mem').textContent = '—';
+    $('d-temp').textContent    = (sn85.gpu_temp != null ? sn85.gpu_temp : '—') + '°';
+    $('d-temp').style.color    = sn85.gpu_temp > 80 ? '#FF453A' : sn85.gpu_temp > 70 ? '#FF9F0A' : '#30D158';
+    $('d-power').textContent   = (sn85.gpu_power || '—') + ' W';
 
-  // ── KPI 2 : Travail produit ──
-  if (sub.type === 'forecasting') {
-    const pred = data.predictions_count || 0;
-    const brier = data.brier_score;
-    card.querySelector('.m-work').textContent     = pred > 0 ? pred + ' prédictions' : '—';
-    card.querySelector('.m-work-sub').textContent = brier !== null
-      ? `Brier ${brier.toFixed(4)} · ${brier < 0.25 ? '↓ bon' : 'à améliorer'}`
-      : (pred > 0 ? 'Score en cours' : 'En attente d\'activation');
-    card.querySelector('.m-work').style.color = pred > 0 ? '#0A84FF' : 'rgba(255,255,255,.3)';
-  } else {
-    const tasks = data.tasks || {};
-    const done = tasks.completed || 0, recv = tasks.received || 0, rate = tasks.success_rate || 0;
-    card.querySelector('.m-work').textContent     = recv > 0 ? `${done} / ${recv}` : '—';
-    card.querySelector('.m-work-sub').innerHTML   = recv > 0
-      ? `<span class="${rate>=80?'p-ok':rate>=50?'p-warn':'p-off'}">${rate}% succès</span>`
-      : '<span class="p-off">Aucune tâche</span>';
-    card.querySelector('.m-work').style.color = recv > 0 ? '#0A84FF' : 'rgba(255,255,255,.3)';
+    const svcs = sn85.services || {};
+    const svcLabels = { 'video-upscaler':'Upscaler','video-compressor':'Compressor','video-deleter':'Deleter','video-miner':'Miner' };
+    $('d-services').innerHTML = Object.entries(svcs).map(([k, v]) => {
+      const ok  = v === 'online';
+      const col = ok ? '#30D158' : v === 'errored' ? '#FF453A' : 'rgba(255,255,255,.3)';
+      return `<div class="kv">
+        <span class="kv-label">${svcLabels[k] || k}</span>
+        <span class="kv-val" style="color:${col}">${v.toUpperCase()}</span>
+      </div>`;
+    }).join('');
   }
+}
 
-  // ── KPI 3 : Coût engagés ──
-  const cost = data.cost_usd || 0;
-  card.querySelector('.m-cost').textContent     = '$' + cost.toFixed(2);
-  card.querySelector('.m-cost-sub').textContent = sub.type === 'forecasting'
-    ? (data.agent_name || 'API LLM')
-    : (data.gpu_hours != null ? `${data.gpu_hours.toFixed(1)} h GPU` : 'RunPod');
+// ── Miners tab ──────────────────────────────────────────────────────
+function renderMiners(results) {
+  const ACTIVE_S = ['MINING','ACTIVE','IMMUNE','STARTING'];
+  const active = results.filter(d => d && ACTIVE_S.includes(d.status)).length;
+  $('m-summary').textContent = active + ' / ' + SUBNETS.length + ' actif' + (active > 1 ? 's' : '');
 
-  // ── KPI 4 : Balance en TAO ──
-  const bal = data.balance;
-  const balStr = (bal && bal !== '—') ? Number(bal).toFixed(4) + ' τ' : '— τ';
-  card.querySelector('.m-bal').textContent     = balStr;
-  card.querySelector('.m-bal-sub').textContent = 'coldkey';
+  $('miners-list').innerHTML = SUBNETS.map((sub, i) => {
+    const data = results[i];
+    const s  = data ? data.status : 'OFFLINE';
+    let sc;
+    if (s==='MINING'||s==='ACTIVE')        sc = '#30D158';
+    else if (s==='IMMUNE'||s==='STARTING') sc = '#FF9F0A';
+    else                                   sc = '#FF453A';
 
-  // ── Tags ──
-  card.querySelector('.m-uid-tag').textContent  = `UID #${data.uid!=null?data.uid:sub.uid}`;
-  if (sub.type === 'compute') {
-    const gpuName = data.gpu_name
-      ? data.gpu_name.replace('NVIDIA ','').replace('GeForce ','')
-      : sub.gpu;
-    // SN26: show rank in GPU tag
-    if (sub.netuid === 26 && data.rank) {
-      card.querySelector('.m-extra-tag').textContent = `${gpuName} · Rang #${data.rank}`;
+    const hours = data ? (data.immunity_hours_remaining || 0) : 0;
+    const label = s === 'IMMUNE' ? `IMMUNE · ${fmtHours(hours)}` : s;
+
+    // ── KPI 1 : Incentive + émission ──
+    const inc       = data ? (data.incentive || 0) : 0;
+    const eday      = data ? (data.emission_day || 0) : 0;
+    const edayAlpha = data ? (data.emission_day_alpha || 0) : 0;
+    const incHTML   = inc > 0
+      ? `<span class="chip-ok" style="font-size:.72em">ACTIF</span> <span style="font-size:.78em;font-weight:700">${f(inc,5)}</span>`
+      : `<span class="chip-off" style="font-size:.72em">EN ATTENTE</span>`;
+    const incSub = edayAlpha > 0
+      ? `~${f(edayAlpha,3)} α/j ≈ ${f(eday,4)} τ`
+      : eday > 0 ? `~${f(eday,4)} τ/jour` : "Pas d'émission";
+
+    // ── KPI 2 : Travail produit ──
+    let workVal, workSub, workColor = 'var(--blue)';
+    if (sub.type === 'forecasting') {
+      const pred  = data ? (data.predictions_count || 0) : 0;
+      const brier = data ? (data.brier_score ?? null) : null;
+      workVal  = pred > 0 ? pred + ' préd.' : '—';
+      workSub  = brier != null ? `Brier ${f(brier,4)}` : (pred > 0 ? 'Score en cours' : 'En attente');
+      workColor = pred > 0 ? 'var(--blue)' : 'var(--dim)';
     } else {
-      card.querySelector('.m-extra-tag').textContent =
-        data.gpu_util != null ? `${gpuName} · ${data.gpu_util}%` : gpuName;
+      const tasks = data ? (data.tasks || {}) : {};
+      const done = tasks.completed || 0, recv = tasks.received || 0, rate = tasks.success_rate || 0;
+      workVal   = recv > 0 ? `${done} / ${recv}` : '—';
+      workSub   = recv > 0 ? `${rate}% succès` : 'Aucune tâche';
+      workColor = recv > 0 ? 'var(--blue)' : 'var(--dim)';
     }
-  }
+
+    // ── KPI 3 : Coût engagés ──
+    const cost    = data ? (data.cost_usd || 0) : 0;
+    const costSub = sub.type === 'forecasting'
+      ? (data && data.agent_name ? data.agent_name : 'API LLM')
+      : (data && data.gpu_hours != null ? `${f(data.gpu_hours,1)} h GPU` : 'RunPod');
+
+    // ── KPI 4 : Rang (SN26) ou Balance (autres) ──
+    let kpi4Label, kpi4Val, kpi4Sub, kpi4Color;
+    if (sub.netuid === 26 && data && data.rank) {
+      kpi4Label = 'Rang SN26';
+      kpi4Val   = `#${data.rank}`;
+      kpi4Sub   = `sur ${data.total_miners || '?'} miners`;
+      kpi4Color = 'var(--teal)';
+    } else {
+      const bal = data ? data.balance : null;
+      kpi4Label = 'Balance';
+      kpi4Val   = (bal != null && bal !== '—') ? f(Number(bal),4) + ' τ' : '— τ';
+      kpi4Sub   = 'coldkey';
+      kpi4Color = 'var(--ok)';
+    }
+
+    // ── Rank + GPU in desc ──
+    const rankBadge = (data && data.rank) ? ` · Rang #${data.rank}` : '';
+    const gpuLabel  = sub.type === 'forecasting' ? 'No GPU' : sub.gpu;
+
+    // ── Attack strip (SN26 only) ──
+    const attackStrip = (sub.netuid === 26 && data) ? `
+      <div class="attack-strip">
+        <div class="as-item">
+          <div class="as-label">Meilleur δ</div>
+          <div class="as-val" style="color:var(--teal)">${data.best_delta != null ? f(data.best_delta,4) : '—'}</div>
+        </div>
+        <div class="as-item">
+          <div class="as-label">Moy. δ</div>
+          <div class="as-val" style="color:var(--blue)">${data.avg_delta != null ? f(data.avg_delta,4) : '—'}</div>
+        </div>
+        <div class="as-item">
+          <div class="as-label">Statut</div>
+          <div class="as-val"><span class="chip-teal" style="font-size:.7em">PGD</span></div>
+        </div>
+      </div>` : '';
+
+    return `
+      <div class="miner-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="miner-sn" style="color:${sub.color}">SN${sub.netuid}</div>
+            <div class="miner-name">${sub.name}</div>
+            <div class="miner-desc">UID #${sub.uid}${rankBadge} · ${gpuLabel} · ${sub.network}</div>
+          </div>
+          <div class="status-pill" style="color:${sc};border-color:${sc}33;background:${sc}12;flex-shrink:0">
+            <div class="dot" style="background:${sc}"></div>
+            <span style="font-size:.9em">${label}</span>
+          </div>
+        </div>
+        <div class="m4">
+          <div class="m4-cell">
+            <div class="m4-label">Incentive</div>
+            <div class="m4-val">${incHTML}</div>
+            <div class="m4-sub">${incSub}</div>
+          </div>
+          <div class="m4-cell">
+            <div class="m4-label">Travail produit</div>
+            <div class="m4-val" style="color:${workColor}">${workVal}</div>
+            <div class="m4-sub">${workSub}</div>
+          </div>
+          <div class="m4-cell">
+            <div class="m4-label">Coût engagés</div>
+            <div class="m4-val" style="color:var(--warn)">$${f(cost,2)}</div>
+            <div class="m4-sub">${costSub}</div>
+          </div>
+          <div class="m4-cell">
+            <div class="m4-label">${kpi4Label}</div>
+            <div class="m4-val" style="color:${kpi4Color}">${kpi4Val}</div>
+            <div class="m4-sub">${kpi4Sub}</div>
+          </div>
+        </div>
+        ${attackStrip}
+        <a class="dash-btn" href="${sub.dashboardUrl}" ${sub.dashboardUrl.startsWith('http')?'target="_blank"':''}>
+          Dashboard &nbsp;→
+        </a>
+      </div>
+    `;
+  }).join('');
 }
 
-function buildAddCard() {
-  const div = document.createElement('div');
-  div.className = 'card-add';
-  div.innerHTML = `
-    <div class="add-icon">+</div>
-    <div>
-      <div style="font-weight:500;color:rgba(255,255,255,.3);margin-bottom:4px">Ajouter un subnet</div>
-      <div style="font-size:.88em">Éditer <code style="color:rgba(255,255,255,.4)">config.js</code></div>
-    </div>
-  `;
-  return div;
-}
-
-// ── renderPnl : DOM update only — calcul via mining-core.js::computePnl ──
+// ── P&L tab ─────────────────────────────────────────────────────────
 function renderPnl(results, taoPrice) {
-  const p = computePnl(results, taoPrice, FIXED_COSTS, REGISTRATION_COSTS);
+  const p = computePnl(results, taoPrice, FIXED_COSTS);
   const pnlColor = p.pnl >= 0 ? '#30D158' : '#FF453A';
 
-  document.getElementById('pnl-revenue').textContent    = '+$' + p.revenue.toFixed(2);
-  document.getElementById('pnl-tao-detail').textContent = '~' + p.totalEarnedTao.toFixed(4) + ' τ · ~' + p.totalEarnedAlpha.toFixed(2) + ' α (estimé)';
-  document.getElementById('pnl-var').textContent        = '−$' + p.varCosts.toFixed(2);
-  document.getElementById('pnl-fixed').textContent      = '−$' + p.fixedTotal.toFixed(2);
-  document.getElementById('pnl-fixed-period').textContent =
-    p.daysTracked > 0 ? '$' + p.monthlyFixed + '/mois · ' + p.daysTracked.toFixed(1) + ' j trackés' : 'proratisés sur la période';
-  document.getElementById('pnl-net').style.color = pnlColor;
-  document.getElementById('pnl-net').textContent  = fmtPnl(p.pnl);
-  document.getElementById('pnl-roi').textContent  =
-    'ROI ' + (p.roi >= 0 ? '+' : '−') + Math.abs(p.roi).toFixed(1) + '%' +
-    (p.breakEvenDays > 0 ? ' · BE dans ' + p.breakEvenDays.toFixed(0) + ' j' : '');
-  document.getElementById('pnl-tao-price').textContent  = '$' + p.price.toFixed(2);
-  document.getElementById('pnl-period-days').textContent = p.daysTracked.toFixed(1);
+  $('p-tao-price').textContent  = p.price > 0 ? '$' + p.price.toFixed(2) : '$—';
+  $('p-pnl-val').textContent    = fmtPnl(p.pnl);
+  $('p-pnl-val').style.color    = pnlColor;
+  $('p-pnl-sub').textContent    = 'ROI ' + (p.roi >= 0 ? '+' : '') + p.roi.toFixed(1) + '%'
+    + (p.breakEvenDays > 0 ? ' · BE dans ' + p.breakEvenDays.toFixed(0) + ' j' : '');
+  $('p-revenue').textContent    = '+$' + p.revenue.toFixed(2);
+  $('p-tao-earned').textContent = p.totalEarnedTao.toFixed(6) + ' τ gagné';
 
-  // Breakdown — lignes issues de mining-core.js (p.lines)
-  const bd = document.getElementById('pnl-breakdown');
-  bd.innerHTML = '';
-
-  p.lines.forEach(r => {
-    const div = document.createElement('div');
-    div.className = 'pnl-row';
-    if (r.separator) {
-      div.style.borderTop = '1px solid rgba(255,255,255,.12)';
-      div.style.marginTop = '4px';
-      div.style.paddingTop = '16px';
-    }
+  $('p-breakdown').innerHTML = p.lines.map(r => {
     const isPnlRow = r.label === 'P&L net';
-    const color = isPnlRow ? pnlColor : (r.sign > 0 ? '#30D158' : '#FF9F0A');
+    const color  = isPnlRow ? pnlColor : (r.sign > 0 ? '#30D158' : '#FF9F0A');
     const valStr = isPnlRow ? fmtPnl(r.val) : (r.sign > 0 ? '+' : '−') + '$' + Math.abs(r.val).toFixed(2);
-    div.innerHTML =
-      `<span class="pnl-row-label">${r.label}</span>` +
-      `<span><span class="pnl-row-val" style="color:${color}">${valStr}</span>` +
-      `<span class="pnl-row-sub">${r.sub}</span></span>`;
-    bd.appendChild(div);
-  });
+    return `<div class="kv" ${r.separator ? 'style="border-top:1px solid rgba(255,255,255,.12);margin-top:6px;padding-top:14px"' : ''}>
+      <div>
+        <span class="kv-label">${r.label}</span>
+        <div style="font-size:.68em;color:rgba(255,255,255,.2);margin-top:2px">${r.sub}</div>
+      </div>
+      <span class="kv-val" style="color:${color}">${valStr}</span>
+    </div>`;
+  }).join('');
+
+  $('p-period').textContent = p.daysTracked > 0
+    ? `Tracking depuis ${p.daysTracked.toFixed(1)} jours · $${p.monthlyFixed}/mois en coûts fixes`
+    : 'Tracking en cours…';
 }
 
+// ── Logs tab ─────────────────────────────────────────────────────────
+function renderLogs(data) {
+  if (!data || !data.logs || data.logs.length === 0) {
+    $('logs-list').innerHTML = '<div style="color:var(--dim);font-size:.82em;text-align:center;padding:20px 0">Aucun log disponible</div>';
+    return;
+  }
+  $('logs-list').innerHTML = data.logs.map(e => {
+    const isErr  = /error|fail|exception/i.test(e.msg);
+    const isWarn = /warn|timeout/i.test(e.msg);
+    const col = isErr ? '#FF453A' : isWarn ? '#FF9F0A' : 'rgba(255,255,255,.55)';
+    return `<div class="log-entry">
+      <span class="log-ts">${e.ts}</span>
+      <span style="color:${col}">${e.msg}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── Logs from SN26 recent challenges ─────────────────────────────────
+function buildLogsFromSn26(data) {
+  if (!data) return;
+  const ch = data.tasks || {};
+  // Try to show recent challenges as pseudo-logs
+  const recent = data._recent_challenges || [];
+  if (recent.length === 0) return;
+  $('logs-list').innerHTML = recent.map(r => {
+    const col = r.ok ? '#30D158' : '#FF453A';
+    const res = r.ok ? '✓' : '✗';
+    return `<div class="log-entry">
+      <span class="log-ts">${r.ts || ''}</span>
+      <span style="color:${col}">${res} ${r.norm_type} ε=${r.epsilon} δ=${r.delta != null ? r.delta.toFixed(4) : '—'}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── Main refresh ──────────────────────────────────────────────────────
+let _taoPrice = 0;
+
 async function refresh() {
-  const [results, meta, taoPrice] = await Promise.all([
-    Promise.all(SUBNETS.map(fetchStatus)),
-    fetchMeta(),
-    fetchTaoPrice(0),
-  ]);
+  const btn = $('btn-refresh');
+  if (btn) btn.classList.add('spinning');
 
-  // Agrégats flotte via mining-core.js
-  const fleet = computeFleetSummary(results);
-  let taoFallback = 0;
-  results.forEach((data, i) => {
-    renderCard(SUBNETS[i], data);
-    if (data && data.tao_price_usd) taoFallback = data.tao_price_usd;
-  });
+  try {
+    const [results, meta, tao] = await Promise.all([
+      Promise.all(SUBNETS.map(fetchStatus)),
+      fetchMeta(),
+      fetchTaoPrice(),
+    ]);
 
-  const price = taoPrice || taoFallback;
+    if (tao) _taoPrice = tao;
+    else {
+      const fb = results.find(d => d && d.tao_price_usd);
+      if (fb) _taoPrice = fb.tao_price_usd;
+    }
 
-  document.getElementById('s-mining').textContent      = fleet.mining + ' / ' + SUBNETS.length;
-  document.getElementById('s-tasks').textContent       = fleet.totalDone + ' / ' + fleet.totalRecv;
-  document.getElementById('s-tasks-rate').textContent  = fleet.successRate + '% succès';
-  document.getElementById('s-emission').textContent    = fleet.totalEmission > 0 ? '~' + fleet.totalEmission.toFixed(5) + ' τ' : '— τ';
-  document.getElementById('s-cost').textContent        = '$' + fleet.totalCost.toFixed(2);
+    try { renderMiners(results); } catch(e) { console.error('renderMiners', e); }
+    try { renderDashboard(results, _taoPrice); } catch(e) { console.error('renderDashboard', e); }
+    try { renderPnl(results, _taoPrice); } catch(e) { console.error('renderPnl', e); }
+    try { renderLogs(results[0]); } catch(e) { console.error('renderLogs', e); }
 
-  renderPnl(results, price);
-
-  if (meta && meta.updated_at) {
-    const d = new Date(meta.updated_at);
-    document.getElementById('last-refresh').textContent =
-      'Données du ' + d.toLocaleTimeString('fr-FR') + ' · refresh auto toutes les 15 min';
-  } else {
-    document.getElementById('last-refresh').textContent = 'En attente du premier refresh…';
+    if (meta && meta.updated_at) {
+      const d = new Date(meta.updated_at);
+      $('last-update').textContent = 'Données du ' + d.toLocaleTimeString('fr-FR');
+    }
+  } finally {
+    if (btn) btn.classList.remove('spinning');
   }
 }
 
-SUBNETS.forEach(sub => grid.appendChild(buildCard(sub)));
-grid.appendChild(buildAddCard());
 refresh();
 setInterval(refresh, 30_000);
+$('btn-refresh').addEventListener('click', refresh);
 </script>
 </body>
 </html>

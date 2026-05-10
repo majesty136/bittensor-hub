@@ -21,25 +21,24 @@
   "tracking_since": "2026-05-09T15:38:00Z",
   "immunity_hours_remaining": 0.0,
   "tasks": {
-    "received": 44,
-    "completed": 44,
+    "received": 43,
+    "completed": 43,
     "skipped": 0,
-    "attacks_ok": 44,
+    "attacks_ok": 43,
     "success_rate": 100
   },
   "pm2": {
-    "perturb-miner":  {"status": "online", "restarts": 36, "uptime": "25m"},
-    "sn26-monitor":   {"status": "online", "restarts": 2,  "uptime": "110m"},
-    "sn26-optimizer": {"status": "online", "restarts": 3,  "uptime": "25m"}
+    "perturb-miner": {"status": "online", "restarts": 36, "uptime": "25m"},
+    "sn26-monitor":  {"status": "online", "restarts": 2,  "uptime": "110m"},
+    "sn26-optimizer":{"status": "online", "restarts": 3,  "uptime": "25m"}
   },
   "optimizer": {
     "enabled": true,
-    "optimizations": 6,
-    "last_run": "2026-05-10T16:57:00Z"
+    "optimizations": 1,
+    "last_run": "2026-05-10T16:30:00Z"
   },
   "monitor_ok": true,
   "chain_block": 8158200,
   "axon_ip": "103.196.86.111",
-  "axon_port": 16812,
-  "floor_pct": 33.3
+  "axon_port": 16812
 }

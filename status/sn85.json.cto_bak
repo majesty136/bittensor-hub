@@ -37,7 +37,7 @@
   "optimizer": {
     "enabled": true,
     "optimizations": 1,
-    "last_run": "2026-05-10T16:57:00Z",
+    "last_run": "2026-05-10T16:00:00Z",
     "config": "crf18/slow"
   },
   "monitor_ok": true,

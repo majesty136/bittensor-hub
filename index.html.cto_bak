@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#000000">
+<title>Mining Hub · Bittensor</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#000;
+    color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding:48px 32px 64px;
+  }
+  @media(max-width:680px){body{padding:28px 16px 48px}}
+
+  .wrap{max-width:1080px;margin:0 auto}
+
+  /* ── Header ── */
+  .hd{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:52px}
+  .hd-left h1{font-size:2em;font-weight:700;letter-spacing:-.03em}
+  .hd-left p{margin-top:4px;font-size:.82em;color:rgba(255,255,255,.4)}
+  .hd-right{text-align:right}
+  .hd-ts{font-size:.72em;color:rgba(255,255,255,.25);margin-top:6px}
+
+  /* ── Summary strip ── */
+  .summary{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:2px;
+    margin-bottom:40px;
+  }
+  @media(max-width:680px){.summary{grid-template-columns:repeat(2,1fr)}}
+  .sum-tile{
+    background:rgba(255,255,255,.04);
+    padding:24px 22px;
+  }
+  .sum-tile:first-child{border-radius:16px 0 0 16px}
+  .sum-tile:last-child{border-radius:0 16px 16px 0}
+  @media(max-width:680px){
+    .sum-tile:first-child{border-radius:16px 0 0 0}
+    .sum-tile:nth-child(2){border-radius:0 16px 0 0}
+    .sum-tile:nth-child(3){border-radius:0 0 0 16px}
+    .sum-tile:last-child{border-radius:0 0 16px 0}
+  }
+  .sum-label{font-size:.62em;font-weight:500;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+  .sum-val{font-size:1.8em;font-weight:700;letter-spacing:-.04em;line-height:1}
+  .sum-sub{font-size:.72em;color:rgba(255,255,255,.3);margin-top:5px}
+
+  /* ── Section label ── */
+  .section-label{
+    font-size:.65em;font-weight:600;color:rgba(255,255,255,.3);
+    text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px;
+  }
+
+  /* ── Cards grid ── */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px}
+  @media(max-width:620px){.grid{grid-template-columns:1fr}}
+
+  /* ── Miner card ── */
+  .card{
+    background:rgba(255,255,255,.04);
+    border-radius:0;
+    padding:28px;
+    display:flex;flex-direction:column;gap:0;
+    transition:background .2s;
+    position:relative;
+  }
+  .grid .card:first-child{border-radius:20px 0 0 0}
+  .grid .card:nth-child(2){border-radius:0 20px 0 0}
+  .grid .card:last-child{border-radius:0 0 20px 20px}
+  .card:hover{background:rgba(255,255,255,.07)}
+
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .sn-badge{font-size:2.4em;font-weight:800;letter-spacing:-.05em;line-height:1}
+  .status-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:99px;padding:5px 12px;
+    font-size:.68em;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  }
+  .dot-live{width:5px;height:5px;border-radius:50%;animation:blink 2s ease infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .card-name{font-size:1.1em;font-weight:600;margin-bottom:3px}
+  .card-desc{font-size:.78em;color:rgba(255,255,255,.35);margin-bottom:20px}
+
+  /* metrics 2×2 */
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+  .metric{background:rgba(255,255,255,.04);border-radius:0;padding:14px 16px}
+  .metric:first-child{border-radius:10px 0 0 0}
+  .metric:nth-child(2){border-radius:0 10px 0 0}
+  .metric:nth-child(3){border-radius:0 0 0 10px}
+  .metric:last-child{border-radius:0 0 10px 0}
+  .metric-label{font-size:.6em;font-weight:500;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+  .metric-val{font-size:.95em;font-weight:600;line-height:1.2}
+  .metric-sub{font-size:.68em;color:rgba(255,255,255,.3);margin-top:3px}
+
+  /* tag row */
+  .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 20px}
+  .tag{
+    background:rgba(255,255,255,.06);border-radius:99px;
+    padding:3px 11px;font-size:.65em;color:rgba(255,255,255,.4);
+  }
+
+  /* CTA */
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:12px;padding:12px 20px;
+    color:rgba(255,255,255,.8);font-size:.82em;font-weight:500;
+    cursor:pointer;text-decoration:none;
+    transition:background .15s,border-color .15s;
+    margin-top:auto;
+  }
+  .btn:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.2)}
+
+  /* add card */
+  .card-add{
+    background:rgba(255,255,255,.02);
+    border:1px dashed rgba(255,255,255,.1);
+    border-radius:20px;padding:32px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:12px;min-height:260px;color:rgba(255,255,255,.2);font-size:.82em;text-align:center;
+  }
+  .add-icon{
+    width:44px;height:44px;border-radius:50%;
+    border:1px dashed rgba(255,255,255,.15);
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.4em;color:rgba(255,255,255,.2);
+  }
+
+  /* pills */
+  .p-ok  {display:inline-block;background:rgba(48,209,88,.12);color:#30D158;border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
+  .p-warn{display:inline-block;background:rgba(255,159,10,.12);color:#FF9F0A;border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
+  .p-off {display:inline-block;background:rgba(255,255,255,.06);color:rgba(255,255,255,.3);border-radius:99px;padding:1px 8px;font-size:.72em;font-weight:600}
+
+  /* ── P&L section ── */
+  .pnl-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
+  @media(max-width:680px){.pnl-hero{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:400px){.pnl-hero{grid-template-columns:1fr 1fr}}
+  .pnl-tile{background:rgba(255,255,255,.04);padding:24px 22px}
+  .pnl-tile:first-child{border-radius:16px 0 0 0}
+  .pnl-tile:nth-child(2){border-radius:0}
+  .pnl-tile:nth-child(3){border-radius:0}
+  .pnl-tile:last-child{border-radius:0 16px 0 0}
+  @media(max-width:680px){
+    .pnl-tile:first-child{border-radius:16px 0 0 0}
+    .pnl-tile:nth-child(2){border-radius:0 16px 0 0}
+    .pnl-tile:nth-child(3){border-radius:0 0 0 0}
+    .pnl-tile:last-child{border-radius:0}
+  }
+  .pnl-label{font-size:.62em;font-weight:500;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+  .pnl-val{font-size:1.8em;font-weight:700;letter-spacing:-.04em;line-height:1}
+  .pnl-sub{font-size:.72em;color:rgba(255,255,255,.3);margin-top:5px}
+
+  .pnl-breakdown{
+    background:rgba(255,255,255,.04);
+    border-radius:0 0 16px 16px;
+    padding:0 22px;
+    overflow-x:auto;
+  }
+  .pnl-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05);
+    gap:8px;min-width:0;
+  }
+  .pnl-row:last-child{border:none}
+  .pnl-row-label{font-size:.8em;color:rgba(255,255,255,.4);min-width:0;flex:1}
+  .pnl-row-val{font-size:.8em;font-weight:600;white-space:nowrap}
+  .pnl-row-sub{font-size:.68em;color:rgba(255,255,255,.25);margin-left:8px;white-space:nowrap}
+  .pnl-divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0}
+  @media(max-width:480px){
+    .pnl-row-sub{display:none}
+  }
+
+  /* ── Forecasting card specifics ── */
+  .immune-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    background:rgba(255,159,10,.12);color:#FF9F0A;
+    border-radius:99px;padding:3px 10px;font-size:.65em;font-weight:600;letter-spacing:.06em;
+  }
+  .brier-val{font-size:1.05em;font-weight:700}
+  .brier-sub{font-size:.68em;color:rgba(255,255,255,.3);margin-top:2px}
+  .score-bar{height:3px;border-radius:2px;background:rgba(255,255,255,.08);margin-top:6px;overflow:hidden}
+  .score-fill{height:3px;border-radius:2px;transition:width .5s}
+
+  /* footer */
+  .ft{margin-top:48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  .ft span{font-size:.68em;color:rgba(255,255,255,.15)}
+  .ft-bar{height:1px;background:rgba(255,255,255,.06);width:100px;border-radius:1px;overflow:hidden}
+  .ft-fill{height:1px;background:rgba(255,255,255,.2);animation:refill 30s linear infinite}
+  @keyframes refill{from{width:0}to{width:100%}}
+</style>
+</head>
+<body><div class="wrap">
+
+<!-- HEADER -->
+<div class="hd">
+  <div class="hd-left">
+    <h1>Mining Hub</h1>
+    <p>Bittensor · Tableau de bord centralisé · Coldkey 5FLpgbE…dSK</p>
+  </div>
+  <div class="hd-right">
+    <div id="last-refresh" class="hd-ts">Chargement…</div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary">
+  <div class="sum-tile">
+    <div class="sum-label">Miners actifs</div>
+    <div class="sum-val" id="s-mining" style="color:#30D158">—</div>
+  </div>
+  <div class="sum-tile">
+    <div class="sum-label">Tâches réalisées</div>
+    <div class="sum-val" id="s-tasks" style="color:#BF5AF2">—</div>
+    <div class="sum-sub" id="s-tasks-rate">—% succès</div>
+  </div>
+  <div class="sum-tile">
+    <div class="sum-label">Émission / jour</div>
+    <div class="sum-val" id="s-emission" style="color:#0A84FF">— τ</div>
+  </div>
+  <div class="sum-tile">
+    <div class="sum-label">Coût total</div>
+    <div class="sum-val" id="s-cost" style="color:#FF9F0A">$—</div>
+  </div>
+</div>
+
+<!-- P&L GLOBAL -->
+<div class="section-label" style="margin-top:40px">Rentabilité globale</div>
+
+<div class="pnl-hero">
+  <div class="pnl-tile">
+    <div class="pnl-label">Revenus</div>
+    <div class="pnl-val" id="pnl-revenue" style="color:#30D158">$—</div>
+    <div class="pnl-sub" id="pnl-tao-detail">— τ gagné</div>
+  </div>
+  <div class="pnl-tile">
+    <div class="pnl-label">Coûts variables</div>
+    <div class="pnl-val" id="pnl-var" style="color:#FF9F0A">$—</div>
+    <div class="pnl-sub">GPU + Stockage R2</div>
+  </div>
+  <div class="pnl-tile">
+    <div class="pnl-label">Coûts fixes</div>
+    <div class="pnl-val" id="pnl-fixed" style="color:#FF9F0A">$—</div>
+    <div class="pnl-sub" id="pnl-fixed-period">proratisés sur la période</div>
+  </div>
+  <div class="pnl-tile">
+    <div class="pnl-label">P&amp;L net</div>
+    <div class="pnl-val" id="pnl-net">$—</div>
+    <div class="pnl-sub" id="pnl-roi">ROI —%</div>
+  </div>
+</div>
+
+<div class="pnl-breakdown" id="pnl-breakdown">
+  <div class="pnl-row" style="padding:16px 0 12px">
+    <span class="pnl-row-label" style="color:rgba(255,255,255,.2);font-size:.68em;letter-spacing:.1em;text-transform:uppercase">Détail des coûts</span>
+    <span class="pnl-row-val" style="font-size:.68em;color:rgba(255,255,255,.15)">TAO <span id="pnl-tao-price">$—</span> · <span id="pnl-period-days">—</span> jours trackés</span>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="section-label" style="margin-top:40px">Miners</div>
+<div class="grid" id="grid"></div>
+
+<!-- FOOTER -->
+<div class="ft">
+  <a href="app.html" style="font-size:.68em;color:rgba(255,255,255,.25);text-decoration:none">
+    Installer l'app iOS →
+  </a>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span>Prochain refresh</span>
+    <div class="ft-bar"><div class="ft-fill"></div></div>
+  </div>
+</div>
+
+</div>
+
+<script src="config.js"></script>
+<script src="mining-core.js"></script>
+<script>
+const grid = document.getElementById('grid');
+// statusColor, fetchStatus, fetchMeta, fetchTaoPrice, computePnl,
+// computeFleetSummary, fmtPnl → tous dans mining-core.js
+
+// ── Card unifiée (4 KPIs identiques pour tous les subnets) ──────────
+
+function buildCard(sub) {
+  const workLabel = sub.type === 'forecasting' ? 'Travail produit' : 'Travail produit';
+  const costLabel = sub.type === 'forecasting' ? 'Coût engagés' : 'Coût engagés';
+  const div = document.createElement('div');
+  div.className = 'card'; div.id = 'card-' + sub.netuid;
+  div.innerHTML = `
+    <div class="card-top">
+      <div class="sn-badge" style="color:${sub.color}">SN${sub.netuid}</div>
+      <div class="status-pill" style="color:rgba(255,255,255,.3)">
+        <div class="dot-live" style="background:rgba(255,255,255,.3)"></div>
+        <span class="status-label">…</span>
+      </div>
+    </div>
+    <div class="card-name">${sub.name}</div>
+    <div class="card-desc">${sub.description}</div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Incentive</div>
+        <div class="metric-val m-incentive"><span class="p-off">…</span></div>
+        <div class="metric-sub m-incentive-sub">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Travail produit</div>
+        <div class="metric-val m-work" style="color:#0A84FF">—</div>
+        <div class="metric-sub m-work-sub">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Coût engagés</div>
+        <div class="metric-val m-cost" style="color:#FF9F0A">—</div>
+        <div class="metric-sub m-cost-sub">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Balance</div>
+        <div class="metric-val m-bal" style="color:#30D158">— τ</div>
+        <div class="metric-sub m-bal-sub">coldkey</div>
+      </div>
+    </div>
+    <div class="tag-row">
+      <span class="tag m-uid-tag">UID #${sub.uid!=null?sub.uid:'—'}</span>
+      <span class="tag m-extra-tag">${sub.type==='forecasting'?'MAIN track':sub.gpu}</span>
+      ${sub.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+      <span class="tag">${sub.network}</span>
+    </div>
+    <a class="btn" href="${sub.dashboardUrl}" target="_blank">Dashboard &nbsp;→</a>
+  `;
+  return div;
+}
+
+function renderCard(sub, data) {
+  const card = document.getElementById('card-' + sub.netuid);
+  if (!card) return;
+
+  // ── Status pill ──
+  const s = data ? data.status : 'OFFLINE';
+  let sc;
+  if (s==='MINING'||s==='ACTIVE')      sc = '#30D158';
+  else if (s==='IMMUNE'||s==='STARTING') sc = '#FF9F0A';
+  else if (s==='OFFLINE'||s==='ERROR')   sc = '#FF453A';
+  else                                   sc = 'rgba(255,255,255,.3)';
+  card.querySelector('.dot-live').style.background = sc;
+  card.querySelector('.status-pill').style.color   = sc;
+  const hours = data ? (data.immunity_hours_remaining || 0) : 0;
+  card.querySelector('.status-label').textContent  = s==='IMMUNE' ? `IMMUNE · ${fmtHours(hours)}` : s;
+
+  if (!data) {
+    card.querySelector('.m-incentive').innerHTML       = '<span class="p-off">OFFLINE</span>';
+    card.querySelector('.m-incentive-sub').textContent = '—';
+    card.querySelector('.m-work').textContent          = '—';
+    card.querySelector('.m-work-sub').textContent      = '—';
+    card.querySelector('.m-cost').textContent          = '—';
+    card.querySelector('.m-cost-sub').textContent      = '—';
+    card.querySelector('.m-bal').textContent           = '— τ';
+    card.querySelector('.m-bal-sub').textContent       = 'coldkey';
+    card.querySelector('.m-uid-tag').textContent       = sub.uid!=null ? `UID #${sub.uid}` : '—';
+    return;
+  }
+
+  // ── KPI 1 : Incentive ──
+  const inc       = data.incentive || 0;
+  const eday      = data.emission_day || 0;
+  const edayAlpha = data.emission_day_alpha || 0;
+  card.querySelector('.m-incentive').innerHTML =
+    inc > 0
+      ? `<span class="p-ok">ACTIF</span> <span style="font-size:.82em">${inc.toFixed(6)}</span>`
+      : `<span class="p-off">EN ATTENTE</span>`;
+  card.querySelector('.m-incentive-sub').textContent =
+    edayAlpha > 0
+      ? `~${edayAlpha.toFixed(3)} α/jour ≈ ${eday.toFixed(4)} τ`
+      : eday > 0 ? `~${eday.toFixed(4)} τ/jour` : "Pas d'émission";
+
+  // ── KPI 2 : Travail produit ──
+  if (sub.type === 'forecasting') {
+    const pred = data.predictions_count || 0;
+    const brier = data.brier_score;
+    card.querySelector('.m-work').textContent     = pred > 0 ? pred + ' prédictions' : '—';
+    card.querySelector('.m-work-sub').textContent = brier !== null
+      ? `Brier ${brier.toFixed(4)} · ${brier < 0.25 ? '↓ bon' : 'à améliorer'}`
+      : (pred > 0 ? 'Score en cours' : 'En attente d\'activation');
+    card.querySelector('.m-work').style.color = pred > 0 ? '#0A84FF' : 'rgba(255,255,255,.3)';
+  } else {
+    const tasks = data.tasks || {};
+    const done = tasks.completed || 0, recv = tasks.received || 0, rate = tasks.success_rate || 0;
+    card.querySelector('.m-work').textContent     = recv > 0 ? `${done} / ${recv}` : '—';
+    card.querySelector('.m-work-sub').innerHTML   = recv > 0
+      ? `<span class="${rate>=80?'p-ok':rate>=50?'p-warn':'p-off'}">${rate}% succès</span>`
+      : '<span class="p-off">Aucune tâche</span>';
+    card.querySelector('.m-work').style.color = recv > 0 ? '#0A84FF' : 'rgba(255,255,255,.3)';
+  }
+
+  // ── KPI 3 : Coût engagés ──
+  const cost = data.cost_usd || 0;
+  card.querySelector('.m-cost').textContent     = '$' + cost.toFixed(2);
+  card.querySelector('.m-cost-sub').textContent = sub.type === 'forecasting'
+    ? (data.agent_name || 'API LLM')
+    : (data.gpu_hours != null ? `${data.gpu_hours.toFixed(1)} h GPU` : 'RunPod');
+
+  // ── KPI 4 : Balance en TAO ──
+  const bal = data.balance;
+  const balStr = (bal && bal !== '—') ? Number(bal).toFixed(4) + ' τ' : '— τ';
+  card.querySelector('.m-bal').textContent     = balStr;
+  card.querySelector('.m-bal-sub').textContent = 'coldkey';
+
+  // ── Tags ──
+  card.querySelector('.m-uid-tag').textContent  = `UID #${data.uid!=null?data.uid:sub.uid}`;
+  if (sub.type === 'compute') {
+    const gpuName = data.gpu_name
+      ? data.gpu_name.replace('NVIDIA ','').replace('GeForce ','')
+      : sub.gpu;
+    // SN26: show rank in GPU tag
+    if (sub.netuid === 26 && data.rank) {
+      card.querySelector('.m-extra-tag').textContent = `${gpuName} · Rang #${data.rank}`;
+    } else {
+      card.querySelector('.m-extra-tag').textContent =
+        data.gpu_util != null ? `${gpuName} · ${data.gpu_util}%` : gpuName;
+    }
+  }
+}
+
+function buildAddCard() {
+  const div = document.createElement('div');
+  div.className = 'card-add';
+  div.innerHTML = `
+    <div class="add-icon">+</div>
+    <div>
+      <div style="font-weight:500;color:rgba(255,255,255,.3);margin-bottom:4px">Ajouter un subnet</div>
+      <div style="font-size:.88em">Éditer <code style="color:rgba(255,255,255,.4)">config.js</code></div>
+    </div>
+  `;
+  return div;
+}
+
+// ── renderPnl : DOM update only — calcul via mining-core.js::computePnl ──
+function renderPnl(results, taoPrice) {
+  const p = computePnl(results, taoPrice, FIXED_COSTS, REGISTRATION_COSTS);
+  const pnlColor = p.pnl >= 0 ? '#30D158' : '#FF453A';
+
+  document.getElementById('pnl-revenue').textContent    = '+$' + p.revenue.toFixed(2);
+  document.getElementById('pnl-tao-detail').textContent = '~' + p.totalEarnedTao.toFixed(4) + ' τ · ~' + p.totalEarnedAlpha.toFixed(2) + ' α (estimé)';
+  document.getElementById('pnl-var').textContent        = '−$' + p.varCosts.toFixed(2);
+  document.getElementById('pnl-fixed').textContent      = '−$' + p.fixedTotal.toFixed(2);
+  document.getElementById('pnl-fixed-period').textContent =
+    p.daysTracked > 0 ? '$' + p.monthlyFixed + '/mois · ' + p.daysTracked.toFixed(1) + ' j trackés' : 'proratisés sur la période';
+  document.getElementById('pnl-net').style.color = pnlColor;
+  document.getElementById('pnl-net').textContent  = fmtPnl(p.pnl);
+  document.getElementById('pnl-roi').textContent  =
+    'ROI ' + (p.roi >= 0 ? '+' : '−') + Math.abs(p.roi).toFixed(1) + '%' +
+    (p.breakEvenDays > 0 ? ' · BE dans ' + p.breakEvenDays.toFixed(0) + ' j' : '');
+  document.getElementById('pnl-tao-price').textContent  = '$' + p.price.toFixed(2);
+  document.getElementById('pnl-period-days').textContent = p.daysTracked.toFixed(1);
+
+  // Breakdown — lignes issues de mining-core.js (p.lines)
+  const bd = document.getElementById('pnl-breakdown');
+  bd.innerHTML = '';
+
+  p.lines.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'pnl-row';
+    if (r.separator) {
+      div.style.borderTop = '1px solid rgba(255,255,255,.12)';
+      div.style.marginTop = '4px';
+      div.style.paddingTop = '16px';
+    }
+    const isPnlRow = r.label === 'P&L net';
+    const color = isPnlRow ? pnlColor : (r.sign > 0 ? '#30D158' : '#FF9F0A');
+    const valStr = isPnlRow ? fmtPnl(r.val) : (r.sign > 0 ? '+' : '−') + '$' + Math.abs(r.val).toFixed(2);
+    div.innerHTML =
+      `<span class="pnl-row-label">${r.label}</span>` +
+      `<span><span class="pnl-row-val" style="color:${color}">${valStr}</span>` +
+      `<span class="pnl-row-sub">${r.sub}</span></span>`;
+    bd.appendChild(div);
+  });
+}
+
+async function refresh() {
+  const [results, meta, taoPrice] = await Promise.all([
+    Promise.all(SUBNETS.map(fetchStatus)),
+    fetchMeta(),
+    fetchTaoPrice(0),
+  ]);
+
+  // Agrégats flotte via mining-core.js
+  const fleet = computeFleetSummary(results);
+  let taoFallback = 0;
+  results.forEach((data, i) => {
+    renderCard(SUBNETS[i], data);
+    if (data && data.tao_price_usd) taoFallback = data.tao_price_usd;
+  });
+
+  const price = taoPrice || taoFallback;
+
+  document.getElementById('s-mining').textContent      = fleet.mining + ' / ' + SUBNETS.length;
+  document.getElementById('s-tasks').textContent       = fleet.totalDone + ' / ' + fleet.totalRecv;
+  document.getElementById('s-tasks-rate').textContent  = fleet.successRate + '% succès';
+  document.getElementById('s-emission').textContent    = fleet.totalEmission > 0 ? '~' + fleet.totalEmission.toFixed(5) + ' τ' : '— τ';
+  document.getElementById('s-cost').textContent        = '$' + fleet.totalCost.toFixed(2);
+
+  renderPnl(results, price);
+
+  if (meta && meta.updated_at) {
+    const d = new Date(meta.updated_at);
+    document.getElementById('last-refresh').textContent =
+      'Données du ' + d.toLocaleTimeString('fr-FR') + ' · refresh auto toutes les 15 min';
+  } else {
+    document.getElementById('last-refresh').textContent = 'En attente du premier refresh…';
+  }
+}
+
+SUBNETS.forEach(sub => grid.appendChild(buildCard(sub)));
+grid.appendChild(buildAddCard());
+refresh();
+setInterval(refresh, 30_000);
+</script>
+</body>
+</html>
