@@ -10,7 +10,7 @@
   "emission_day": 0.0,
   "emission_day_alpha": 0.0,
   "alpha_price_tao": 0.0,
-  "rank": null,
+  "rank": 253,
   "total_miners": 256,
   "tao_price_usd": 326.76,
   "total_earned_tao": 0.0,
@@ -20,11 +20,11 @@
   "tracking_since": "2026-05-10T00:00:00Z",
   "gpu": "RTX 5090",
   "tasks": {
-    "received": 2,
-    "completed": 1,
+    "received": 3,
+    "completed": 3,
     "skipped": 0,
-    "success_rate": 50
+    "success_rate": 100
   },
   "monitor_ok": true,
-  "updated_at": "2026-05-10T17:59:51Z"
+  "updated_at": "2026-05-10T20:30:00Z"
 }
