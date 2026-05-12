@@ -1,6 +1,6 @@
 {
-  "generated_at": 1778562790,
-  "generated_in_s": 8.63,
+  "generated_at": 1778563099,
+  "generated_in_s": 8.26,
   "version": "v2",
   "portfolio": {
     "active_subnets": 2,
@@ -11,9 +11,9 @@
     "daily_usd_cost": 27.12,
     "pnl_usd_day": -27.12,
     "pnl_usd_month": -813.6,
-    "tao_price_usd": 320.88,
+    "tao_price_usd": 320.91,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 216.54
+    "coldkey_balance_usd": 216.56
   },
   "subnets": [
     {
@@ -43,7 +43,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 1.0,
-          "stake": 1160015.0,
+          "stake": 1160033.5,
           "hotkey": "5EHfTi6R\u2026",
           "ip": "63.142.193.28"
         },
@@ -67,7 +67,7 @@
           "rank": 4,
           "uid": 3,
           "incentive": 0.0,
-          "stake": 36874.5,
+          "stake": 36874.36,
           "hotkey": "5GDxzsjt\u2026",
           "ip": "185.216.20.148"
         },
@@ -126,7 +126,7 @@
         "daily_usd_cost": 10.56,
         "pnl_usd_day": -10.56,
         "pnl_usd_month": -316.8,
-        "tao_price_usd": 320.88
+        "tao_price_usd": 320.91
       },
       "metagraph_error": null
     },
@@ -240,7 +240,7 @@
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 320.88
+        "tao_price_usd": 320.91
       },
       "metagraph_error": null
     }
@@ -250,16 +250,16 @@
       "name": "ceo-agent",
       "pid": 110759,
       "status": "online",
-      "uptime_s": 23477,
+      "uptime_s": 23787,
       "restarts": 19,
       "memory_mb": 75,
-      "cpu_pct": 0
+      "cpu_pct": 0.2
     },
     {
       "name": "sn41-trader",
       "pid": 71368,
       "status": "online",
-      "uptime_s": 50707,
+      "uptime_s": 51017,
       "restarts": 10,
       "memory_mb": 55,
       "cpu_pct": 0
@@ -268,19 +268,19 @@
       "name": "metagraph-daemon",
       "pid": 120289,
       "status": "online",
-      "uptime_s": 4635,
+      "uptime_s": 4944,
       "restarts": 6,
-      "memory_mb": 2684,
-      "cpu_pct": 0.7
+      "memory_mb": 2805,
+      "cpu_pct": 73.4
     },
     {
       "name": "dashboard-snapshot",
       "pid": 114456,
       "status": "online",
-      "uptime_s": 15939,
+      "uptime_s": 16249,
       "restarts": 0,
       "memory_mb": 2,
-      "cpu_pct": 0.1
+      "cpu_pct": 0
     }
   ],
   "incidents_24h": []
