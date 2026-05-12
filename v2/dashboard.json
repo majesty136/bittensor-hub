@@ -1,6 +1,6 @@
 {
-  "generated_at": 1778591452,
-  "generated_in_s": 20.19,
+  "generated_at": 1778591460,
+  "generated_in_s": 10.08,
   "version": "v2",
   "portfolio": {
     "subnets_in_portfolio": 4,
@@ -528,16 +528,16 @@
       "name": "ceo-agent",
       "pid": 140111,
       "status": "online",
-      "uptime_s": 3404,
+      "uptime_s": 3422,
       "restarts": 26,
       "memory_mb": 88,
-      "cpu_pct": 0
+      "cpu_pct": 0.1
     },
     {
       "name": "sn41-trader",
       "pid": 71368,
       "status": "online",
-      "uptime_s": 79358,
+      "uptime_s": 79376,
       "restarts": 10,
       "memory_mb": 49,
       "cpu_pct": 0
@@ -546,16 +546,16 @@
       "name": "metagraph-daemon",
       "pid": 144251,
       "status": "online",
-      "uptime_s": 2127,
+      "uptime_s": 2145,
       "restarts": 12,
-      "memory_mb": 2268,
-      "cpu_pct": 58.1
+      "memory_mb": 2276,
+      "cpu_pct": 46.2
     },
     {
       "name": "dashboard-snapshot",
       "pid": 145415,
       "status": "online",
-      "uptime_s": 2,
+      "uptime_s": 20,
       "restarts": 1,
       "memory_mb": 3,
       "cpu_pct": 0
@@ -564,7 +564,7 @@
       "name": "sn6-optimizer",
       "pid": 0,
       "status": "stopped",
-      "uptime_s": 2489,
+      "uptime_s": 2506,
       "restarts": 14,
       "memory_mb": 0,
       "cpu_pct": 0
@@ -573,7 +573,7 @@
       "name": "sn6-monitor",
       "pid": 144372,
       "status": "online",
-      "uptime_s": 2040,
+      "uptime_s": 2057,
       "restarts": 0,
       "memory_mb": 43,
       "cpu_pct": 0
