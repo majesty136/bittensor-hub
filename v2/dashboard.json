@@ -1,21 +1,21 @@
 {
-  "generated_at": 1778588001,
-  "generated_in_s": 8.44,
+  "generated_at": 1778588311,
+  "generated_in_s": 8.54,
   "version": "v2",
   "portfolio": {
     "subnets_in_portfolio": 4,
     "subnets_mining": 2,
     "subnets_preparing": 2,
     "miners_total": 5,
-    "miners_active": 3,
+    "miners_active": 2,
     "daily_tao_total": 0.0,
     "daily_usd_gross": 0.0,
     "daily_usd_cost": 33.12,
     "pnl_usd_day": -33.12,
     "pnl_usd_month": -993.6,
-    "tao_price_usd": 310.64,
+    "tao_price_usd": 311.06,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 209.63
+    "coldkey_balance_usd": 209.91
   },
   "subnets": [
     {
@@ -64,7 +64,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 1.0,
-          "stake": 1164014.38,
+          "stake": 1164005.5,
           "hotkey": "5EHfTi6R\u2026",
           "ip": "63.142.193.28"
         },
@@ -80,7 +80,7 @@
           "rank": 3,
           "uid": 2,
           "incentive": 0.0,
-          "stake": 97151.39,
+          "stake": 97151.23,
           "hotkey": "5E2LP6En\u2026",
           "ip": "213.173.99.31"
         },
@@ -88,7 +88,7 @@
           "rank": 4,
           "uid": 3,
           "incentive": 0.0,
-          "stake": 36886.46,
+          "stake": 36893.89,
           "hotkey": "5GDxzsjt\u2026",
           "ip": "185.216.20.148"
         },
@@ -147,7 +147,7 @@
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 310.64
+        "tao_price_usd": 311.06
       },
       "metagraph_error": null
     },
@@ -182,7 +182,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 0.805493,
-          "stake": 2869785.25,
+          "stake": 2869789.25,
           "hotkey": "5FR392L6\u2026",
           "ip": "0.0.0.0"
         },
@@ -265,7 +265,7 @@
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 310.64
+        "tao_price_usd": 311.06
       },
       "metagraph_error": null
     },
@@ -381,7 +381,7 @@
         "daily_usd_cost": 0.0,
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 310.64
+        "tao_price_usd": 311.06
       },
       "metagraph_error": null
     },
@@ -393,7 +393,7 @@
       "status": "preparing",
       "external_dashboard_url": "https://taostats.io/subnets/41",
       "total_miners": 256,
-      "active_miners": 1,
+      "active_miners": 0,
       "miners": [
         {
           "name": "sn41 miner",
@@ -406,9 +406,9 @@
           "axon_port": 0,
           "is_serving": false,
           "pod_id": null,
-          "pod_status": "unknown",
+          "pod_status": "no_pod",
           "cost_per_hour": 0.0,
-          "is_active": true
+          "is_active": false
         }
       ],
       "competition_top10": [
@@ -499,7 +499,7 @@
         "daily_usd_cost": 0.0,
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 310.64
+        "tao_price_usd": 311.06
       },
       "metagraph_error": null
     }
@@ -507,36 +507,36 @@
   "agents": [
     {
       "name": "ceo-agent",
-      "pid": 139348,
+      "pid": 140111,
       "status": "online",
-      "uptime_s": 859,
-      "restarts": 25,
-      "memory_mb": 97,
+      "uptime_s": 275,
+      "restarts": 26,
+      "memory_mb": 84,
       "cpu_pct": 0
     },
     {
       "name": "sn41-trader",
       "pid": 71368,
       "status": "online",
-      "uptime_s": 75919,
+      "uptime_s": 76229,
       "restarts": 10,
-      "memory_mb": 49,
+      "memory_mb": 57,
       "cpu_pct": 0
     },
     {
       "name": "metagraph-daemon",
       "pid": 135291,
       "status": "online",
-      "uptime_s": 2212,
+      "uptime_s": 2523,
       "restarts": 11,
-      "memory_mb": 2250,
+      "memory_mb": 2547,
       "cpu_pct": 0
     },
     {
       "name": "dashboard-snapshot",
       "pid": 114456,
       "status": "online",
-      "uptime_s": 41151,
+      "uptime_s": 41461,
       "restarts": 0,
       "memory_mb": 2,
       "cpu_pct": 0
@@ -545,7 +545,7 @@
       "name": "sn6-optimizer",
       "pid": 139132,
       "status": "online",
-      "uptime_s": 952,
+      "uptime_s": 1262,
       "restarts": 3,
       "memory_mb": 108,
       "cpu_pct": 0
@@ -568,7 +568,7 @@
       "ts": 1778586270,
       "alert": "\ud83d\udea8 **ALERTE** \u2014 SN41 Sportstensor (none) injoignable SSH ! (3 tentatives \u00e9chou\u00e9es)",
       "resolution": "Incident r\u00e9solu en mode nocturne autonome. Voici le rapport pour le brief matin.\n\n---\n\n## \ud83c\udf19 RAPPORT INCIDENT NOCTURNE \u2014 2026-05-12 11:38 UTC\n\n### Verdict : \u2705 FAUX POSITIF \u2014 Aucune action corrective re",
-      "outcome": "pending"
+      "outcome": "validated_ok"
     },
     {
       "ts": 1778585912,
