@@ -109,11 +109,49 @@
 
   .pos { color: var(--pos); }
   .neg { color: var(--neg); }
-  .ok-dot, .err-dot, .warn-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  .ok-dot, .err-dot, .warn-dot, .stopped-dot, .pending-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
     margin-right: 6px; vertical-align: middle; }
   .ok-dot { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
   .err-dot { background: var(--err); box-shadow: 0 0 8px var(--err); }
   .warn-dot { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+  .stopped-dot { background: var(--faint); }
+  .pending-dot { background: var(--dim); opacity: .6; }
+
+  /* ── Hero KPI (Daily P&L au premier plan) ── */
+  .card.hero { padding: 22px 18px; text-align: center; }
+  .card.hero .card-title { font-size: .7em; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--dim); margin-bottom: 6px; }
+  .hero-value { font-size: 2.6em; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+  .hero-value.pos { color: var(--pos); }
+  .hero-value.neg { color: var(--neg); }
+  .hero-sub { font-size: .8em; color: var(--faint); margin-top: 4px; }
+
+  /* ── Status badges + external link ── */
+  .badge { display: inline-block; font-size: .55em; letter-spacing: .08em; font-weight: 700;
+    padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle;
+    background: var(--bg-2); color: var(--dim); }
+  .badge-mining { background: rgba(76, 217, 100, .15); color: var(--ok); }
+  .badge-preparing { background: rgba(255, 193, 7, .15); color: var(--warn); }
+  .ext-link { color: var(--dim); text-decoration: none; margin-left: 8px;
+    font-size: .85em; vertical-align: middle; }
+  .ext-link:hover { color: var(--fg); }
+
+  /* ── Miner stopped/inactive UX ── */
+  .miner-section-label { font-size: .6em; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--faint); margin: 14px 0 4px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .miner-row.miner-stopped, .miner-row.miner-pending {
+    opacity: .45;
+    text-decoration: line-through;
+    text-decoration-color: var(--faint);
+  }
+  .miner-row.miner-stopped .miner-name, .miner-row.miner-pending .miner-name {
+    text-decoration: none;  /* keep name readable, only meta is struck-through */
+  }
+  .miner-status-tag { display: inline-block; font-size: .5em; letter-spacing: .1em;
+    font-weight: 700; padding: 2px 5px; border-radius: 3px; margin-left: 7px;
+    vertical-align: middle; }
+  .miner-status-tag.stopped { background: rgba(255, 90, 90, .15); color: var(--err); }
+  .miner-status-tag.pending { background: rgba(180, 180, 180, .15); color: var(--faint); }
 
   /* ── Subnet card ── */
   .subnet-card { padding: 18px; }
@@ -187,7 +225,13 @@
         </div>
         <button class="pill" id="refresh-btn">Refresh</button>
       </div>
-      <div class="card glow">
+      <!-- Hero KPI : Daily P&L au premier plan -->
+      <div class="card glow hero">
+        <div class="card-title">Daily P&L</div>
+        <div class="hero-value" id="pnl-day">— USD</div>
+        <div class="hero-sub" id="pnl-month">— /month projected</div>
+      </div>
+      <div class="card">
         <div class="card-title">Portfolio</div>
         <div class="kpi-grid">
           <div class="kpi full">
@@ -196,19 +240,19 @@
             <div class="sub" id="balance-usd">— USD</div>
           </div>
           <div class="kpi">
-            <div class="label">Daily P&L</div>
-            <div class="value" id="pnl-day">— USD</div>
-            <div class="sub" id="pnl-month">— /month</div>
+            <div class="label">Subnets</div>
+            <div class="value" id="subnets-count-kpi">— / —</div>
+            <div class="sub">mining / portfolio</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Miners</div>
+            <div class="value" id="miners-count-kpi">— / —</div>
+            <div class="sub">active / deployed</div>
           </div>
           <div class="kpi">
             <div class="label">Daily revenue</div>
             <div class="value" id="daily-tao">— τ</div>
             <div class="sub" id="daily-usd">— USD</div>
-          </div>
-          <div class="kpi">
-            <div class="label">Active</div>
-            <div class="value" id="active-counts">— / —</div>
-            <div class="sub">miners / subnets</div>
           </div>
           <div class="kpi">
             <div class="label">Daily cost</div>
@@ -305,17 +349,23 @@ function renderOverview() {
   const p = d.portfolio || {};
   document.getElementById('balance-tao').textContent = fmt_num(p.coldkey_balance_tao, 4) + ' τ';
   document.getElementById('balance-usd').textContent = fmt_usd(p.coldkey_balance_usd);
+  // Hero KPI : Daily P&L
   const pnl = p.pnl_usd_day || 0;
   const pnlEl = document.getElementById('pnl-day');
   pnlEl.textContent = fmt_usd(pnl);
-  pnlEl.className = 'value ' + (pnl >= 0 ? 'pos' : 'neg');
+  pnlEl.className = 'hero-value ' + (pnl >= 0 ? 'pos' : 'neg');
   const pnlMonth = p.pnl_usd_month || 0;
-  document.getElementById('pnl-month').textContent = `≈ ${fmt_usd(pnlMonth)}/month`;
+  document.getElementById('pnl-month').textContent = `≈ ${fmt_usd(pnlMonth)}/month projected`;
+  // Sous-KPIs
   document.getElementById('daily-tao').textContent = fmt_num(p.daily_tao_total, 5) + ' τ';
   document.getElementById('daily-usd').textContent = fmt_usd(p.daily_usd_gross);
   document.getElementById('daily-cost').textContent = fmt_usd(p.daily_usd_cost);
-  document.getElementById('active-counts').textContent = `${p.active_miners} / ${p.active_subnets}`;
   document.getElementById('tao-price').textContent = `TAO: ${fmt_usd(p.tao_price_usd)}`;
+  // KPIs séparés : Subnets vs Miners
+  document.getElementById('subnets-count-kpi').textContent =
+    `${p.subnets_mining ?? 0} / ${p.subnets_in_portfolio ?? 0}`;
+  document.getElementById('miners-count-kpi').textContent =
+    `${p.miners_active ?? 0} / ${p.miners_total ?? 0}`;
 
   // Top opportunities : subnets sorted by current pnl_usd_day desc
   const ops = (d.subnets || [])
@@ -337,34 +387,85 @@ function renderSubnets() {
   const d = DATA;
   if (!d) return;
   const subs = d.subnets || [];
-  document.getElementById('subnets-count').textContent = `${subs.length} active`;
+  const mining = subs.filter(s => s.status === 'mining').length;
+  const preparing = subs.filter(s => s.status === 'preparing').length;
+  document.getElementById('subnets-count').textContent =
+    `${mining} mining · ${preparing} preparing · ${subs.length} total`;
   if (subs.length === 0) {
     document.getElementById('subnets-list').innerHTML = '<div class="empty">No subnets configured</div>';
     return;
   }
-  document.getElementById('subnets-list').innerHTML = subs.map(s => {
-    const minersHtml = s.miners.map(m => {
-      const dot = m.is_serving ? '<span class="ok-dot"></span>' : '<span class="err-dot"></span>';
+  // Trier : mining d'abord, puis preparing
+  const sortedSubs = subs.slice().sort((a, b) => {
+    const order = { mining: 0, preparing: 1, paused: 2 };
+    return (order[a.status] ?? 9) - (order[b.status] ?? 9);
+  });
+  document.getElementById('subnets-list').innerHTML = sortedSubs.map(s => {
+    const statusBadge = s.status === 'mining'
+      ? '<span class="badge badge-mining">MINING</span>'
+      : s.status === 'preparing'
+        ? '<span class="badge badge-preparing">PREPARING</span>'
+        : `<span class="badge">${(s.status || 'unknown').toUpperCase()}</span>`;
+    const extLink = s.external_dashboard_url
+      ? `<a class="ext-link" href="${s.external_dashboard_url}" target="_blank" rel="noopener" title="External dashboard">↗</a>`
+      : '';
+    // Séparation active vs inactive : tri actifs d'abord, inactifs en bas avec UX différenciée
+    const activeMiners = (s.miners || []).filter(m => m.is_active);
+    const inactiveMiners = (s.miners || []).filter(m => !m.is_active);
+    const renderMinerRow = (m) => {
+      let dot, inactiveClass = '';
+      if (m.pod_status === 'stopped' || m.pod_status === 'exited') {
+        dot = '<span class="stopped-dot"></span>';
+        inactiveClass = ' miner-stopped';
+      } else if (m.pod_status === 'no_pod') {
+        dot = '<span class="pending-dot"></span>';
+        inactiveClass = ' miner-pending';
+      } else if (m.is_serving) {
+        dot = '<span class="ok-dot"></span>';
+      } else {
+        dot = '<span class="err-dot"></span>';
+      }
       const rank = m.rank ? `#${m.rank}` : '—';
-      return `<div class="miner-row">
+      const statusTag = m.pod_status === 'stopped'
+        ? '<span class="miner-status-tag stopped">STOPPED</span>'
+        : m.pod_status === 'no_pod'
+          ? '<span class="miner-status-tag pending">NO POD</span>'
+          : m.pod_status === 'exited'
+            ? '<span class="miner-status-tag stopped">EXITED</span>'
+            : '';
+      return `<div class="miner-row${inactiveClass}">
         <div class="miner-info">
-          <div class="miner-name">${dot}${m.name || ('UID '+m.uid)}</div>
-          <div class="miner-meta">UID ${m.uid} • ${m.hotkey_short} • ${m.axon_ip || '?'}:${m.axon_port || '?'}</div>
+          <div class="miner-name">${dot}${m.name || ('UID '+m.uid)}${statusTag}</div>
+          <div class="miner-meta">UID ${m.uid ?? '?'} • ${m.hotkey_short || '—'} • ${m.axon_ip || '?'}:${m.axon_port || '?'}</div>
         </div>
-        <div class="miner-rank">${rank}<span class="small">τ ${fmt_num(m.incentive, 6)}</span></div>
+        <div class="miner-rank">${rank}<span class="small">τ ${fmt_num(m.incentive || 0, 6)}</span></div>
       </div>`;
-    }).join('');
-    const pnl = s.estimated.pnl_usd_day;
+    };
+    let minersHtml;
+    if (activeMiners.length === 0 && inactiveMiners.length === 0) {
+      minersHtml = '<div class="empty" style="padding:10px 0">No miner deployed yet</div>';
+    } else {
+      const activeHtml = activeMiners.map(renderMinerRow).join('');
+      const inactiveHtml = inactiveMiners.length > 0
+        ? `<div class="miner-section-label">${inactiveMiners.length} not active</div>` +
+          inactiveMiners.map(renderMinerRow).join('')
+        : '';
+      minersHtml = activeHtml + inactiveHtml;
+      if (activeMiners.length === 0 && inactiveMiners.length > 0) {
+        minersHtml = '<div class="empty" style="padding:8px 0 4px">No active miner currently</div>' + inactiveHtml;
+      }
+    }
+    const pnl = s.estimated?.pnl_usd_day ?? 0;
     const pnlCls = pnl >= 0 ? 'pos' : 'neg';
     return `<div class="card subnet-card">
       <div class="subnet-head">
-        <div class="subnet-name">${s.name}</div>
+        <div class="subnet-name">${s.name} ${statusBadge}${extLink}</div>
         <div class="subnet-netuid">netuid ${s.netuid}</div>
       </div>
       <div class="subnet-mech">${s.mechanism || ''}</div>
       ${minersHtml}
       <div class="kpi-grid" style="margin-top: 14px">
-        <div class="kpi"><div class="label">Daily τ</div><div class="value" style="font-size:1em">${fmt_num(s.estimated.daily_tao, 5)}</div></div>
+        <div class="kpi"><div class="label">Daily τ</div><div class="value" style="font-size:1em">${fmt_num(s.estimated?.daily_tao || 0, 5)}</div></div>
         <div class="kpi"><div class="label">P&L /day</div><div class="value ${pnlCls}" style="font-size:1em">${fmt_usd(pnl)}</div></div>
       </div>
     </div>`;
