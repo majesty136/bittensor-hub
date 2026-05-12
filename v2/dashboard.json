@@ -1,6 +1,6 @@
 {
-  "generated_at": 1778567400,
-  "generated_in_s": 8.15,
+  "generated_at": 1778567711,
+  "generated_in_s": 9.43,
   "version": "v2",
   "portfolio": {
     "active_subnets": 2,
@@ -11,9 +11,9 @@
     "daily_usd_cost": 27.12,
     "pnl_usd_day": -27.12,
     "pnl_usd_month": -813.6,
-    "tao_price_usd": 320.67,
+    "tao_price_usd": 319.91,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 216.4
+    "coldkey_balance_usd": 215.88
   },
   "subnets": [
     {
@@ -43,7 +43,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 1.0,
-          "stake": 1158753.75,
+          "stake": 1158750.62,
           "hotkey": "5EHfTi6R\u2026",
           "ip": "63.142.193.28"
         },
@@ -59,7 +59,7 @@
           "rank": 3,
           "uid": 2,
           "incentive": 0.0,
-          "stake": 97177.68,
+          "stake": 97177.77,
           "hotkey": "5E2LP6En\u2026",
           "ip": "213.173.99.31"
         },
@@ -67,7 +67,7 @@
           "rank": 4,
           "uid": 3,
           "incentive": 0.0,
-          "stake": 36873.34,
+          "stake": 36873.48,
           "hotkey": "5GDxzsjt\u2026",
           "ip": "185.216.20.148"
         },
@@ -126,7 +126,7 @@
         "daily_usd_cost": 10.56,
         "pnl_usd_day": -10.56,
         "pnl_usd_month": -316.8,
-        "tao_price_usd": 320.67
+        "tao_price_usd": 319.91
       },
       "metagraph_error": null
     },
@@ -157,7 +157,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 0.805631,
-          "stake": 2854548.0,
+          "stake": 2854548.5,
           "hotkey": "5FR392L6\u2026",
           "ip": "0.0.0.0"
         },
@@ -240,7 +240,7 @@
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 320.67
+        "tao_price_usd": 319.91
       },
       "metagraph_error": null
     }
@@ -250,16 +250,16 @@
       "name": "ceo-agent",
       "pid": 110759,
       "status": "online",
-      "uptime_s": 28088,
+      "uptime_s": 28399,
       "restarts": 19,
-      "memory_mb": 94,
-      "cpu_pct": 0.4
+      "memory_mb": 101,
+      "cpu_pct": 0
     },
     {
       "name": "sn41-trader",
       "pid": 71368,
       "status": "online",
-      "uptime_s": 55318,
+      "uptime_s": 55628,
       "restarts": 10,
       "memory_mb": 56,
       "cpu_pct": 0
@@ -268,16 +268,16 @@
       "name": "metagraph-daemon",
       "pid": 122078,
       "status": "online",
-      "uptime_s": 2793,
+      "uptime_s": 3104,
       "restarts": 7,
-      "memory_mb": 1661,
-      "cpu_pct": 0.4
+      "memory_mb": 1857,
+      "cpu_pct": 0.6
     },
     {
       "name": "dashboard-snapshot",
       "pid": 114456,
       "status": "online",
-      "uptime_s": 20550,
+      "uptime_s": 20861,
       "restarts": 0,
       "memory_mb": 2,
       "cpu_pct": 0
@@ -288,7 +288,7 @@
       "ts": 1778565420,
       "alert": "\u2705 **R\u00c9TABLI** \u2014 SN26 Perturb (RTX 4090) de nouveau joignable.",
       "resolution": "---\n\n## \ud83d\udccb Morning Brief \u2014 Incident nocturne 05:54 UTC\n\n**Alerte** : \"\u2705 R\u00c9TABLI \u2014 SN26 Perturb (RTX 4090) de nouveau joignable\"\n\n**Verdict** : \ud83d\udfe2 **FAUX POSITIF du monitoring** \u2014 aucune action requise, ",
-      "outcome": "pending"
+      "outcome": "validated_ok"
     },
     {
       "ts": 1778564938,
