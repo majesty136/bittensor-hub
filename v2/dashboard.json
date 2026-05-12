@@ -1,6 +1,6 @@
 {
-  "generated_at": 1778586140,
-  "generated_in_s": 8.47,
+  "generated_at": 1778586451,
+  "generated_in_s": 9.38,
   "version": "v2",
   "portfolio": {
     "subnets_in_portfolio": 4,
@@ -13,9 +13,9 @@
     "daily_usd_cost": 33.12,
     "pnl_usd_day": -33.12,
     "pnl_usd_month": -993.6,
-    "tao_price_usd": 311.58,
+    "tao_price_usd": 311.62,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 210.26
+    "coldkey_balance_usd": 210.29
   },
   "subnets": [
     {
@@ -64,7 +64,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 1.0,
-          "stake": 1164387.75,
+          "stake": 1164375.38,
           "hotkey": "5EHfTi6R\u2026",
           "ip": "63.142.193.28"
         },
@@ -80,7 +80,7 @@
           "rank": 3,
           "uid": 2,
           "incentive": 0.0,
-          "stake": 97151.24,
+          "stake": 97151.12,
           "hotkey": "5E2LP6En\u2026",
           "ip": "213.173.99.31"
         },
@@ -88,7 +88,7 @@
           "rank": 4,
           "uid": 3,
           "incentive": 0.0,
-          "stake": 36892.57,
+          "stake": 36892.55,
           "hotkey": "5GDxzsjt\u2026",
           "ip": "185.216.20.148"
         },
@@ -147,7 +147,7 @@
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 311.58
+        "tao_price_usd": 311.62
       },
       "metagraph_error": null
     },
@@ -182,7 +182,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 0.805493,
-          "stake": 2868349.0,
+          "stake": 2868354.75,
           "hotkey": "5FR392L6\u2026",
           "ip": "0.0.0.0"
         },
@@ -265,7 +265,7 @@
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 311.58
+        "tao_price_usd": 311.62
       },
       "metagraph_error": null
     },
@@ -381,7 +381,7 @@
         "daily_usd_cost": 0.0,
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 311.58
+        "tao_price_usd": 311.62
       },
       "metagraph_error": null
     },
@@ -499,7 +499,7 @@
         "daily_usd_cost": 0.0,
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 311.58
+        "tao_price_usd": 311.62
       },
       "metagraph_error": null
     }
@@ -509,16 +509,16 @@
       "name": "ceo-agent",
       "pid": 131867,
       "status": "online",
-      "uptime_s": 3491,
+      "uptime_s": 3801,
       "restarts": 23,
       "memory_mb": 94,
-      "cpu_pct": 1
+      "cpu_pct": 0
     },
     {
       "name": "sn41-trader",
       "pid": 71368,
       "status": "online",
-      "uptime_s": 74058,
+      "uptime_s": 74368,
       "restarts": 10,
       "memory_mb": 49,
       "cpu_pct": 0
@@ -527,31 +527,37 @@
       "name": "metagraph-daemon",
       "pid": 135291,
       "status": "online",
-      "uptime_s": 351,
+      "uptime_s": 662,
       "restarts": 11,
-      "memory_mb": 628,
-      "cpu_pct": 20.5
+      "memory_mb": 944,
+      "cpu_pct": 0
     },
     {
       "name": "dashboard-snapshot",
       "pid": 114456,
       "status": "online",
-      "uptime_s": 39290,
+      "uptime_s": 39601,
       "restarts": 0,
       "memory_mb": 2,
       "cpu_pct": 0
     },
     {
       "name": "sn6-optimizer",
-      "pid": 134642,
+      "pid": 137379,
       "status": "online",
-      "uptime_s": 1116,
-      "restarts": 1,
-      "memory_mb": 90,
+      "uptime_s": 129,
+      "restarts": 2,
+      "memory_mb": 108,
       "cpu_pct": 0
     }
   ],
   "incidents_24h": [
+    {
+      "ts": 1778586270,
+      "alert": "\ud83d\udea8 **ALERTE** \u2014 SN41 Sportstensor (none) injoignable SSH ! (3 tentatives \u00e9chou\u00e9es)",
+      "resolution": "Incident r\u00e9solu en mode nocturne autonome. Voici le rapport pour le brief matin.\n\n---\n\n## \ud83c\udf19 RAPPORT INCIDENT NOCTURNE \u2014 2026-05-12 11:38 UTC\n\n### Verdict : \u2705 FAUX POSITIF \u2014 Aucune action corrective re",
+      "outcome": "pending"
+    },
     {
       "ts": 1778585912,
       "alert": "\ud83d\udea8 **ALERTE** \u2014 SN26 Perturb (RTX 4090) injoignable SSH ! (3 tentatives \u00e9chou\u00e9es)",
