@@ -1,19 +1,19 @@
 {
-  "generated_at": 1778549019,
-  "generated_in_s": 8.31,
+  "generated_at": 1778549329,
+  "generated_in_s": 8.5,
   "version": "v2",
   "portfolio": {
     "active_subnets": 2,
     "active_miners": 2,
     "total_incentive": 0.0,
     "daily_tao_total": 0.04395,
-    "daily_usd_gross": 14.02,
+    "daily_usd_gross": 14.0,
     "daily_usd_cost": 27.12,
-    "pnl_usd_day": -13.1,
-    "pnl_usd_month": -393.15,
-    "tao_price_usd": 318.92,
+    "pnl_usd_day": -13.12,
+    "pnl_usd_month": -393.47,
+    "tao_price_usd": 318.68,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 215.22
+    "coldkey_balance_usd": 215.05
   },
   "subnets": [
     {
@@ -122,11 +122,11 @@
       ],
       "estimated": {
         "daily_tao": 0.04395,
-        "daily_usd_gross": 14.02,
+        "daily_usd_gross": 14.0,
         "daily_usd_cost": 10.56,
-        "pnl_usd_day": 3.46,
-        "pnl_usd_month": 103.65,
-        "tao_price_usd": 318.92
+        "pnl_usd_day": 3.44,
+        "pnl_usd_month": 103.33,
+        "tao_price_usd": 318.68
       },
       "metagraph_error": null
     },
@@ -157,7 +157,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 0.804349,
-          "stake": 2849112.5,
+          "stake": 2849113.0,
           "hotkey": "5FR392L6\u2026",
           "ip": "0.0.0.0"
         },
@@ -240,7 +240,7 @@
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 318.92
+        "tao_price_usd": 318.68
       },
       "metagraph_error": null
     }
@@ -250,16 +250,16 @@
       "name": "ceo-agent",
       "pid": 110759,
       "status": "online",
-      "uptime_s": 9707,
+      "uptime_s": 10017,
       "restarts": 19,
-      "memory_mb": 76,
+      "memory_mb": 75,
       "cpu_pct": 0
     },
     {
       "name": "sn41-trader",
       "pid": 71368,
       "status": "online",
-      "uptime_s": 36937,
+      "uptime_s": 37246,
       "restarts": 10,
       "memory_mb": 55,
       "cpu_pct": 0
@@ -268,16 +268,16 @@
       "name": "metagraph-daemon",
       "pid": 113814,
       "status": "online",
-      "uptime_s": 3013,
+      "uptime_s": 3322,
       "restarts": 4,
-      "memory_mb": 1838,
-      "cpu_pct": 0.6
+      "memory_mb": 2039,
+      "cpu_pct": 0.7
     },
     {
       "name": "dashboard-snapshot",
       "pid": 114456,
       "status": "online",
-      "uptime_s": 2170,
+      "uptime_s": 2479,
       "restarts": 0,
       "memory_mb": 3,
       "cpu_pct": 0
