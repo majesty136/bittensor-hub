@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bittensor HQ">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<title>Bittensor HQ</title>
+<style>
+  :root {
+    --bg-0: #0a0a0f;
+    --bg-1: #14141c;
+    --bg-2: #1c1c28;
+    --bg-3: #25253a;
+    --txt: #f5f5fa;
+    --dim: rgba(245,245,250,.55);
+    --faint: rgba(245,245,250,.28);
+    --line: rgba(245,245,250,.08);
+    --ok:   #30D158;
+    --warn: #FF9F0A;
+    --err:  #FF453A;
+    --pos:  #34d399;
+    --neg:  #f87171;
+    --accent: #818cf8;
+    --accent-2: #a78bfa;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --tab-h: 70px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%; height: -webkit-fill-available;
+    background: var(--bg-0); color: var(--txt);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; overflow: hidden;
+  }
+  body {
+    background-image: radial-gradient(circle at 20% 10%, rgba(129,140,248,.08), transparent 50%),
+                      radial-gradient(circle at 80% 90%, rgba(167,139,250,.06), transparent 50%);
+  }
+  #shell { display: flex; flex-direction: column; height: 100%; height: -webkit-fill-available; }
+  #status-spacer { height: var(--safe-top); background: var(--bg-0); position: sticky; top: 0; z-index: 30; }
+  #scroll {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px calc(var(--tab-h) + var(--safe-bottom) + 20px) 16px;
+  }
+
+  /* ── Header ── */
+  .page-header { padding: 12px 4px 24px; display: flex; align-items: flex-end; justify-content: space-between; }
+  .page-title { font-size: 1.7em; font-weight: 700; letter-spacing: -.02em; }
+  .page-sub { font-size: .72em; color: var(--dim); margin-top: 4px; }
+  .pill {
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 99px;
+    padding: 6px 12px; font-size: .72em; color: var(--dim); cursor: pointer;
+    font-family: inherit; transition: background .15s;
+  }
+  .pill:active { background: var(--bg-3); }
+  .pill.refreshing::before { content: '↻ '; display: inline-block; animation: spin 1s linear infinite; }
+  @keyframes spin { from {transform: rotate(0)} to {transform: rotate(360deg)} }
+
+  /* ── Tabs ── */
+  #tabs {
+    position: absolute; bottom: 0; left: 0; right: 0; height: calc(var(--tab-h) + var(--safe-bottom));
+    background: rgba(20,20,28,.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--line);
+    display: flex; padding-bottom: var(--safe-bottom);
+    z-index: 20;
+  }
+  .tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; cursor: pointer; color: var(--dim); transition: color .15s;
+    padding: 6px 0;
+  }
+  .tab.active { color: var(--accent); }
+  .tab .ico { font-size: 1.3em; line-height: 1; }
+  .tab .lbl { font-size: .65em; font-weight: 500; letter-spacing: .02em; }
+
+  /* ── Sections ── */
+  .section { display: none; animation: fadein .3s ease; }
+  .section.active { display: block; }
+  @keyframes fadein { from {opacity:0; transform: translateY(8px)} to {opacity:1; transform:none} }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bg-1); border: 1px solid var(--line); border-radius: 16px;
+    padding: 18px; margin-bottom: 12px;
+  }
+  .card-title { font-size: .85em; color: var(--dim); margin-bottom: 12px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: .08em; }
+  .card h2 { font-size: 1.1em; font-weight: 600; margin-bottom: 4px; letter-spacing: -.01em; }
+  .card.glow { background: linear-gradient(135deg, rgba(129,140,248,.12), rgba(167,139,250,.06));
+    border-color: rgba(129,140,248,.3); }
+
+  /* ── KPI grid ── */
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi {
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .kpi .label { font-size: .68em; color: var(--dim); letter-spacing: .04em; text-transform: uppercase; }
+  .kpi .value { font-size: 1.35em; font-weight: 700; letter-spacing: -.02em; }
+  .kpi .sub { font-size: .7em; color: var(--faint); }
+  .kpi.full { grid-column: 1 / -1; }
+
+  .pos { color: var(--pos); }
+  .neg { color: var(--neg); }
+  .ok-dot, .err-dot, .warn-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    margin-right: 6px; vertical-align: middle; }
+  .ok-dot { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+  .err-dot { background: var(--err); box-shadow: 0 0 8px var(--err); }
+  .warn-dot { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+
+  /* ── Subnet card ── */
+  .subnet-card { padding: 18px; }
+  .subnet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .subnet-name { font-size: 1.1em; font-weight: 700; letter-spacing: -.01em; }
+  .subnet-netuid { font-size: .65em; color: var(--faint); background: var(--bg-2);
+    padding: 3px 8px; border-radius: 6px; font-weight: 500; }
+  .subnet-mech { font-size: .75em; color: var(--dim); margin-bottom: 14px; line-height: 1.4; }
+
+  .miner-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-top: 1px solid var(--line);
+  }
+  .miner-row:first-child { border-top: none; padding-top: 4px; }
+  .miner-info { display: flex; flex-direction: column; gap: 2px; }
+  .miner-name { font-size: .85em; font-weight: 600; }
+  .miner-meta { font-size: .68em; color: var(--faint); }
+  .miner-rank { font-size: 1.05em; font-weight: 700; text-align: right; }
+  .miner-rank .small { font-size: .65em; font-weight: 500; color: var(--dim); display: block; }
+
+  /* ── Competition table ── */
+  .comp-table { width: 100%; font-size: .78em; }
+  .comp-table th { text-align: left; color: var(--faint); font-weight: 500; padding: 6px 4px;
+    font-size: .85em; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line); }
+  .comp-table td { padding: 8px 4px; border-bottom: 1px solid var(--line); }
+  .comp-table tr.us { background: rgba(129,140,248,.12); }
+  .comp-table tr.us td { font-weight: 700; }
+
+  /* ── Agents ── */
+  .agent-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-top: 1px solid var(--line);
+  }
+  .agent-row:first-child { border-top: none; padding-top: 4px; }
+  .agent-name { font-weight: 600; font-size: .9em; }
+  .agent-meta { font-size: .7em; color: var(--faint); }
+  .agent-stats { text-align: right; font-size: .75em; color: var(--dim); }
+
+  /* ── Incidents ── */
+  .incident { padding: 10px 0; border-top: 1px solid var(--line); }
+  .incident:first-child { border-top: none; padding-top: 4px; }
+  .incident-ts { font-size: .7em; color: var(--faint); }
+  .incident-text { font-size: .82em; line-height: 1.4; margin-top: 3px; }
+  .incident-outcome { display: inline-block; font-size: .65em; padding: 2px 7px; border-radius: 4px;
+    margin-left: 6px; vertical-align: middle; }
+  .incident-outcome.validated_ok { background: rgba(48,209,88,.18); color: var(--ok); }
+  .incident-outcome.rolled_back { background: rgba(255,69,58,.18); color: var(--err); }
+  .incident-outcome.inconclusive { background: rgba(255,159,10,.18); color: var(--warn); }
+  .incident-outcome.pending { background: var(--bg-3); color: var(--dim); }
+
+  /* ── Loading ── */
+  .loading { padding: 30px; text-align: center; color: var(--dim); font-size: .85em; }
+  .err-banner { background: rgba(255,69,58,.2); color: var(--err); padding: 14px;
+    border-radius: 12px; margin-bottom: 12px; font-size: .85em; }
+
+  /* ── Misc ── */
+  .empty { padding: 20px; text-align: center; color: var(--faint); font-size: .85em; font-style: italic; }
+</style>
+</head>
+<body>
+<div id="shell">
+  <div id="status-spacer"></div>
+  <div id="scroll">
+
+    <!-- ── OVERVIEW ── -->
+    <section class="section active" id="sec-overview">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Bittensor HQ</div>
+          <div class="page-sub" id="last-update">Loading…</div>
+        </div>
+        <button class="pill" id="refresh-btn">Refresh</button>
+      </div>
+      <div class="card glow">
+        <div class="card-title">Portfolio</div>
+        <div class="kpi-grid">
+          <div class="kpi full">
+            <div class="label">Coldkey balance</div>
+            <div class="value" id="balance-tao">— τ</div>
+            <div class="sub" id="balance-usd">— USD</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Daily P&L</div>
+            <div class="value" id="pnl-day">— USD</div>
+            <div class="sub" id="pnl-month">— /month</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Daily revenue</div>
+            <div class="value" id="daily-tao">— τ</div>
+            <div class="sub" id="daily-usd">— USD</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Active</div>
+            <div class="value" id="active-counts">— / —</div>
+            <div class="sub">miners / subnets</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Daily cost</div>
+            <div class="value" id="daily-cost">— USD</div>
+            <div class="sub" id="tao-price">TAO: —</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top opportunities</div>
+        <div id="top-opportunities" class="empty">Calculating…</div>
+      </div>
+    </section>
+
+    <!-- ── SUBNETS ── -->
+    <section class="section" id="sec-subnets">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Subnets</div>
+          <div class="page-sub" id="subnets-count">—</div>
+        </div>
+      </div>
+      <div id="subnets-list"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ── COMPETITION ── -->
+    <section class="section" id="sec-comp">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Competition</div>
+          <div class="page-sub">Where we stand vs the top miners</div>
+        </div>
+      </div>
+      <div id="comp-list"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ── AGENTS ── -->
+    <section class="section" id="sec-agents">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Board of agents</div>
+          <div class="page-sub">7 AI executives, 24/7</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Live status</div>
+        <div id="agents-list"><div class="loading">Loading…</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Recent incidents (24h)</div>
+        <div id="incidents-list"><div class="loading">Loading…</div></div>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="tabs">
+    <div class="tab active" data-section="sec-overview"><div class="ico">📊</div><div class="lbl">Overview</div></div>
+    <div class="tab" data-section="sec-subnets"><div class="ico">🔗</div><div class="lbl">Subnets</div></div>
+    <div class="tab" data-section="sec-comp"><div class="ico">⚔️</div><div class="lbl">Compete</div></div>
+    <div class="tab" data-section="sec-agents"><div class="ico">🤖</div><div class="lbl">Agents</div></div>
+  </div>
+</div>
+
+<script>
+const DATA_URL = './dashboard.json';
+let DATA = null;
+
+function fmt_num(n, decimals = 4) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  if (Math.abs(n) >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (Math.abs(n) >= 1e3) return (n / 1e3).toFixed(1) + 'k';
+  return n.toFixed(decimals);
+}
+function fmt_usd(n) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  const sign = n < 0 ? '-' : '';
+  const abs = Math.abs(n);
+  return `${sign}$${abs.toFixed(2)}`;
+}
+function ago(ts) {
+  if (!ts) return '—';
+  const sec = Date.now() / 1000 - ts;
+  if (sec < 60) return Math.floor(sec) + 's ago';
+  if (sec < 3600) return Math.floor(sec / 60) + 'm ago';
+  if (sec < 86400) return Math.floor(sec / 3600) + 'h ago';
+  return Math.floor(sec / 86400) + 'd ago';
+}
+
+function renderOverview() {
+  const d = DATA;
+  if (!d) return;
+  document.getElementById('last-update').textContent = `Updated ${ago(d.generated_at)}`;
+  const p = d.portfolio || {};
+  document.getElementById('balance-tao').textContent = fmt_num(p.coldkey_balance_tao, 4) + ' τ';
+  document.getElementById('balance-usd').textContent = fmt_usd(p.coldkey_balance_usd);
+  const pnl = p.pnl_usd_day || 0;
+  const pnlEl = document.getElementById('pnl-day');
+  pnlEl.textContent = fmt_usd(pnl);
+  pnlEl.className = 'value ' + (pnl >= 0 ? 'pos' : 'neg');
+  const pnlMonth = p.pnl_usd_month || 0;
+  document.getElementById('pnl-month').textContent = `≈ ${fmt_usd(pnlMonth)}/month`;
+  document.getElementById('daily-tao').textContent = fmt_num(p.daily_tao_total, 5) + ' τ';
+  document.getElementById('daily-usd').textContent = fmt_usd(p.daily_usd_gross);
+  document.getElementById('daily-cost').textContent = fmt_usd(p.daily_usd_cost);
+  document.getElementById('active-counts').textContent = `${p.active_miners} / ${p.active_subnets}`;
+  document.getElementById('tao-price').textContent = `TAO: ${fmt_usd(p.tao_price_usd)}`;
+
+  // Top opportunities : subnets sorted by current pnl_usd_day desc
+  const ops = (d.subnets || [])
+    .slice().sort((a,b) => (b.estimated.pnl_usd_day || 0) - (a.estimated.pnl_usd_day || 0));
+  const oppDiv = document.getElementById('top-opportunities');
+  if (ops.length === 0) { oppDiv.innerHTML = '<div class="empty">No active subnets</div>'; return; }
+  oppDiv.innerHTML = ops.slice(0, 5).map(s => {
+    const pnl = s.estimated.pnl_usd_day;
+    const cls = pnl >= 0 ? 'pos' : 'neg';
+    return `<div class="agent-row">
+      <div><div class="agent-name">${s.name}</div>
+        <div class="agent-meta">netuid ${s.netuid} • ${s.miners.length} miner${s.miners.length>1?'s':''}</div></div>
+      <div class="agent-stats"><span class="${cls}">${fmt_usd(pnl)}/day</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderSubnets() {
+  const d = DATA;
+  if (!d) return;
+  const subs = d.subnets || [];
+  document.getElementById('subnets-count').textContent = `${subs.length} active`;
+  if (subs.length === 0) {
+    document.getElementById('subnets-list').innerHTML = '<div class="empty">No subnets configured</div>';
+    return;
+  }
+  document.getElementById('subnets-list').innerHTML = subs.map(s => {
+    const minersHtml = s.miners.map(m => {
+      const dot = m.is_serving ? '<span class="ok-dot"></span>' : '<span class="err-dot"></span>';
+      const rank = m.rank ? `#${m.rank}` : '—';
+      return `<div class="miner-row">
+        <div class="miner-info">
+          <div class="miner-name">${dot}${m.name || ('UID '+m.uid)}</div>
+          <div class="miner-meta">UID ${m.uid} • ${m.hotkey_short} • ${m.axon_ip || '?'}:${m.axon_port || '?'}</div>
+        </div>
+        <div class="miner-rank">${rank}<span class="small">τ ${fmt_num(m.incentive, 6)}</span></div>
+      </div>`;
+    }).join('');
+    const pnl = s.estimated.pnl_usd_day;
+    const pnlCls = pnl >= 0 ? 'pos' : 'neg';
+    return `<div class="card subnet-card">
+      <div class="subnet-head">
+        <div class="subnet-name">${s.name}</div>
+        <div class="subnet-netuid">netuid ${s.netuid}</div>
+      </div>
+      <div class="subnet-mech">${s.mechanism || ''}</div>
+      ${minersHtml}
+      <div class="kpi-grid" style="margin-top: 14px">
+        <div class="kpi"><div class="label">Daily τ</div><div class="value" style="font-size:1em">${fmt_num(s.estimated.daily_tao, 5)}</div></div>
+        <div class="kpi"><div class="label">P&L /day</div><div class="value ${pnlCls}" style="font-size:1em">${fmt_usd(pnl)}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCompetition() {
+  const d = DATA;
+  if (!d) return;
+  const subs = d.subnets || [];
+  if (subs.length === 0) {
+    document.getElementById('comp-list').innerHTML = '<div class="empty">No data</div>';
+    return;
+  }
+  document.getElementById('comp-list').innerHTML = subs.map(s => {
+    const ourUids = new Set(s.miners.map(m => m.uid));
+    const rows = (s.competition_top10 || []).map(t => {
+      const us = ourUids.has(t.uid) ? ' class="us"' : '';
+      return `<tr${us}>
+        <td>#${t.rank}</td><td>${t.uid}</td>
+        <td>${fmt_num(t.incentive, 5)}</td>
+        <td>${fmt_num(t.stake, 0)}</td>
+        <td>${t.ip}</td></tr>`;
+    }).join('');
+    const ourBest = Math.min(...s.miners.map(m => m.rank || 9999).filter(r => r < 9999), 9999);
+    const ourMsg = ourBest === 9999 ? 'Not ranked yet' : `Our best: rank #${ourBest} / ${s.total_miners}`;
+    return `<div class="card">
+      <div class="subnet-head">
+        <div class="subnet-name">${s.name}</div>
+        <div class="subnet-netuid">netuid ${s.netuid}</div>
+      </div>
+      <div class="subnet-mech">${ourMsg}</div>
+      <table class="comp-table">
+        <thead><tr><th>Rank</th><th>UID</th><th>Inc</th><th>Stake</th><th>IP</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+function renderAgents() {
+  const d = DATA;
+  if (!d) return;
+  const agents = d.agents || [];
+  document.getElementById('agents-list').innerHTML = agents.length === 0
+    ? '<div class="empty">No agent data</div>'
+    : agents.map(a => {
+        const isOK = a.status === 'online';
+        const dot = isOK ? '<span class="ok-dot"></span>' : '<span class="err-dot"></span>';
+        const uph = a.uptime_s ? `${Math.floor(a.uptime_s / 3600)}h ${Math.floor((a.uptime_s % 3600) / 60)}m` : '—';
+        return `<div class="agent-row">
+          <div><div class="agent-name">${dot}${a.name}</div>
+            <div class="agent-meta">PID ${a.pid || '—'} • restarts ${a.restarts || 0} • ${a.memory_mb || 0} MB</div></div>
+          <div class="agent-stats">${uph}</div>
+        </div>`;
+      }).join('');
+
+  const inc = d.incidents_24h || [];
+  document.getElementById('incidents-list').innerHTML = inc.length === 0
+    ? '<div class="empty">No incidents in last 24h ✓</div>'
+    : inc.slice(0, 10).map(i => {
+        return `<div class="incident">
+          <div class="incident-ts">${ago(i.ts)}</div>
+          <div class="incident-text">${i.alert} <span class="incident-outcome ${i.outcome}">${i.outcome}</span></div>
+        </div>`;
+      }).join('');
+}
+
+async function loadData() {
+  document.getElementById('refresh-btn').classList.add('refreshing');
+  try {
+    const r = await fetch(DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    DATA = await r.json();
+    renderOverview(); renderSubnets(); renderCompetition(); renderAgents();
+  } catch (e) {
+    document.getElementById('subnets-list').innerHTML = `<div class="err-banner">Failed to load data: ${e.message}</div>`;
+  } finally {
+    document.getElementById('refresh-btn').classList.remove('refreshing');
+  }
+}
+
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById(t.dataset.section).classList.add('active');
+  document.getElementById('scroll').scrollTop = 0;
+}));
+document.getElementById('refresh-btn').addEventListener('click', loadData);
+loadData();
+setInterval(loadData, 60_000);
+</script>
+</body>
+</html>
