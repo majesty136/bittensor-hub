@@ -1,6 +1,6 @@
 {
-  "generated_at": 1778581086,
-  "generated_in_s": 11.29,
+  "generated_at": 1778581509,
+  "generated_in_s": 16.43,
   "version": "v2",
   "portfolio": {
     "subnets_in_portfolio": 4,
@@ -13,9 +13,9 @@
     "daily_usd_cost": 33.12,
     "pnl_usd_day": -33.12,
     "pnl_usd_month": -993.6,
-    "tao_price_usd": 313.45,
+    "tao_price_usd": 313.85,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 211.52
+    "coldkey_balance_usd": 211.79
   },
   "subnets": [
     {
@@ -25,131 +25,68 @@
       "mechanism": "Adversarial perturbation PGD (EfficientNet-B5)",
       "status": "mining",
       "external_dashboard_url": "https://taostats.io/subnets/26",
-      "total_miners": 236,
+      "total_miners": 0,
       "active_miners": 1,
       "miners": [
         {
-          "name": "sn26 miner",
           "uid": 129,
-          "hotkey_short": "5ExroXjh\u2026",
-          "rank": 130,
-          "incentive": 0.0,
-          "stake_tao": 1.4158,
-          "axon_ip": "103.196.86.111",
-          "axon_port": 16813,
-          "is_serving": true,
+          "hotkey": "5ExroXjhMkXePHtYMjNrtURU32msNFJCHogaN4RMHVoT22C8",
+          "pod": {
+            "host": "103.196.86.111",
+            "port": 16812,
+            "key": "~/.ssh/sn26_runpod",
+            "gpu": "RTX 4090",
+            "vram_gb": 24,
+            "cost_per_hour": 0.69,
+            "runpod_id": "jsgx8o7tedy97x"
+          },
+          "axon": {
+            "port": 16813
+          },
+          "rank": null,
+          "incentive": 0,
+          "is_serving": false,
           "pod_id": "jsgx8o7tedy97x",
           "pod_status": "RUNNING",
           "cost_per_hour": 0.69,
           "is_active": true
         },
         {
-          "name": "sn26-miner-2",
           "uid": 232,
-          "hotkey_short": "5GByTm41\u2026",
-          "rank": 233,
-          "incentive": 0.0,
-          "stake_tao": 0.0,
-          "axon_ip": "209.170.80.132",
-          "axon_port": 12920,
-          "is_serving": true,
+          "hotkey": "5GByTm41ieWqHvZcotAepEZRcK8R2RpDPkWXAVXnCxpdvUcV",
+          "pod": {
+            "host": "209.170.80.132",
+            "port": 12919,
+            "key": "~/.ssh/sn85_runpod",
+            "gpu": "RTX 4090",
+            "vram_gb": 24,
+            "cost_per_hour": 0.69,
+            "runpod_id": "jdrudda8tsp4tl",
+            "stopped": true
+          },
+          "axon": {
+            "port": 12920
+          },
+          "name": "sn26-miner-2",
+          "rank": null,
+          "incentive": 0,
+          "is_serving": false,
           "pod_id": "jdrudda8tsp4tl",
           "pod_status": "stopped",
           "cost_per_hour": 0.0,
           "is_active": false
         }
       ],
-      "competition_top10": [
-        {
-          "rank": 1,
-          "uid": 0,
-          "incentive": 1.0,
-          "stake": 1162371.5,
-          "hotkey": "5EHfTi6R\u2026",
-          "ip": "63.142.193.28"
-        },
-        {
-          "rank": 2,
-          "uid": 1,
-          "incentive": 0.0,
-          "stake": 0.0,
-          "hotkey": "5FLoWCDo\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 3,
-          "uid": 2,
-          "incentive": 0.0,
-          "stake": 97175.66,
-          "hotkey": "5E2LP6En\u2026",
-          "ip": "213.173.99.31"
-        },
-        {
-          "rank": 4,
-          "uid": 3,
-          "incentive": 0.0,
-          "stake": 36890.89,
-          "hotkey": "5GDxzsjt\u2026",
-          "ip": "185.216.20.148"
-        },
-        {
-          "rank": 5,
-          "uid": 4,
-          "incentive": 0.0,
-          "stake": 0.0,
-          "hotkey": "5FgzFyHm\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 6,
-          "uid": 5,
-          "incentive": 0.0,
-          "stake": 755.85,
-          "hotkey": "5HYQeVHx\u2026",
-          "ip": "162.239.74.119"
-        },
-        {
-          "rank": 7,
-          "uid": 6,
-          "incentive": 0.0,
-          "stake": 2.03,
-          "hotkey": "5CJ3kezE\u2026",
-          "ip": "180.131.145.159"
-        },
-        {
-          "rank": 8,
-          "uid": 7,
-          "incentive": 0.0,
-          "stake": 0.0,
-          "hotkey": "5DWyg7Ek\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 9,
-          "uid": 8,
-          "incentive": 0.0,
-          "stake": 0.51,
-          "hotkey": "5GbtkZXH\u2026",
-          "ip": "216.81.248.198"
-        },
-        {
-          "rank": 10,
-          "uid": 9,
-          "incentive": 0.0,
-          "stake": 0.0,
-          "hotkey": "5CqQPdG6\u2026",
-          "ip": "76.66.207.49"
-        }
-      ],
+      "competition_top10": [],
       "estimated": {
         "daily_tao": 0.0,
         "daily_usd_gross": 0.0,
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 313.45
+        "tao_price_usd": 313.85
       },
-      "metagraph_error": null
+      "metagraph_error": "<urlopen error [Errno 111] Connection refused>"
     },
     {
       "id": "sn85",
@@ -158,116 +95,42 @@
       "mechanism": "Video upscaling Real-ESRGAN (PIE-APP score)",
       "status": "mining",
       "external_dashboard_url": "https://vidaio.io/miners/5GNLvtNat3KYgUnY8eKGCXRUg16hH8dWRsm1zwQeydnres63",
-      "total_miners": 256,
+      "total_miners": 0,
       "active_miners": 1,
       "miners": [
         {
-          "name": "sn85 miner",
           "uid": 251,
-          "hotkey_short": "5GNLvtNa\u2026",
-          "rank": 254,
-          "incentive": 0.0,
-          "stake_tao": 0.0,
-          "axon_ip": "87.197.110.78",
-          "axon_port": 40170,
-          "is_serving": true,
+          "hotkey": "5GNLvtNat3KYgUnY8eKGCXRUg16hH8dWRsm1zwQeydnres63",
+          "pod": {
+            "host": "87.197.110.78",
+            "port": 40166,
+            "key": "~/.ssh/sn85_runpod",
+            "gpu": "RTX 5090",
+            "vram_gb": 32,
+            "cost_per_hour": 0.69
+          },
+          "axon": {
+            "port": 40170
+          },
+          "rank": null,
+          "incentive": 0,
+          "is_serving": false,
           "pod_id": null,
           "pod_status": "unknown",
           "cost_per_hour": 0.69,
           "is_active": true
         }
       ],
-      "competition_top10": [
-        {
-          "rank": 1,
-          "uid": 0,
-          "incentive": 0.805417,
-          "stake": 2867113.0,
-          "hotkey": "5FR392L6\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 2,
-          "uid": 66,
-          "incentive": 0.006485,
-          "stake": 0.96,
-          "hotkey": "5GKw6gv9\u2026",
-          "ip": "65.21.67.48"
-        },
-        {
-          "rank": 3,
-          "uid": 226,
-          "incentive": 0.006104,
-          "stake": 0.9,
-          "hotkey": "5D9eVvJe\u2026",
-          "ip": "65.21.67.48"
-        },
-        {
-          "rank": 4,
-          "uid": 8,
-          "incentive": 0.005676,
-          "stake": 8.14,
-          "hotkey": "5C5f1Tn4\u2026",
-          "ip": "65.108.194.232"
-        },
-        {
-          "rank": 5,
-          "uid": 31,
-          "incentive": 0.005676,
-          "stake": 8.18,
-          "hotkey": "5HizdqAi\u2026",
-          "ip": "65.108.194.232"
-        },
-        {
-          "rank": 6,
-          "uid": 39,
-          "incentive": 0.005676,
-          "stake": 5.57,
-          "hotkey": "5EPXtcHa\u2026",
-          "ip": "65.108.194.232"
-        },
-        {
-          "rank": 7,
-          "uid": 152,
-          "incentive": 0.005676,
-          "stake": 5.57,
-          "hotkey": "5EWmhsmB\u2026",
-          "ip": "65.108.194.232"
-        },
-        {
-          "rank": 8,
-          "uid": 176,
-          "incentive": 0.005676,
-          "stake": 4.94,
-          "hotkey": "5F9Mbzds\u2026",
-          "ip": "65.108.194.232"
-        },
-        {
-          "rank": 9,
-          "uid": 57,
-          "incentive": 0.005646,
-          "stake": 3.73,
-          "hotkey": "5DvqQaX8\u2026",
-          "ip": "65.108.194.232"
-        },
-        {
-          "rank": 10,
-          "uid": 99,
-          "incentive": 0.005646,
-          "stake": 5.01,
-          "hotkey": "5Df2JVby\u2026",
-          "ip": "65.108.194.232"
-        }
-      ],
+      "competition_top10": [],
       "estimated": {
         "daily_tao": 0.0,
         "daily_usd_gross": 0.0,
         "daily_usd_cost": 16.56,
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 313.45
+        "tao_price_usd": 313.85
       },
-      "metagraph_error": null
+      "metagraph_error": "<urlopen error [Errno 111] Connection refused>"
     },
     {
       "id": "sn6",
@@ -276,7 +139,7 @@
       "mechanism": "AI reasoning (Lightning Rod + Vericore + GPT-5 + Chutes)",
       "status": "preparing",
       "external_dashboard_url": "https://taostats.io/subnets/6",
-      "total_miners": 256,
+      "total_miners": 0,
       "active_miners": 0,
       "miners": [
         {
@@ -293,97 +156,16 @@
           "is_active": false
         }
       ],
-      "competition_top10": [
-        {
-          "rank": 1,
-          "uid": 235,
-          "incentive": 0.158038,
-          "stake": 353.76,
-          "hotkey": "5GYbxN8M\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 2,
-          "uid": 39,
-          "incentive": 0.111208,
-          "stake": 147.8,
-          "hotkey": "5H4Gco1N\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 3,
-          "uid": 207,
-          "incentive": 0.108492,
-          "stake": 155.46,
-          "hotkey": "5FHYAz5F\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 4,
-          "uid": 232,
-          "incentive": 0.108232,
-          "stake": 143.84,
-          "hotkey": "5Et8VAKW\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 5,
-          "uid": 137,
-          "incentive": 0.108156,
-          "stake": 144.29,
-          "hotkey": "5FC7u9w3\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 6,
-          "uid": 123,
-          "incentive": 0.049805,
-          "stake": 206.55,
-          "hotkey": "5GBTqX3b\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 7,
-          "uid": 56,
-          "incentive": 0.049653,
-          "stake": 69.17,
-          "hotkey": "5FbLeQbT\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 8,
-          "uid": 200,
-          "incentive": 0.049561,
-          "stake": 66.37,
-          "hotkey": "5D74x4X1\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 9,
-          "uid": 203,
-          "incentive": 0.04947,
-          "stake": 68.14,
-          "hotkey": "5FeTCpCU\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 10,
-          "uid": 44,
-          "incentive": 0.029694,
-          "stake": 145.86,
-          "hotkey": "5DRYbJPu\u2026",
-          "ip": "0.0.0.0"
-        }
-      ],
+      "competition_top10": [],
       "estimated": {
         "daily_tao": 0.0,
         "daily_usd_gross": 0.0,
         "daily_usd_cost": 0.0,
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 313.45
+        "tao_price_usd": 313.85
       },
-      "metagraph_error": null
+      "metagraph_error": "<urlopen error [Errno 111] Connection refused>"
     },
     {
       "id": "sn41",
@@ -392,18 +174,24 @@
       "mechanism": "Polymarket trading (Brier + ROI r\u00e9el)",
       "status": "preparing",
       "external_dashboard_url": "https://taostats.io/subnets/41",
-      "total_miners": 256,
+      "total_miners": 0,
       "active_miners": 1,
       "miners": [
         {
-          "name": "sn41 miner",
           "uid": 208,
-          "hotkey_short": "5CzGpSUb\u2026",
-          "rank": 212,
-          "incentive": 0.0,
-          "stake_tao": 0.0,
-          "axon_ip": "0.0.0.0",
-          "axon_port": 0,
+          "hotkey": "5CzGpSUbufiQDjZnFS6kY4ok2VwtRstQi4rRdA57muhtuB8a",
+          "pod": {
+            "host": "62.238.31.176",
+            "port": 22,
+            "key": "~/.ssh/sn26_runpod",
+            "gpu": "none",
+            "vram_gb": 0,
+            "cost_per_hour": 0.0,
+            "runpod_id": null
+          },
+          "axon": null,
+          "rank": null,
+          "incentive": 0,
           "is_serving": false,
           "pod_id": null,
           "pod_status": "unknown",
@@ -411,97 +199,16 @@
           "is_active": true
         }
       ],
-      "competition_top10": [
-        {
-          "rank": 1,
-          "uid": 210,
-          "incentive": 0.93817,
-          "stake": 13076.65,
-          "hotkey": "5FCSevLk\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 2,
-          "uid": 159,
-          "incentive": 0.008469,
-          "stake": 13.63,
-          "hotkey": "5GU9u78b\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 3,
-          "uid": 149,
-          "incentive": 0.006867,
-          "stake": 189.66,
-          "hotkey": "5HGKFjwY\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 4,
-          "uid": 197,
-          "incentive": 0.00621,
-          "stake": 157.04,
-          "hotkey": "5GNci2K2\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 5,
-          "uid": 90,
-          "incentive": 0.005127,
-          "stake": 16.47,
-          "hotkey": "5CkJsxv6\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 6,
-          "uid": 105,
-          "incentive": 0.004379,
-          "stake": 139.15,
-          "hotkey": "5HB9BTbF\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 7,
-          "uid": 238,
-          "incentive": 0.004288,
-          "stake": 6.93,
-          "hotkey": "5Gx1KniY\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 8,
-          "uid": 54,
-          "incentive": 0.004242,
-          "stake": 5.14,
-          "hotkey": "5CVY9zF3\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 9,
-          "uid": 13,
-          "incentive": 0.004211,
-          "stake": 64.41,
-          "hotkey": "5Dt4xxc6\u2026",
-          "ip": "0.0.0.0"
-        },
-        {
-          "rank": 10,
-          "uid": 86,
-          "incentive": 0.004211,
-          "stake": 28.23,
-          "hotkey": "5FZY4C63\u2026",
-          "ip": "0.0.0.0"
-        }
-      ],
+      "competition_top10": [],
       "estimated": {
         "daily_tao": 0.0,
         "daily_usd_gross": 0.0,
         "daily_usd_cost": 0.0,
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 313.45
+        "tao_price_usd": 313.85
       },
-      "metagraph_error": null
+      "metagraph_error": "<urlopen error [Errno 111] Connection refused>"
     }
   ],
   "agents": [
@@ -509,34 +216,34 @@
       "name": "ceo-agent",
       "pid": 126422,
       "status": "online",
-      "uptime_s": 6722,
+      "uptime_s": 7140,
       "restarts": 21,
       "memory_mb": 89,
-      "cpu_pct": 0
+      "cpu_pct": 2.5
     },
     {
       "name": "sn41-trader",
       "pid": 71368,
       "status": "online",
-      "uptime_s": 69001,
+      "uptime_s": 69419,
       "restarts": 10,
-      "memory_mb": 56,
+      "memory_mb": 49,
       "cpu_pct": 0
     },
     {
       "name": "metagraph-daemon",
       "pid": 127603,
-      "status": "online",
-      "uptime_s": 5113,
+      "status": "waiting restart",
+      "uptime_s": 5531,
       "restarts": 9,
-      "memory_mb": 3220,
-      "cpu_pct": 1.3
+      "memory_mb": 0,
+      "cpu_pct": 0
     },
     {
       "name": "dashboard-snapshot",
       "pid": 114456,
       "status": "online",
-      "uptime_s": 34233,
+      "uptime_s": 34652,
       "restarts": 0,
       "memory_mb": 2,
       "cpu_pct": 0
