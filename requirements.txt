@@ -1,0 +1,2 @@
+bittensor==10.1.0
+async-substrate-interface==1.6.4

@@ -46,10 +46,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip --quiet
-          pip install \
-            "bittensor==10.1.0" \
-            "async-substrate-interface==1.6.4" \
-            --quiet
+          pip install -r requirements.txt --quiet
           python -c "import bittensor; print('bittensor', bittensor.__version__)"
 
       # 4. Fetch métagraphe on-chain
