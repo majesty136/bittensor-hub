@@ -1,6 +1,6 @@
 {
-  "generated_at": 1778659811,
-  "generated_in_s": 9.25,
+  "generated_at": 1778660114,
+  "generated_in_s": 2.06,
   "version": "v2",
   "portfolio": {
     "subnets_in_portfolio": 4,
@@ -15,9 +15,9 @@
     "daily_usd_api": 1.8911,
     "pnl_usd_day": -35.01,
     "pnl_usd_month": -1050.33,
-    "tao_price_usd": 305.62,
+    "tao_price_usd": 305.03,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 206.24,
+    "coldkey_balance_usd": 205.84,
     "neo_errors": {
       "count_24h": 0,
       "count_1h": 0,
@@ -73,7 +73,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 1.0,
-          "stake": 1141697.5,
+          "stake": 1142991.88,
           "hotkey": "5EHfTi6R\u2026",
           "ip": "63.142.193.28"
         },
@@ -89,7 +89,7 @@
           "rank": 3,
           "uid": 2,
           "incentive": 0.0,
-          "stake": 97262.86,
+          "stake": 97262.88,
           "hotkey": "5E2LP6En\u2026",
           "ip": "213.173.99.31"
         },
@@ -129,7 +129,7 @@
           "rank": 8,
           "uid": 7,
           "incentive": 0.0,
-          "stake": 16923.15,
+          "stake": 16923.16,
           "hotkey": "5DWyg7Ek\u2026",
           "ip": "0.0.0.0"
         },
@@ -159,7 +159,7 @@
         "external_costs": {},
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 305.62
+        "tao_price_usd": 305.03
       },
       "metagraph_error": null
     },
@@ -194,7 +194,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 0.804822,
-          "stake": 2819264.75,
+          "stake": 2818757.0,
           "hotkey": "5FR392L6\u2026",
           "ip": "0.0.0.0"
         },
@@ -280,7 +280,7 @@
         "external_costs": {},
         "pnl_usd_day": -16.56,
         "pnl_usd_month": -496.8,
-        "tao_price_usd": 305.62
+        "tao_price_usd": 305.03
       },
       "metagraph_error": null
     },
@@ -404,7 +404,7 @@
         },
         "pnl_usd_day": -1.89,
         "pnl_usd_month": -56.73,
-        "tao_price_usd": 305.62
+        "tao_price_usd": 305.03
       },
       "metagraph_error": null
     },
@@ -525,7 +525,7 @@
         "external_costs": {},
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 305.62
+        "tao_price_usd": 305.03
       },
       "metagraph_error": null,
       "trading": {
@@ -552,7 +552,7 @@
       "name": "ceo-agent",
       "pid": 149665,
       "status": "online",
-      "uptime_s": 62173,
+      "uptime_s": 62483,
       "restarts": 30,
       "memory_mb": 87,
       "cpu_pct": 0
@@ -561,16 +561,16 @@
       "name": "metagraph-daemon",
       "pid": 172766,
       "status": "online",
-      "uptime_s": 1516,
+      "uptime_s": 1826,
       "restarts": 32,
-      "memory_mb": 1668,
+      "memory_mb": 1902,
       "cpu_pct": 0
     },
     {
       "name": "dashboard-snapshot",
       "pid": 145415,
       "status": "online",
-      "uptime_s": 68372,
+      "uptime_s": 68682,
       "restarts": 1,
       "memory_mb": 2,
       "cpu_pct": 0
@@ -579,7 +579,7 @@
       "name": "sn6-optimizer",
       "pid": 0,
       "status": "stopped",
-      "uptime_s": 70859,
+      "uptime_s": 71169,
       "restarts": 14,
       "memory_mb": 0,
       "cpu_pct": 0
@@ -588,7 +588,7 @@
       "name": "sn6-monitor",
       "pid": 170672,
       "status": "online",
-      "uptime_s": 3201,
+      "uptime_s": 3511,
       "restarts": 3,
       "memory_mb": 42,
       "cpu_pct": 0
@@ -597,7 +597,7 @@
       "name": "sn41-trader",
       "pid": 153267,
       "status": "online",
-      "uptime_s": 59446,
+      "uptime_s": 59756,
       "restarts": 2,
       "memory_mb": 52,
       "cpu_pct": 0
@@ -606,7 +606,7 @@
       "name": "sn41-pnl-resolver",
       "pid": 150971,
       "status": "online",
-      "uptime_s": 61131,
+      "uptime_s": 61441,
       "restarts": 0,
       "memory_mb": 25,
       "cpu_pct": 0
