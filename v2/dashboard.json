@@ -1,6 +1,6 @@
 {
-  "generated_at": 1778791733,
-  "generated_in_s": 1.95,
+  "generated_at": 1778792039,
+  "generated_in_s": 4.02,
   "version": "v2",
   "portfolio": {
     "subnets_in_portfolio": 4,
@@ -15,9 +15,9 @@
     "daily_usd_api": 5.3902,
     "pnl_usd_day": -10.67,
     "pnl_usd_month": -320.11,
-    "tao_price_usd": 303.5,
+    "tao_price_usd": 303.93,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 204.81,
+    "coldkey_balance_usd": 205.1,
     "neo_errors": {
       "count_24h": 1,
       "count_1h": 0,
@@ -81,7 +81,7 @@
           "rank": 2,
           "uid": 0,
           "incentive": 0.0,
-          "stake": 1138714.75,
+          "stake": 1139084.38,
           "hotkey": "5EHfTi6R\u2026",
           "ip": "63.142.193.28"
         },
@@ -97,7 +97,7 @@
           "rank": 4,
           "uid": 2,
           "incentive": 0.0,
-          "stake": 98350.53,
+          "stake": 98349.66,
           "hotkey": "5E2LP6En\u2026",
           "ip": "213.173.99.31"
         },
@@ -105,7 +105,7 @@
           "rank": 5,
           "uid": 3,
           "incentive": 0.0,
-          "stake": 37277.33,
+          "stake": 37278.01,
           "hotkey": "5GDxzsjt\u2026",
           "ip": "185.216.20.148"
         },
@@ -137,7 +137,7 @@
           "rank": 9,
           "uid": 7,
           "incentive": 0.0,
-          "stake": 16904.31,
+          "stake": 16904.4,
           "hotkey": "5DWyg7Ek\u2026",
           "ip": "0.0.0.0"
         },
@@ -159,7 +159,7 @@
         "external_costs": {},
         "pnl_usd_day": -5.28,
         "pnl_usd_month": -158.4,
-        "tao_price_usd": 303.5
+        "tao_price_usd": 303.93
       },
       "metagraph_error": null
     },
@@ -194,7 +194,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 0.806912,
-          "stake": 2698489.75,
+          "stake": 2698717.5,
           "hotkey": "5FR392L6\u2026",
           "ip": "0.0.0.0"
         },
@@ -280,7 +280,7 @@
         "external_costs": {},
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 303.5
+        "tao_price_usd": 303.93
       },
       "metagraph_error": null
     },
@@ -404,7 +404,7 @@
         },
         "pnl_usd_day": -5.39,
         "pnl_usd_month": -161.71,
-        "tao_price_usd": 303.5
+        "tao_price_usd": 303.93
       },
       "metagraph_error": null
     },
@@ -525,7 +525,7 @@
         "external_costs": {},
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 303.5
+        "tao_price_usd": 303.93
       },
       "metagraph_error": null,
       "trading": {
@@ -559,25 +559,25 @@
       "name": "ceo-agent",
       "pid": 201549,
       "status": "online",
-      "uptime_s": 48956,
+      "uptime_s": 49262,
       "restarts": 34,
-      "memory_mb": 84,
+      "memory_mb": 79,
       "cpu_pct": 0
     },
     {
       "name": "metagraph-daemon",
       "pid": 218225,
       "status": "online",
-      "uptime_s": 2776,
+      "uptime_s": 3082,
       "restarts": 71,
-      "memory_mb": 2718,
+      "memory_mb": 2960,
       "cpu_pct": 0
     },
     {
       "name": "dashboard-snapshot",
       "pid": 145415,
       "status": "online",
-      "uptime_s": 200301,
+      "uptime_s": 200607,
       "restarts": 1,
       "memory_mb": 2,
       "cpu_pct": 0
@@ -586,7 +586,7 @@
       "name": "sn6-optimizer",
       "pid": 0,
       "status": "stopped",
-      "uptime_s": 202788,
+      "uptime_s": 203093,
       "restarts": 14,
       "memory_mb": 0,
       "cpu_pct": 0
@@ -595,16 +595,16 @@
       "name": "sn6-monitor",
       "pid": 170672,
       "status": "online",
-      "uptime_s": 135130,
+      "uptime_s": 135435,
       "restarts": 3,
-      "memory_mb": 61,
+      "memory_mb": 55,
       "cpu_pct": 0
     },
     {
       "name": "sn41-trader",
       "pid": 175892,
       "status": "online",
-      "uptime_s": 128324,
+      "uptime_s": 128630,
       "restarts": 3,
       "memory_mb": 56,
       "cpu_pct": 0
@@ -613,9 +613,9 @@
       "name": "sn41-pnl-resolver",
       "pid": 150971,
       "status": "online",
-      "uptime_s": 193060,
+      "uptime_s": 193365,
       "restarts": 0,
-      "memory_mb": 25,
+      "memory_mb": 22,
       "cpu_pct": 0
     }
   ],
