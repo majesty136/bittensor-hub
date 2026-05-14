@@ -1,6 +1,6 @@
 {
-  "generated_at": 1778798932,
-  "generated_in_s": 2.42,
+  "generated_at": 1778799236,
+  "generated_in_s": 2.58,
   "version": "v2",
   "portfolio": {
     "subnets_in_portfolio": 4,
@@ -15,9 +15,9 @@
     "daily_usd_api": 5.4187,
     "pnl_usd_day": -10.7,
     "pnl_usd_month": -320.96,
-    "tao_price_usd": 307.53,
+    "tao_price_usd": 307.5,
     "coldkey_balance_tao": 0.674826,
-    "coldkey_balance_usd": 207.53,
+    "coldkey_balance_usd": 207.51,
     "neo_errors": {
       "count_24h": 1,
       "count_1h": 0,
@@ -81,7 +81,7 @@
           "rank": 2,
           "uid": 0,
           "incentive": 0.0,
-          "stake": 1148447.38,
+          "stake": 1148450.5,
           "hotkey": "5EHfTi6R\u2026",
           "ip": "63.142.193.28"
         },
@@ -105,7 +105,7 @@
           "rank": 5,
           "uid": 3,
           "incentive": 0.0,
-          "stake": 37604.62,
+          "stake": 37604.74,
           "hotkey": "5GDxzsjt\u2026",
           "ip": "185.216.20.148"
         },
@@ -137,7 +137,7 @@
           "rank": 9,
           "uid": 7,
           "incentive": 0.0,
-          "stake": 16904.54,
+          "stake": 16904.55,
           "hotkey": "5DWyg7Ek\u2026",
           "ip": "0.0.0.0"
         },
@@ -159,7 +159,7 @@
         "external_costs": {},
         "pnl_usd_day": -5.28,
         "pnl_usd_month": -158.4,
-        "tao_price_usd": 307.53
+        "tao_price_usd": 307.5
       },
       "metagraph_error": null
     },
@@ -194,7 +194,7 @@
           "rank": 1,
           "uid": 0,
           "incentive": 0.806485,
-          "stake": 2699661.0,
+          "stake": 2701692.5,
           "hotkey": "5FR392L6\u2026",
           "ip": "0.0.0.0"
         },
@@ -280,7 +280,7 @@
         "external_costs": {},
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 307.53
+        "tao_price_usd": 307.5
       },
       "metagraph_error": null
     },
@@ -404,7 +404,7 @@
         },
         "pnl_usd_day": -5.42,
         "pnl_usd_month": -162.56,
-        "tao_price_usd": 307.53
+        "tao_price_usd": 307.5
       },
       "metagraph_error": null
     },
@@ -525,7 +525,7 @@
         "external_costs": {},
         "pnl_usd_day": 0.0,
         "pnl_usd_month": 0.0,
-        "tao_price_usd": 307.53
+        "tao_price_usd": 307.5
       },
       "metagraph_error": null,
       "trading": {
@@ -559,25 +559,25 @@
       "name": "ceo-agent",
       "pid": 201549,
       "status": "online",
-      "uptime_s": 56155,
+      "uptime_s": 56459,
       "restarts": 34,
-      "memory_mb": 82,
+      "memory_mb": 83,
       "cpu_pct": 0
     },
     {
       "name": "metagraph-daemon",
-      "pid": 219888,
+      "pid": 220853,
       "status": "online",
-      "uptime_s": 3138,
-      "restarts": 73,
-      "memory_mb": 2951,
+      "uptime_s": 37,
+      "restarts": 74,
+      "memory_mb": 235,
       "cpu_pct": 0
     },
     {
       "name": "dashboard-snapshot",
       "pid": 145415,
       "status": "online",
-      "uptime_s": 207500,
+      "uptime_s": 207804,
       "restarts": 1,
       "memory_mb": 2,
       "cpu_pct": 0
@@ -586,7 +586,7 @@
       "name": "sn6-optimizer",
       "pid": 0,
       "status": "stopped",
-      "uptime_s": 209986,
+      "uptime_s": 210290,
       "restarts": 14,
       "memory_mb": 0,
       "cpu_pct": 0
@@ -595,27 +595,27 @@
       "name": "sn6-monitor",
       "pid": 170672,
       "status": "online",
-      "uptime_s": 142328,
+      "uptime_s": 142632,
       "restarts": 3,
-      "memory_mb": 59,
+      "memory_mb": 54,
       "cpu_pct": 0
     },
     {
       "name": "sn41-trader",
       "pid": 175892,
       "status": "online",
-      "uptime_s": 135523,
+      "uptime_s": 135827,
       "restarts": 3,
-      "memory_mb": 61,
+      "memory_mb": 55,
       "cpu_pct": 0
     },
     {
       "name": "sn41-pnl-resolver",
       "pid": 150971,
       "status": "online",
-      "uptime_s": 200258,
+      "uptime_s": 200562,
       "restarts": 0,
-      "memory_mb": 23,
+      "memory_mb": 22,
       "cpu_pct": 0
     }
   ],
